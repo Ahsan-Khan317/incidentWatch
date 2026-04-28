@@ -111,6 +111,19 @@ git push origin feature/your-feature-name
 
 ---
 
+# ADMIN ONLY: Sync develop to main
+
+ONLY admin should run these commands to move approved changes into main:
+
+```bash
+git checkout main
+git pull origin main
+git merge develop
+git push origin main
+```
+
+---
+
 # 10. Daily Update (Avoid Conflicts)
 
 Always sync your code:
