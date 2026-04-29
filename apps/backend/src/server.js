@@ -1,14 +1,38 @@
+import "./configs/env.config.js";
 import { createServer } from "http";
 import app from "./app.js";
 import { initSocket } from "./socket/socket.js";
+import { connectDB } from "./configs/db.config.js";
+import { connectRedis } from "./configs/redis.config.js";
+import { transporter } from "./services/Email/sendEmail.js";
 
-const server = createServer(app);
+const startServer = async () => {
+  try {
+    // Connect to Database first
+    await connectDB();
 
-// Initialize Socket.io
-initSocket(server);
+    // Then connect to Redis
+    await connectRedis();
 
-const PORT = process.env.PORT || 5000;
+    // Verify Email Service
+    await transporter.verify();
+    console.log("✅ Email service ready");
 
-server.listen(PORT, () => {
-  console.log(`Backend running on ${PORT}`);
-});
+    // Create HTTP server
+    const server = createServer(app);
+
+    // Initialize Socket.io
+    initSocket(server);
+
+    const PORT = process.env.PORT || 5000;
+
+    server.listen(PORT, () => {
+      console.log(`✅ Backend running on ${PORT}`);
+    });
+  } catch (error) {
+    console.error(`Failed to start server: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+startServer();
