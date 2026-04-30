@@ -49,7 +49,6 @@ export const Features = () => {
     if (!cards.length) return;
 
     const ctx = gsap.context(() => {
-      // Initial stack
       cards.forEach((card, i) => {
         gsap.set(card, {
           y: i * 14,
@@ -106,21 +105,28 @@ export const Features = () => {
   }, []);
 
   return (
-    <section id="features" ref={sectionRef} className="relative bg-white py-10">
+    <section
+      id="features"
+      ref={sectionRef}
+      className="relative bg-white dark:bg-neutral-950 py-10 transition-colors duration-300"
+    >
       <div className="mx-auto max-w-7xl px-6">
         {/* Heading */}
         <div className="text-center mb-10">
-          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-slate-900">
-            Built for <span className="text-green-600">Reliability</span>
+          <h2 className="text-5xl md:text-6xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Built for{" "}
+            <span className="text-green-600 dark:text-green-400">
+              Reliability
+            </span>
           </h2>
 
-          <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-slate-600 dark:text-white/60 max-w-2xl mx-auto">
             Manage the full incident lifecycle — detect faster, respond smarter,
             recover quicker.
           </p>
         </div>
 
-        {/* Stack Centered */}
+        {/* Stack */}
         <div className="h-[70vh] flex items-center justify-center">
           <div className="relative w-full max-w-5xl h-[460px]">
             {features.map((item, index) => {
@@ -134,37 +140,116 @@ export const Features = () => {
                   }}
                   className="absolute inset-0"
                 >
-                  <div className="h-full w-full rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.08)] p-8 md:p-12 flex flex-col justify-between">
+                  <div
+                    className="
+                    group relative h-full w-full overflow-hidden rounded-3xl
+                    border border-slate-200 dark:border-white/10
+                    bg-white dark:bg-neutral-900
+                    shadow-[0_20px_60px_rgba(0,0,0,0.08)]
+                    dark:shadow-[0_20px_60px_rgba(0,0,0,0.45)]
+                    p-8 md:p-12 flex flex-col justify-between
+                    transition-all duration-300
+                    hover:-translate-y-1
+                    hover:shadow-[0_30px_80px_rgba(16,185,129,0.10)]
+                    dark:hover:shadow-[0_30px_80px_rgba(34,197,94,0.14)]
+                  "
+                  >
+                    {/* Glow */}
+                    <div
+                      className="
+                      absolute inset-0 pointer-events-none rounded-3xl
+                      bg-[radial-gradient(circle_at_top_right,rgba(22,163,74,0.06),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.04),transparent_28%)]
+                      dark:bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.10),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.08),transparent_28%)]
+                    "
+                    />
+
                     {/* Top */}
-                    <div className="flex items-center justify-between">
+                    <div className="relative z-10 flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="h-14 w-14 rounded-2xl bg-green-50 flex items-center justify-center">
-                          <Icon className="h-7 w-7 text-green-600" />
+                        <div className="h-14 w-14 rounded-2xl bg-green-50 dark:bg-green-500/10 flex items-center justify-center">
+                          <Icon className="h-7 w-7 text-green-600 dark:text-green-400" />
                         </div>
 
-                        <span className="text-xs tracking-[0.25em] uppercase text-slate-400 font-medium">
-                          Feature {index + 1}
-                        </span>
+                        <div>
+                          <span className="block text-xs uppercase tracking-[0.25em] font-medium text-slate-400 dark:text-white/40">
+                            Feature {index + 1}
+                          </span>
+
+                          <span className="text-sm text-slate-500 dark:text-white/55">
+                            Smart Automation
+                          </span>
+                        </div>
                       </div>
 
-                      <span className="text-6xl font-bold text-slate-100">
+                      <span className="text-6xl font-bold text-slate-100 dark:text-white/5">
                         0{index + 1}
                       </span>
                     </div>
 
                     {/* Middle */}
-                    <div>
-                      <h3 className="text-3xl md:text-5xl font-bold text-slate-900 leading-tight mb-5">
+                    <div className="relative z-10">
+                      <h3 className="text-3xl md:text-5xl font-bold leading-tight mb-5 text-slate-900 dark:text-white">
                         {item.title}
                       </h3>
 
-                      <p className="text-slate-600 text-lg leading-relaxed max-w-2xl">
+                      <p className="text-lg leading-relaxed max-w-2xl mb-6 text-slate-600 dark:text-white/65">
                         {item.desc}
                       </p>
+
+                      <div className="grid grid-cols-2 gap-3 max-w-xl">
+                        <div className="text-sm text-slate-500 dark:text-white/50">
+                          ✓ Faster Recovery
+                        </div>
+                        <div className="text-sm text-slate-500 dark:text-white/50">
+                          ✓ Real-Time Insights
+                        </div>
+                        <div className="text-sm text-slate-500 dark:text-white/50">
+                          ✓ Smart Routing
+                        </div>
+                        <div className="text-sm text-slate-500 dark:text-white/50">
+                          ✓ Team Ready
+                        </div>
+                      </div>
                     </div>
 
                     {/* Bottom */}
-                    <div className="h-1 w-28 rounded-full bg-green-600" />
+                    <div className="relative z-10 space-y-4">
+                      <div className="h-1.5 w-36 rounded-full bg-green-600 dark:bg-green-500" />
+
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="rounded-xl bg-slate-50 dark:bg-white/5 px-3 py-2">
+                          <p className="text-xs text-slate-400 dark:text-white/35">
+                            Speed
+                          </p>
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white">
+                            30s
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl bg-slate-50 dark:bg-white/5 px-3 py-2">
+                          <p className="text-xs text-slate-400 dark:text-white/35">
+                            Accuracy
+                          </p>
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white">
+                            94%
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl bg-slate-50 dark:bg-white/5 px-3 py-2">
+                          <p className="text-xs text-slate-400 dark:text-white/35">
+                            Status
+                          </p>
+                          <p className="text-sm font-semibold text-green-600 dark:text-green-400">
+                            Online
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-sm text-slate-400 dark:text-white/35">
+                        <span>Enterprise Grade</span>
+                        <span>DevDynasty</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
