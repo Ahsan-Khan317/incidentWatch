@@ -36,11 +36,11 @@ export const OrganizationFlow = () => {
             initial={{ opacity: 0.92, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-display font-bold mb-4"
+            className="text-4xl md:text-5xl font-display font-bold uppercase tracking-tight mb-4 text-heading"
           >
             Scale with <span className="text-primary">Collaboration.</span>
           </motion.h2>
-          <p className="text-body max-w-2xl mx-auto">
+          <p className="text-body max-w-2xl mx-auto font-body">
             From solo founders to enterprise engineering teams—IncidentWatch
             scales with your organization.
           </p>
@@ -58,17 +58,17 @@ export const OrganizationFlow = () => {
             >
               {/* Connector Line (Desktop) */}
               {idx < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-1/2 w-full h-[2px] bg-gradient-to-r from-primary/30 to-transparent -z-10" />
+                <div className="hidden lg:block absolute top-12 left-1/2 w-full h-[1px] border-t border-dashed border-primary/30 -z-10" />
               )}
 
-              <div className="w-20 h-20 bg-surface-1 border border-white/5 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-soft group-hover:shadow-primary/20 group-hover:border-primary/20 transition-all duration-500">
+              <div className="w-20 h-20 bg-surface-1 border border-border-soft rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-soft group-hover:shadow-primary/10 group-hover:border-primary/30 transition-all duration-500">
                 <step.icon className="w-10 h-10 text-primary" />
               </div>
 
-              <h3 className="text-2xl font-display font-bold mb-4">
+              <h3 className="text-2xl font-display font-bold uppercase tracking-tight mb-4 text-heading">
                 {step.title}
               </h3>
-              <p className="text-body text-sm leading-relaxed max-w-xs mx-auto">
+              <p className="text-body text-sm leading-relaxed max-w-xs mx-auto font-body">
                 {step.description}
               </p>
             </motion.div>
