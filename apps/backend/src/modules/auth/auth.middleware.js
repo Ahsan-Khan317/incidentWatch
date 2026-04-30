@@ -1,58 +1,72 @@
-import { verifyAccessToken } from "../..//utils/generateToken.js";
+import { verifyAccessToken } from "../../utils/generateToken.js";
+import { sessionService } from "../session/session.service.js";
 import { ApiError } from "../../utils/Error/ApiError.js";
 
-//baseauth
+/**
+ * Shared helper: verify JWT + verify session exists in Redis via sessionService.
+ */
+const verifySession = async (req) => {
+  const authHeader = req.headers.authorization;
+  let token = null;
 
-export const org_user_Auth = (req, res, next) => {
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  } else if (req.cookies?.accessToken) {
+    token = req.cookies.accessToken;
+  }
+
+  if (!token) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+  const decoded = verifyAccessToken(token);
+
+  if (!decoded) {
+    throw new ApiError(401, "Invalid or expired token");
+  }
+
+  const { id, orgid, role, sessionId } = decoded;
+
+  if (!sessionId) {
+    throw new ApiError(401, "Legacy token — please re-login");
+  }
+
+  // Use sessionService for stateful check
+  const session = await sessionService.getSession(id, sessionId);
+
+  if (!session) {
+    throw new ApiError(401, "Session expired or revoked");
+  }
+
+  return { id, orgid, role, sessionId };
+};
+
+export const org_user_Auth = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return next(new ApiError(401, "Unauthorized access"));
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decode = verifyAccessToken(token);
-
-    if (!decode) {
-      return next(new ApiError(401, "Invalid or expired token"));
-    }
-
-    req.user = decode;
-
+    req.user = await verifySession(req);
     next();
   } catch (error) {
+    if (error instanceof ApiError) {
+      return next(error);
+    }
     return next(new ApiError(401, "Authentication failed"));
   }
 };
 
-//adminauth
-
-export const org_admin_Auth = (req, res, next) => {
+export const org_admin_Auth = async (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const user = await verifySession(req);
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return next(new ApiError(401, "Unauthorized access"));
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decode = verifyAccessToken(token);
-
-    if (!decode) {
-      return next(new ApiError(401, "Invalid or expired token"));
-    }
-
-    if (decode.role !== "admin") {
+    if (user.role !== "admin") {
       return next(new ApiError(403, "Admin access required"));
     }
 
-    req.user = decode;
-
+    req.user = user;
     next();
   } catch (error) {
+    if (error instanceof ApiError) {
+      return next(error);
+    }
     return next(new ApiError(401, "Authentication failed"));
   }
 };

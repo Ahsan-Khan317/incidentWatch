@@ -1,3 +1,6 @@
+import { ENV } from "@/configs/env.config.js";
+import { API_PREFIX } from "@/constants/index.js";
+
 export const getInviteEmailTemplate = (inviteToken, orgName, userEmail) => {
   const inviteLink = `${process.env.FRONTEND_URL}/register?token=${inviteToken}&email=${userEmail}`;
 
@@ -224,7 +227,7 @@ export const getOrgWelcomeTemplate = (orgName) => {
   `;
 };
 export const verifyEmail_msg = (token) => {
-  const verificationUrl = `http://localhost:4200/incidentwatch/verify/email/${token}`;
+  const verificationUrl = `${ENV.BACKEND_URL}${API_PREFIX}/auth/verify/email/${token}`;
 
   return `
 <!DOCTYPE html>

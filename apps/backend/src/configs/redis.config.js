@@ -1,19 +1,28 @@
 import Redis from "ioredis";
 import { ENV } from "../configs/env.config.js";
 
+/** @type {import("ioredis").Redis | null} */
+let redisClient = null;
+
+/**
+ * Initialize the Redis singleton. Call once at server startup.
+ * Subsequent calls return the existing client.
+ * @returns {Promise<import("ioredis").Redis>}
+ */
 export const connectRedis = async () => {
+  if (redisClient) return redisClient;
+
   try {
-    // Parse Redis URL to extract credentials and host
     const redisUrl = new URL(ENV.REDIS_URL);
     const password = redisUrl.password;
     const host = redisUrl.hostname;
     const port = redisUrl.port || 6379;
 
-    const redisClient = new Redis({
+    redisClient = new Redis({
       host,
       port,
       password: password || undefined,
-      tls: redisUrl.protocol === "rediss" ? {} : undefined,
+      tls: redisUrl.protocol === "rediss:" ? {} : undefined,
       maxRetriesPerRequest: 3,
       retryStrategy: (times) => {
         if (times > 3) return null;
@@ -21,15 +30,32 @@ export const connectRedis = async () => {
       },
     });
 
-    // Only attach error handler after connection is established
     redisClient.on("connect", () => {
-      console.log(`Redis Connected: ${host}:${port}`);
+      console.log(`✅ Redis Connected: ${host}:${port}`);
     });
 
+    redisClient.on("error", (err) => {
+      console.error(`Redis Error: ${err.message}`);
+    });
+
+    // Verify the connection
     await redisClient.ping();
     return redisClient;
   } catch (error) {
-    console.error(`Redis Error: ${error.message}`);
-    return null;
+    console.error(`Redis Connection Failed: ${error.message}`);
+    redisClient = null;
+    throw error; // Let server.js handle startup failure
   }
+};
+
+/**
+ * Get the existing Redis client singleton.
+ * Must call connectRedis() first at startup.
+ * @returns {import("ioredis").Redis}
+ */
+export const getRedis = () => {
+  if (!redisClient) {
+    throw new Error("Redis not initialized. Call connectRedis() first.");
+  }
+  return redisClient;
 };

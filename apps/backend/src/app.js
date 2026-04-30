@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { getIO } from "./socket/socket.js";
 import { API_PREFIX } from "@/constants/index.js";
-import rootRouter from "./modules/auth/routes/auth.routes.js";
+import rootRouter from "./router/root.router.js";
 import { ENV } from "./configs/env.config.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 import { globalErrorHandler } from "@/middlewares/error.middleware.js";
@@ -10,6 +10,7 @@ import { corsMiddleware } from "./middlewares/cors.middleware.js";
 
 const app = express();
 app.use(corsMiddleware);
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 // Body parsing
 app.use(express.json());
@@ -20,9 +21,6 @@ app.use(cookieParser());
 
 // Setup global API prefix with root router
 app.use(API_PREFIX, rootRouter);
-
-// Auth routes (alias for incidentwatch prefix)
-app.use(`/incidentwatch`, rootRouter);
 
 app.post("/logs", (req, res) => {
   console.log("LOG:", req.body);
