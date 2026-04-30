@@ -1,36 +1,11 @@
 "use client";
-import React from "react";
 import { motion } from "framer-motion";
+import { IncidentSimulator } from "./IncidentSimulator/index";
 
 export const Hero = () => {
-  const terminalLines = [
-    "> npm install -g @incidentwatch/agent",
-    "> incidentwatch-agent start --key=xyz... --id=prod-1",
-    "> [INFO] Connected to IncidentWatch Ingestion API",
-    "> [INFO] Heartbeat monitoring active (30s interval)",
-    "> [INFO] Log stream tailing: /var/log/app.log",
-    "> [OK] Monitoring live...",
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.5,
-      },
-    },
-  };
-
-  const lineVariants = {
-    hidden: { opacity: 0, x: -10 },
-    visible: { opacity: 1, x: 0 },
-  };
-
   return (
-    <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-      <div className="container-max grid lg:grid-cols-2 gap-12 items-center">
+    <section className="relative pt-40 md:pt-28 pb-10 px-6 overflow-hidden">
+      <div className="container-max grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
         {/* Left Side: Content */}
         <motion.div
           initial={{ opacity: 0.92, x: -16 }}
@@ -38,81 +13,61 @@ export const Hero = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <h1 className="text-5xl md:text-7xl font-display font-extrabold text-heading leading-[1.1] mb-6">
-            Uptime is <span className="text-primary">Non-Negotiable.</span>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="px-2 py-1 bg-primary/10 border border-primary/20 rounded text-[10px] font-bold text-primary uppercase tracking-widest">
+              v1.0 Beta
+            </div>
+            <span className="text-[10px] text-muted font-bold uppercase tracking-widest">
+              Available for AWS & Azure
+            </span>
+          </div>
+
+          <h1 className="text-5xl md:text-7xl font-display uppercase font-extrabold text-heading leading-[0.9] mb-6">
+            Downtime is <span className="text-primary">Unacceptable.</span>
           </h1>
-          <p className="text-lg text-body mb-8 max-w-lg">
+          <p className="text-lg text-body mb-10 max-w-lg leading-relaxed">
             Detect incidents in under 30 seconds. AI-powered root cause
             analysis, automated team escalations, and real-time public status
             pages—all in one place.
           </p>
+
           <div className="flex flex-wrap gap-4">
-            <button className="btn-primary btn-lg">Start Monitoring Now</button>
-            <button className="btn-outline btn-lg">View Demo</button>
+            <button className="btn btn-primary btn-lg px-10">
+              <span className="btn-slide">
+                <span>Start Monitoring</span>
+                <span>Start Monitoring</span>
+              </span>
+            </button>
+
+            <button className="btn btn-outline btn-lg px-10">
+              Book a Demo
+            </button>
+          </div>
+
+          {/* Social Proof Placeholder */}
+          <div className="mt-12 pt-12 border-t border-border-soft flex items-center gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-muted">
+              Trusted by
+            </span>
+            <div className="flex gap-8 items-center grayscale">
+              <span className="text-lg font-bold text-heading">RAZOR</span>
+              <span className="text-lg font-bold text-heading">NEXUS</span>
+              <span className="text-lg font-bold text-heading">CLOUDFY</span>
+            </div>
           </div>
         </motion.div>
 
-        {/* Right Side: Terminal Mockup */}
+        {/* Right Side: Interactive Dashboard */}
         <motion.div
-          initial={{ opacity: 0.9, scale: 0.98, y: 12 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative group"
+          key="hero-simulator"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative min-h-[400px] flex items-center justify-center"
         >
-          {/* Decorative Glow */}
-          <div className="absolute -inset-4 bg-primary/20 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-          <div className="relative glass-surface p-6 font-mono text-sm border border-neutral-200 rounded-xl shadow-lg bg-neutral-900/90">
-            <div className="flex gap-2 mb-4 border-b border-white/10 pb-3">
-              <div className="w-3 h-3 rounded-full bg-danger/70" />
-              <div className="w-3 h-3 rounded-full bg-warning/70" />
-              <div className="w-3 h-3 rounded-full bg-success/70" />
-              <span className="ml-2 text-xs text-neutral-400">
-                terminal — incidentwatch-agent
-              </span>
-            </div>
-
-            <motion.div
-              variants={containerVariants}
-              initial={false}
-              animate="visible"
-              className="space-y-2"
-            >
-              {terminalLines.map((line, idx) => (
-                <motion.p
-                  key={idx}
-                  variants={lineVariants}
-                  className={
-                    line.includes("[ERROR]")
-                      ? "text-danger"
-                      : line.includes("[INFO]")
-                        ? "text-info"
-                        : line.includes(">")
-                          ? "text-primary"
-                          : "text-body-strong"
-                  }
-                >
-                  {line}
-                </motion.p>
-              ))}
-              <motion.div
-                animate={{ opacity: [0, 1] }}
-                transition={{
-                  duration: 0.8,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
-                className="w-2 h-4 bg-primary inline-block align-middle"
-              />
-            </motion.div>
-          </div>
+          <IncidentSimulator />
         </motion.div>
       </div>
-
-      {/* Background Shapes */}
-      <div className="absolute top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full" />
-      <div className="absolute bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-accent/5 blur-[100px] rounded-full" />
     </section>
   );
 };
