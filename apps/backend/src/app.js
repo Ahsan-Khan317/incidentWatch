@@ -7,6 +7,7 @@ import { ENV } from "./configs/env.config.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 import { globalErrorHandler } from "@/middlewares/error.middleware.js";
 import { corsMiddleware } from "./middlewares/cors.middleware.js";
+import statusRouter from "./modules/status/status.route.js";
 
 const app = express();
 app.use(corsMiddleware);
@@ -21,6 +22,10 @@ app.use(cookieParser());
 
 // Setup global API prefix with root router
 app.use(API_PREFIX, rootRouter);
+
+// Auth routes
+app.use(`/incidentwatch`, Auth_router);
+app.use(`/incidentwatch/status`, statusRouter);
 
 app.post("/logs", (req, res) => {
   console.log("LOG:", req.body);
