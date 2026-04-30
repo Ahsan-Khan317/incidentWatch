@@ -18,6 +18,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   user,
 }) => {
   const [isDark, setIsDark] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   useEffect(() => {
     if (isDark) {
@@ -70,21 +71,40 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       />
 
       {/* SideNavBar */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-0 border-r border-border-soft flex flex-col justify-between py-6 z-40 shadow-soft transition-colors duration-300">
+      <aside
+        className={`fixed left-0 top-0 h-screen bg-surface-0 border-r border-border-soft flex flex-col justify-between py-6 z-40 shadow-soft transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-20"}`}
+      >
+        {/* Floating Toggle Button */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface-1 border border-border-soft rounded-md flex items-center justify-center text-muted hover:text-primary hover:border-primary shadow-sm transition-all z-50"
+          title="Toggle Sidebar"
+        >
+          <span className="material-symbols-outlined text-[14px]">
+            {isSidebarOpen ? "chevron_left" : "chevron_right"}
+          </span>
+        </button>
+
         <div>
-          <div className="px-6 mb-8 flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center shadow-primary">
-              <span className="material-symbols-outlined text-white text-xl">
-                security
-              </span>
-            </div>
-            <div>
-              <h1 className="text-primary font-display font-black text-lg leading-none">
-                IncidentWatch
-              </h1>
-              <p className="text-muted text-[12px] font-bold uppercase mt-1 tracking-widest">
-                Ops Control
-              </p>
+          <div
+            className={`px-6 mb-8 flex items-center ${isSidebarOpen ? "gap-3" : "justify-center flex-col gap-4"}`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary rounded flex shrink-0 items-center justify-center shadow-primary">
+                <span className="material-symbols-outlined text-white text-xl">
+                  security
+                </span>
+              </div>
+              {isSidebarOpen && (
+                <div>
+                  <h1 className="text-primary font-display font-black text-lg leading-none">
+                    IncidentWatch
+                  </h1>
+                  <p className="text-muted text-[12px] font-bold uppercase mt-1 tracking-widest">
+                    Ops Control
+                  </p>
+                </div>
+              )}
             </div>
           </div>
           <nav className="flex flex-col gap-1 px-3">
@@ -92,49 +112,57 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <a
                 key={item.id}
                 onClick={() => setActiveView(item.id)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all cursor-pointer ${
+                className={`flex items-center py-2.5 rounded-md transition-all cursor-pointer ${isSidebarOpen ? "gap-3 px-3" : "justify-center px-0"} ${
                   activeView === item.id
                     ? "text-primary font-bold bg-primary-soft shadow-inner"
                     : "text-muted hover:text-heading hover:bg-surface-1 font-medium"
                 }`}
+                title={!isSidebarOpen ? item.label : undefined}
               >
                 <span className="material-symbols-outlined">{item.icon}</span>
-                <span className="text-sm tracking-tight">{item.label}</span>
+                {isSidebarOpen && (
+                  <span className="text-sm tracking-tight">{item.label}</span>
+                )}
               </a>
             ))}
           </nav>
         </div>
         <div className="px-4">
-          <div className="p-3 rounded-md border border-border-soft bg-surface-1 flex items-center gap-3 hover:border-border transition-colors">
-            <div className="w-10 h-10 rounded-md bg-primary-soft flex items-center justify-center text-primary font-bold border border-primary-muted">
+          <div
+            className={`p-3 rounded-md border border-border-soft bg-surface-1 flex items-center transition-colors hover:border-border ${isSidebarOpen ? "gap-3" : "justify-center"}`}
+          >
+            <div className="w-10 h-10 shrink-0 rounded-md bg-primary-soft flex items-center justify-center text-primary font-bold border border-primary-muted">
               {user.name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
             </div>
-            <div className="overflow-hidden">
-              <p className="text-sm font-bold text-heading truncate">
-                {user.name}
-              </p>
-              <p className="text-xs text-muted truncate font-medium">
-                {user.role}
-              </p>
-            </div>
-            <span className="material-symbols-outlined text-muted ml-auto text-sm cursor-pointer hover:text-heading transition-colors">
-              more_vert
-            </span>
+            {isSidebarOpen && (
+              <>
+                <div className="overflow-hidden">
+                  <p className="text-sm font-bold text-heading truncate">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-muted truncate font-medium">
+                    {user.role}
+                  </p>
+                </div>
+                <span className="material-symbols-outlined text-muted ml-auto text-sm cursor-pointer hover:text-heading transition-colors">
+                  more_vert
+                </span>
+              </>
+            )}
           </div>
         </div>
       </aside>
 
       {/* Main Wrapper */}
-      <div className="ml-64 flex flex-col min-h-screen">
+      <div
+        className={`flex flex-col min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-20"}`}
+      >
         {/* TopAppBar */}
         <header className="h-16 sticky top-0 bg-surface-0/80 backdrop-blur-md border-b border-border-soft px-8 flex justify-between items-center z-30 transition-colors duration-300">
           <div className="flex items-center gap-4">
-            <button className="p-2 text-muted hover:text-heading hover:bg-surface-1 rounded-md transition-colors">
-              <span className="material-symbols-outlined">menu_open</span>
-            </button>
             <h2 className="font-display text-xl font-bold tracking-tight text-heading">
               {getHeaderTitle()}
             </h2>
