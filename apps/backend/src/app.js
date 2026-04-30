@@ -7,8 +7,10 @@ import { ENV } from "./configs/env.config.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 import { globalErrorHandler } from "@/middlewares/error.middleware.js";
 import Auth_router from "./modules/auth/Auth.route.js";
+import { corsMiddleware } from "./middlewares/cors.middleware.js";
 
 const app = express();
+app.use(corsMiddleware);
 
 // Body parsing
 app.use(express.json());

@@ -1,13 +1,10 @@
 {
   "name": "incident-platform",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "dev": "concurrently -n frontend,backend -c green,cyan \"bun --filter frontend dev\" \"bun --filter backend dev\"",
-    "prepare": "husky"
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
@@ -17,10 +14,13 @@
       "prettier --write"
     ]
   },
-  "devDependencies": {
-    "concurrently": "^9.2.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.4.0",
-    "prettier": "^3.8.3"
-  }
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n frontend,backend -c green,cyan \"bun --filter frontend dev\" \"bun --filter backend dev\"",
+    "prepare": "husky"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
