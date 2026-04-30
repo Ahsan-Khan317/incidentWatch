@@ -14,10 +14,19 @@ export function useLogin() {
   return useMutation<AuthResponse, Error, LoginPayload>({
     mutationFn: (payload: LoginPayload) => loginOrganization(payload),
     onSuccess(data) {
-      setToken(data.token);
-      setAuthToken(data.token);
-      setUser(data.user);
-      queryClient.setQueryData(["auth", "me"], data.user);
+      const { accessToken, ...userData } = data;
+      // Construct user object from flattened fields
+      const user = {
+        id: userData.id!,
+        name: userData.name!,
+        email: userData.email!,
+        role: userData.role,
+      };
+
+      setToken(accessToken);
+      setAuthToken(accessToken);
+      setUser(user);
+      queryClient.setQueryData(["auth", "me"], user);
       router.push("/");
     },
   });
