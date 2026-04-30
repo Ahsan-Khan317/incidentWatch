@@ -24,6 +24,7 @@
     "packages/*"
   ],
   "dependencies": {
+    "framer-motion": "^12.38.0",
     "resend": "^6.12.2"
   }
 }
