@@ -14,9 +14,11 @@ const startServer = async () => {
     // Then connect to Redis
     await connectRedis();
 
-    // Verify Email Service
-    await transporter.verify();
-    console.log("✅ Email service ready");
+    // Verify Email Service (non-blocking)
+    transporter
+      .verify()
+      .then(() => console.log("✅ Email service ready"))
+      .catch((err) => console.warn("⚠️ Email service unavailable:", err.message));
 
     // Create HTTP server
     const server = createServer(app);

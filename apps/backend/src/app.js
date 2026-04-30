@@ -2,11 +2,10 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { getIO } from "./socket/socket.js";
 import { API_PREFIX } from "@/constants/index.js";
-import rootRouter from "./modules/auth/Auth.route.js";
+import rootRouter from "./modules/auth/routes/auth.routes.js";
 import { ENV } from "./configs/env.config.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 import { globalErrorHandler } from "@/middlewares/error.middleware.js";
-import Auth_router from "./modules/auth/Auth.route.js";
 import { corsMiddleware } from "./middlewares/cors.middleware.js";
 
 const app = express();
@@ -22,8 +21,8 @@ app.use(cookieParser());
 // Setup global API prefix with root router
 app.use(API_PREFIX, rootRouter);
 
-// Auth routes
-app.use(`/incidentwatch`, Auth_router);
+// Auth routes (alias for incidentwatch prefix)
+app.use(`/incidentwatch`, rootRouter);
 
 app.post("/logs", (req, res) => {
   console.log("LOG:", req.body);
