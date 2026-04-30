@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Navbar } from "../components/Navbar";
 import { Hero } from "../components/Hero";
@@ -7,6 +8,7 @@ import { DynamicBackground } from "../components/DynamicBackground";
 import { AnomalyEngine } from "../components/AnomalyEngine";
 import { Integrations } from "../components/Integrations";
 import { motion } from "framer-motion";
+import { LogoMarquee } from "../components/Marquee";
 
 export const Landing = () => {
   return (
@@ -18,22 +20,7 @@ export const Landing = () => {
         <Hero />
 
         {/* Trusted By Section (Social Proof) */}
-        <section className="py-12 border-y border-neutral-200 dark:border-white/10 bg-neutral-50/50 dark:bg-neutral-900/50 backdrop-blur-sm">
-          <div className="container-max flex flex-wrap justify-center items-center gap-12 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-            <div className="font-display font-black text-2xl tracking-tighter italic text-heading">
-              Vercel
-            </div>
-            <div className="font-display font-black text-2xl tracking-tighter italic text-heading">
-              Railway
-            </div>
-            <div className="font-display font-black text-2xl tracking-tighter italic text-heading">
-              Supabase
-            </div>
-            <div className="font-display font-black text-2xl tracking-tighter italic text-heading">
-              Redis
-            </div>
-          </div>
-        </section>
+        <LogoMarquee />
 
         <Features />
 
