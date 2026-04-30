@@ -13,9 +13,12 @@ export function useRegister() {
   return useMutation<AuthResponse, Error, RegisterPayload>({
     mutationFn: (payload: RegisterPayload) => registerOrganization(payload),
     onSuccess(data) {
-      setToken(data.token);
-      setAuthToken(data.token);
-      setUser(data.user);
+      const token = data.accessToken;
+      const user = data.user!;
+
+      setToken(token);
+      setAuthToken(token);
+      setUser(user);
       router.push("/");
     },
   });

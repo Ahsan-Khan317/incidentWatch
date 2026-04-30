@@ -1,17 +1,22 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { ENV } from "../configs/env.config.js";
-// Generate access token (15 minutes)
 
-export const generateAccessToken = (userId, orgid, role) => {
-  return jwt.sign({ id: userId, orgid, role }, ENV.ACCESS_TOKEN_SECRET, {
+// Generate a unique session ID (UUID v4 via crypto)
+export const generateSessionId = () => {
+  return crypto.randomUUID();
+};
+
+// Generate access token — now includes sessionId for stateful verification
+export const generateAccessToken = (userId, orgid, role, sessionId) => {
+  return jwt.sign({ id: userId, orgid, role, sessionId }, ENV.ACCESS_TOKEN_SECRET, {
     expiresIn: ENV.ACCESS_TOKEN_EXPIRY || "15m",
   });
 };
 
-// Generate refresh token (7 days)
-export const generateRefreshToken = (userId) => {
-  return jwt.sign({ id: userId }, ENV.REFRESH_TOKEN_SECRET, {
+// Generate refresh token — includes sessionId to tie refresh to session
+export const generateRefreshToken = (userId, sessionId) => {
+  return jwt.sign({ id: userId, sessionId }, ENV.REFRESH_TOKEN_SECRET, {
     expiresIn: ENV.REFRESH_TOKEN_EXPIRY || "7d",
   });
 };
@@ -20,6 +25,8 @@ export const generateRefreshToken = (userId) => {
 export const verifyRefreshToken = (token) => {
   return jwt.verify(token, ENV.REFRESH_TOKEN_SECRET);
 };
+
+// Verify access token
 export const verifyAccessToken = (token) => {
   return jwt.verify(token, ENV.ACCESS_TOKEN_SECRET);
 };

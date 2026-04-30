@@ -2,16 +2,16 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { getIO } from "./socket/socket.js";
 import { API_PREFIX } from "@/constants/index.js";
-import rootRouter from "./modules/auth/Auth.route.js";
+import rootRouter from "./router/root.router.js";
 import { ENV } from "./configs/env.config.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 import { globalErrorHandler } from "@/middlewares/error.middleware.js";
-import Auth_router from "./modules/auth/Auth.route.js";
 import { corsMiddleware } from "./middlewares/cors.middleware.js";
 import statusRouter from "./modules/status/status.route.js";
 
 const app = express();
 app.use(corsMiddleware);
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 // Body parsing
 app.use(express.json());

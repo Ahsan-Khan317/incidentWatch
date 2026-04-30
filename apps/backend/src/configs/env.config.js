@@ -18,10 +18,12 @@ const envSchema = z.object({
     .string()
     .default("*")
     .transform((val) => val.split(",").map((s) => s.trim())),
+  BACKEND_URL: z.string().default("http://localhost:8000"),
 
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
   REDIS_URL: z.string().default("redis://localhost:6379"),
+  SESSION_TTL: z.coerce.number().default(604800), // 7 days in seconds
 
   // ADMIN
   ADMIN_EMAIL: z.string().email().default("admin@gmail.com"),

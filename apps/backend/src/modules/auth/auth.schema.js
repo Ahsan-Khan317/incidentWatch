@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 
-// Organization Registration Validators
-export const orgRegisterValidation = [
+// Organization Registration Schema
+export const orgRegisterSchema = [
   body("name")
     .notEmpty()
     .withMessage("Organization name is required")
@@ -27,8 +27,8 @@ export const orgRegisterValidation = [
     ),
 ];
 
-// Organization Login Validators
-export const orgLoginValidation = [
+// Organization Login Schema
+export const orgLoginSchema = [
   body("email")
     .notEmpty()
     .withMessage("Email is required")
@@ -39,8 +39,8 @@ export const orgLoginValidation = [
   body("password").notEmpty().withMessage("Password is required"),
 ];
 
-// User Registration Validators (via invite token)
-export const userRegisterValidation = [
+// User Registration Schema (via invite token)
+export const userRegisterSchema = [
   body("token")
     .notEmpty()
     .withMessage("Invite token is required")
@@ -78,8 +78,8 @@ export const userRegisterValidation = [
     .withMessage("Passwords do not match"),
 ];
 
-// User Login Validators
-export const userLoginValidation = [
+// User Login Schema
+export const userLoginSchema = [
   body("email")
     .notEmpty()
     .withMessage("Email is required")
@@ -89,3 +89,7 @@ export const userLoginValidation = [
 
   body("password").notEmpty().withMessage("Password is required"),
 ];
+
+// Aliases for backward compatibility
+export const orgRegisterValidation = orgRegisterSchema;
+export const userLoginValidation = userLoginSchema;

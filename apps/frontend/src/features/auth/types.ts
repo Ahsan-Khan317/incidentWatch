@@ -3,6 +3,8 @@ export interface AuthUser {
   name: string;
   email: string;
   role?: string;
+  org_name?: string;
+  oncall?: boolean;
 }
 
 export interface LoginPayload {
@@ -18,6 +20,11 @@ export interface RegisterPayload {
 }
 
 export interface AuthResponse {
-  token: string;
-  user: AuthUser;
+  accessToken: string;
+  id?: string;
+  name?: string;
+  email?: string;
+  role?: string;
+  user?: AuthUser; // For registration response which has { user, organization, accessToken }
+  organization?: any;
 }
