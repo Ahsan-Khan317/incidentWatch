@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#0e1511",
+                    "outline": "#86948a",
+                    "surface-variant": "#2f3632",
+                    "surface-container-low": "#161d19",
+                    "on-error": "#690005",
+                    "on-secondary-container": "#b4b5b5",
+                    "on-primary": "#003824",
+                    "tertiary-fixed-dim": "#ffb3af",
+                    "secondary-fixed-dim": "#c6c6c7",
+                    "inverse-surface": "#dde4dd",
+                    "on-primary-container": "#00422b",
+                    "secondary-container": "#454747",
+                    "surface-tint": "#4edea3",
+                    "surface-container-high": "#242c27",
+                    "secondary-fixed": "#e2e2e2",
+                    "outline-variant": "#3c4a42",
+                    "on-surface": "#dde4dd",
+                    "inverse-primary": "#006c49",
+                    "primary-fixed-dim": "#4edea3",
+                    "on-secondary-fixed": "#1a1c1c",
+                    "on-tertiary": "#650911",
+                    "surface-dim": "#0e1511",
+                    "tertiary-container": "#fc7c78",
+                    "surface": "#0e1511",
+                    "primary": "#4edea3",
+                    "error-container": "#93000a",
+                    "secondary": "#c6c6c7",
+                    "on-primary-fixed": "#002113",
+                    "on-secondary": "#2f3131",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-tertiary-container": "#711419",
+                    "on-error-container": "#ffdad6",
+                    "primary-fixed": "#6ffbbe",
+                    "on-tertiary-fixed": "#410005",
+                    "on-primary-fixed-variant": "#005236",
+                    "on-background": "#dde4dd",
+                    "on-surface-variant": "#bbcabf",
+                    "on-tertiary-fixed-variant": "#842225",
+                    "surface-container": "#1a211d",
+                    "inverse-on-surface": "#2b322d",
+                    "surface-container-lowest": "#09100c",
+                    "primary-container": "#10b981",
+                    "surface-bright": "#343b36",
+                    "tertiary": "#ffb3af",
+                    "on-secondary-fixed-variant": "#454747",
+                    "error": "#ffb4ab",
+                    "surface-container-highest": "#2f3632"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "xl": "48px",
+                    "unit": "4px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "xs": "4px",
+                    "gutter": "24px",
+                    "container-max": "1200px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-md": ["Space Grotesk"],
+                    "headline-lg": ["Space Grotesk"],
+                    "mono-label": ["Space Grotesk"],
+                    "label-sm": ["Inter"],
+                    "display-xl": ["Space Grotesk"],
+                    "body-lg": ["Inter"],
+                    "mono": ["JetBrains Mono", "monospace"]
+            },
+            "fontSize": {
+                    "body-md": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                    "mono-label": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "display-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 2px; }
+        .scanning-line {
+            background: linear-gradient(to bottom, transparent 50%, rgba(16, 185, 129, 0.02) 50%);
+            background-size: 100% 4px;
+        }
+        .pulsate {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- Layout Shell -->
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="flex flex-col fixed left-0 top-0 h-full py-6 bg-[#09090b] w-64 border-r border-white/5 font-['Space_Grotesk'] text-xs font-medium uppercase tracking-widest z-40">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary-container flex items-center justify-center rounded">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<div>
+<h1 class="text-emerald-500 font-black text-sm tracking-tight">IncidentWatch</h1>
+<p class="text-[8px] text-zinc-500">v2.4.0-stable</p>
+</div>
+</div>
+<div class="flex-1 space-y-1">
+<!-- Navigation Items -->
+<a class="flex items-center gap-3 px-6 py-2 text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-2 text-emerald-400 bg-emerald-500/10 border-r-2 border-emerald-500 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="terminal">terminal</span>
+<span>Streaming Logs</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-2 text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="error">error</span>
+<span>Error Tracking</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-2 text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="lan">lan</span>
+<span>Network</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-2 text-zinc-500 hover:text-zinc-200 hover:bg-white/5 transition-all duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<div class="px-6 mt-auto">
+<button class="w-full bg-white text-black py-2 text-[10px] font-bold tracking-widest hover:bg-zinc-200 transition-colors">
+                    NEW QUERY
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col h-full">
+<!-- TopAppBar / Filter Bar -->
+<header class="h-16 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-xl px-lg flex items-center justify-between z-30">
+<div class="flex items-center gap-md">
+<!-- Filters -->
+<div class="flex items-center gap-xs bg-surface-container-low border border-white/5 p-1 rounded-lg">
+<select class="bg-transparent border-none text-label-sm text-on-surface-variant focus:ring-0 cursor-pointer py-1 px-3 appearance-none">
+<option>Service: auth-gateway</option>
+<option>Service: payments-api</option>
+<option>Service: db-proxy</option>
+</select>
+<div class="h-4 w-[1px] bg-white/10 mx-1"></div>
+<select class="bg-transparent border-none text-label-sm text-on-surface-variant focus:ring-0 cursor-pointer py-1 px-3 appearance-none">
+<option>Level: ALL</option>
+<option>Level: ERROR</option>
+<option>Level: INFO</option>
+</select>
+<div class="h-4 w-[1px] bg-white/10 mx-1"></div>
+<select class="bg-transparent border-none text-label-sm text-on-surface-variant focus:ring-0 cursor-pointer py-1 px-3 appearance-none">
+<option>Time: Last 15m</option>
+<option>Time: Last 1h</option>
+<option>Time: Custom</option>
+</select>
+</div>
+<button class="flex items-center gap-2 px-3 py-1.5 border border-white/10 rounded-lg text-label-sm font-medium hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="search">search</span>
+<span>Search logs...</span>
+</button>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm px-3 py-1.5 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
+<div class="w-2 h-2 rounded-full bg-emerald-500 pulsate shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
+<span class="text-label-sm font-bold text-emerald-500 tracking-widest">LIVE</span>
+</div>
+<div class="flex items-center gap-sm">
+<button class="material-symbols-outlined text-outline hover:text-white transition-colors" data-icon="file_download">file_download</button>
+<button class="material-symbols-outlined text-outline hover:text-white transition-colors" data-icon="fullscreen">fullscreen</button>
+</div>
+</div>
+</header>
+<!-- Content Area: Terminal -->
+<div class="flex-1 bg-background p-lg relative overflow-hidden flex flex-col">
+<!-- Terminal Window -->
+<div class="flex-1 border border-white/5 bg-[#09100c] rounded-xl flex flex-col relative overflow-hidden">
+<!-- Window Header -->
+<div class="h-10 bg-white/5 border-b border-white/5 px-md flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+</div>
+<div class="h-4 w-[1px] bg-white/10 mx-2"></div>
+<span class="text-mono-label text-zinc-500">streaming_logs_v1.sh</span>
+</div>
+<span class="text-mono-label text-zinc-600">842 lines cached</span>
+</div>
+<!-- Log Rows -->
+<div class="flex-1 overflow-y-auto custom-scrollbar scanning-line font-mono text-[13px] leading-relaxed p-4">
+<!-- Log Header -->
+<div class="flex gap-4 border-b border-white/5 pb-2 mb-4 text-zinc-600 uppercase tracking-widest text-[10px]">
+<div class="w-12">LN</div>
+<div class="w-32">TIMESTAMP</div>
+<div class="w-24">LEVEL</div>
+<div class="flex-1">MESSAGE</div>
+</div>
+<!-- Log Entries -->
+<div class="space-y-1">
+<!-- Entry 1: INFO -->
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1024</div>
+<div class="w-32 text-zinc-500">08:45:12.332</div>
+<div class="w-24 text-zinc-400 font-bold">[INFO]</div>
+<div class="flex-1 text-zinc-300">
+                                    Incoming <span class="text-primary">GET</span> request from <span class="text-on-secondary-container">192.168.1.45</span> - <span class="text-primary-container">request_id</span>="req_9921_x3"
+                                </div>
+</div>
+<!-- Entry 2: WARN -->
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1025</div>
+<div class="w-32 text-zinc-500">08:45:12.510</div>
+<div class="w-24 text-yellow-500 font-bold">[WARN]</div>
+<div class="flex-1 text-zinc-300">
+                                    High latency detected on <span class="text-primary-container">user_id</span>="usr_440" profile lookup. Duration: <span class="text-yellow-200">1240ms</span>
+</div>
+</div>
+<!-- Entry 3: ERROR -->
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1026</div>
+<div class="w-32 text-zinc-500">08:45:13.001</div>
+<div class="w-24 text-error font-bold">[ERROR]</div>
+<div class="flex-1 text-zinc-300 bg-error/10 px-1 rounded">
+                                    Database connection timeout for <span class="text-primary-container">shard_04</span>. Retrying in 500ms... <span class="text-error-container">status_code</span>="504"
+                                </div>
+</div>
+<!-- Entry 4: CRITICAL -->
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5 border-l-2 border-[#ff0080]">
+<div class="w-12 text-zinc-700 select-none">1027</div>
+<div class="w-32 text-zinc-500">08:45:13.442</div>
+<div class="w-24 text-[#ff0080] font-bold">[CRIT]</div>
+<div class="flex-1 text-zinc-300">
+                                    OOM Exception in <span class="text-primary-container">auth-gateway</span> worker #3. Dumping heap... <span class="text-[#ff0080]">SIGKILL</span>
+</div>
+</div>
+<!-- Repeat for density -->
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1028</div>
+<div class="w-32 text-zinc-500">08:45:14.110</div>
+<div class="w-24 text-zinc-400 font-bold">[INFO]</div>
+<div class="flex-1 text-zinc-300">
+                                    Health check passed for <span class="text-primary-container">service_name</span>="redis-cluster"
+                                </div>
+</div>
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1029</div>
+<div class="w-32 text-zinc-500">08:45:14.550</div>
+<div class="w-24 text-zinc-400 font-bold">[INFO]</div>
+<div class="flex-1 text-zinc-300">
+<span class="text-primary">POST</span> /api/v1/auth/login <span class="text-primary-container">user_id</span>="usr_8821" <span class="text-emerald-400">status_code</span>="200"
+                                </div>
+</div>
+<!-- More mock data -->
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1030</div>
+<div class="w-32 text-zinc-500">08:45:14.800</div>
+<div class="w-24 text-zinc-400 font-bold">[INFO]</div>
+<div class="flex-1 text-zinc-300">
+                                    Garbage collection completed. Reclaimed <span class="text-emerald-400">42MB</span> in 12ms.
+                                </div>
+</div>
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1031</div>
+<div class="w-32 text-zinc-500">08:45:15.221</div>
+<div class="w-24 text-yellow-500 font-bold">[WARN]</div>
+<div class="flex-1 text-zinc-300">
+                                    Token expiration approaching for <span class="text-primary-container">token_id</span>="tk_8fa1". Renewal suggested.
+                                </div>
+</div>
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1032</div>
+<div class="w-32 text-zinc-500">08:45:15.890</div>
+<div class="w-24 text-zinc-400 font-bold">[INFO]</div>
+<div class="flex-1 text-zinc-300">
+                                    New listener registered on <span class="text-primary-container">topic</span>="user_events_stream"
+                                </div>
+</div>
+<div class="flex gap-4 group hover:bg-white/5 transition-colors py-0.5">
+<div class="w-12 text-zinc-700 select-none">1033</div>
+<div class="w-32 text-zinc-500">08:45:16.102</div>
+<div class="w-24 text-zinc-400 font-bold">[INFO]</div>
+<div class="flex-1 text-zinc-300">
+                                    Cache miss on <span class="text-primary-container">key</span>="meta_data_v2". Fetching from origin...
+                                </div>
+</div>
+</div>
+<!-- Typing Indicator -->
+<div class="mt-4 flex items-center gap-2 text-primary-container animate-pulse">
+<span class="text-[10px]">_</span>
+<span class="text-[10px] tracking-widest font-bold">LISTENING FOR NEW EVENTS</span>
+</div>
+</div>
+<!-- Footer / Command Line -->
+<div class="h-12 bg-white/5 border-t border-white/5 px-md flex items-center gap-sm">
+<span class="text-emerald-500 font-bold text-xs select-none">❯</span>
+<input class="flex-1 bg-transparent border-none focus:ring-0 text-xs font-mono text-zinc-100 placeholder-zinc-700" placeholder="Type a command or filter regex..." type="text"/>
+<div class="flex items-center gap-2">
+<kbd class="bg-white/10 px-1.5 py-0.5 rounded text-[9px] text-zinc-400 border border-white/5">⌘ K</kbd>
+<kbd class="bg-white/10 px-1.5 py-0.5 rounded text-[9px] text-zinc-400 border border-white/5">ENTER</kbd>
+</div>
+</div>
+</div>
+<!-- Subtle Info Cards Overlay (Right Bottom) -->
+<div class="absolute bottom-12 right-12 flex flex-col gap-sm pointer-events-none">
+<div class="bg-[#121214]/90 backdrop-blur-md border border-white/5 p-4 rounded-lg w-64 shadow-2xl">
+<div class="flex items-center justify-between mb-2">
+<span class="text-mono-label text-zinc-500 uppercase tracking-tighter">Event Rate</span>
+<span class="text-emerald-500 text-xs font-bold">1.2k/s</span>
+</div>
+<div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-3/4"></div>
+</div>
+</div>
+<div class="bg-[#121214]/90 backdrop-blur-md border border-white/5 p-4 rounded-lg w-64 shadow-2xl">
+<div class="flex items-center justify-between mb-2">
+<span class="text-mono-label text-zinc-500 uppercase tracking-tighter">System Health</span>
+<span class="text-emerald-500 text-xs font-bold">Optimal</span>
+</div>
+<div class="flex gap-1">
+<div class="flex-1 h-8 bg-emerald-500/20 rounded-sm"></div>
+<div class="flex-1 h-8 bg-emerald-500/20 rounded-sm"></div>
+<div class="flex-1 h-8 bg-emerald-500/20 rounded-sm"></div>
+<div class="flex-1 h-8 bg-emerald-500/10 rounded-sm"></div>
+<div class="flex-1 h-8 bg-emerald-500/20 rounded-sm"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Decorative Background Image (Minimal) -->
+<div class="fixed bottom-0 right-0 w-[600px] h-[600px] opacity-10 pointer-events-none z-0">
+<div class="w-full h-full bg-gradient-to-tl from-primary-container/20 to-transparent blur-3xl"></div>
+</div>
+</body></html>

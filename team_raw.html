@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #020617;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#68fcbf",
+                        "primary-fixed-dim": "#4edea3",
+                        "surface-container-lowest": "#060e20",
+                        "primary-fixed": "#6ffbbe",
+                        "inverse-on-surface": "#283044",
+                        "secondary": "#68dba9",
+                        "on-primary-fixed-variant": "#005236",
+                        "inverse-surface": "#dae2fd",
+                        "on-secondary": "#003825",
+                        "on-tertiary": "#003825",
+                        "secondary-fixed-dim": "#68dba9",
+                        "on-secondary-fixed": "#002114",
+                        "surface": "#0b1326",
+                        "tertiary-container": "#00b982",
+                        "on-surface": "#dae2fd",
+                        "outline-variant": "#3c4a42",
+                        "primary-container": "#10b981",
+                        "background": "#0b1326",
+                        "inverse-primary": "#006c49",
+                        "surface-dim": "#0b1326",
+                        "on-error": "#690005",
+                        "surface-container-low": "#131b2e",
+                        "outline": "#86948a",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#005137",
+                        "on-primary-container": "#00422b",
+                        "on-tertiary-fixed": "#002114",
+                        "on-tertiary-container": "#00422c",
+                        "error": "#ffb4ab",
+                        "primary": "#4edea3",
+                        "on-secondary-container": "#00311f",
+                        "secondary-container": "#25a475",
+                        "surface-container-high": "#222a3d",
+                        "tertiary-fixed-dim": "#45dfa4",
+                        "surface-tint": "#4edea3",
+                        "surface-variant": "#2d3449",
+                        "surface-container": "#171f33",
+                        "surface-bright": "#31394d",
+                        "secondary-fixed": "#85f8c4",
+                        "tertiary": "#45dfa4",
+                        "on-background": "#dae2fd",
+                        "on-surface-variant": "#bbcabf",
+                        "on-primary": "#003824",
+                        "error-container": "#93000a",
+                        "on-primary-fixed": "#002113",
+                        "on-secondary-fixed-variant": "#005137",
+                        "surface-container-highest": "#2d3449"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "unit": "4px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "sm": "8px",
+                        "gutter": "16px",
+                        "lg": "24px",
+                        "xl": "40px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-mono": ["Space Grotesk"],
+                        "body-sm": ["Inter"],
+                        "h1": ["Space Grotesk"],
+                        "h2": ["Space Grotesk"],
+                        "body-lg": ["Inter"],
+                        "h3": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", {"lineHeight": "1.5", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "label-mono": ["11px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-sm": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                        "h1": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "h2": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "h3": ["18px", {"lineHeight": "1.4", "letterSpacing": "0em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface-container-lowest text-on-surface antialiased">
+<!-- Sidebar -->
+<aside class="fixed left-0 top-0 h-full z-40 flex flex-col bg-slate-950 dark:bg-[#020617] w-64 border-r border-slate-800 font-label-mono text-sm antialiased">
+<div class="px-6 py-8 flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary-container rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<div>
+<h1 class="text-lg font-bold tracking-tight text-emerald-500">IncidentWatch</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-medium">Engineering Ops</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 mt-4 px-2 space-y-1">
+<div class="flex items-center text-slate-400 hover:bg-slate-900 px-4 py-2 transition-colors duration-200 ease-in-out cursor-pointer group">
+<span class="material-symbols-outlined mr-3 text-lg group-hover:text-emerald-400">dashboard</span>
+<span>Overview</span>
+</div>
+<div class="flex items-center text-slate-400 hover:bg-slate-900 px-4 py-2 transition-colors duration-200 ease-in-out cursor-pointer group">
+<span class="material-symbols-outlined mr-3 text-lg group-hover:text-emerald-400">warning</span>
+<span>Incidents</span>
+</div>
+<div class="flex items-center text-slate-400 hover:bg-slate-900 px-4 py-2 transition-colors duration-200 ease-in-out cursor-pointer group">
+<span class="material-symbols-outlined mr-3 text-lg group-hover:text-emerald-400">list_alt</span>
+<span>Logs</span>
+</div>
+<div class="relative flex items-center bg-slate-900 text-emerald-400 border-l-2 border-emerald-500 px-4 py-2 duration-200 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined mr-3 text-lg" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-bold">Team</span>
+</div>
+<div class="flex items-center text-slate-400 hover:bg-slate-900 px-4 py-2 transition-colors duration-200 ease-in-out cursor-pointer group">
+<span class="material-symbols-outlined mr-3 text-lg group-hover:text-emerald-400">settings</span>
+<span>Settings</span>
+</div>
+</nav>
+<div class="p-4 border-t border-slate-800">
+<div class="flex items-center gap-3 p-2 rounded hover:bg-slate-900 cursor-pointer transition-colors">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A professional headshot of a senior software engineer with a neutral expression, captured in a studio with soft, directional lighting against a dark charcoal background. The aesthetic is clinical and high-end, utilizing a monochromatic palette with sharp focus and high contrast. The image conveys authority and technical expertise in a modern SaaS corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB06iOsEm3zrLthgxj0Hzn9mhagZVB5xL5TcE7CDTMBh4DVjOe2p_siGNUjdmUrdtMtQgxrWBa7uBOhsefyZJRoOJNIPnRNALa-4JSBhUZ_XTMJs8xJdVwMOkjXkNC4mhrKCl1aBdj-3Qt4ZY0akgGHgbHxfcVcjH7jfrEx4QlaQytGSixHYkhAOKs8lm7zX2y2irwCCMEI_01G3WVpNmhswCKy3ueV-1I5g8f-XQvOxT5BldhhOvGZQ4YJRnChjtxZmmKc0E9z_G0"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-slate-200 truncate">Alex Chen</p>
+<p class="text-[10px] text-slate-500 truncate">Admin Access</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Header -->
+<header class="sticky top-0 right-0 z-30 flex items-center justify-between px-8 ml-64 h-14 bg-slate-950/80 backdrop-blur-md border-b border-slate-800">
+<div class="flex items-center gap-4">
+<h2 class="font-h3 text-h3 text-on-surface">Engineering Roster</h2>
+<span class="text-[10px] bg-slate-900 text-slate-500 px-2 py-0.5 border border-slate-800 rounded font-label-mono">14 ACTIVE</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-400 hover:text-emerald-500 transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-emerald-500 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-6 w-[1px] bg-slate-800 mx-2"></div>
+<button class="bg-primary text-on-primary px-4 py-1.5 rounded text-xs font-bold uppercase tracking-wider hover:bg-primary-fixed transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">person_add</span>
+                Add Engineer
+            </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 p-8 min-h-screen">
+<!-- Dashboard Statistics -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="bg-surface-container border border-slate-800 p-6 rounded-lg flex flex-col gap-1">
+<span class="text-[10px] font-label-mono text-slate-500 uppercase tracking-widest">On-Call Primary</span>
+<span class="text-h2 font-h2 text-primary">Marcus Thorne</span>
+<span class="text-body-sm font-body-sm text-slate-400">Shift ends in 4h 22m</span>
+</div>
+<div class="bg-surface-container border border-slate-800 p-6 rounded-lg flex flex-col gap-1">
+<span class="text-[10px] font-label-mono text-slate-500 uppercase tracking-widest">Secondary</span>
+<span class="text-h2 font-h2 text-on-surface">Elena Rodriguez</span>
+<span class="text-body-sm font-body-sm text-slate-400">Response time: 4.2m</span>
+</div>
+<div class="bg-surface-container border border-slate-800 p-6 rounded-lg flex flex-col gap-1">
+<span class="text-[10px] font-label-mono text-slate-500 uppercase tracking-widest">Avg Availability</span>
+<span class="text-h2 font-h2 text-on-surface">99.98%</span>
+<span class="text-body-sm font-body-sm text-primary">↑ 0.02% vs last week</span>
+</div>
+<div class="bg-surface-container border border-slate-800 p-6 rounded-lg flex flex-col gap-1">
+<span class="text-[10px] font-label-mono text-slate-500 uppercase tracking-widest">Current Incident</span>
+<span class="text-h2 font-h2 text-error">None</span>
+<span class="text-body-sm font-body-sm text-slate-400">Stable operations</span>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex items-center justify-between mb-6 bg-surface-container-low p-3 border border-slate-800 rounded">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
+<input class="bg-slate-950 border-slate-800 text-xs text-on-surface pl-9 pr-4 py-2 w-64 rounded focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-all" placeholder="Search engineers..." type="text"/>
+</div>
+<div class="flex gap-2">
+<span class="text-xs bg-slate-900 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded cursor-pointer">All Teams</span>
+<span class="text-xs bg-slate-900 border border-slate-800 text-slate-500 px-3 py-1 rounded cursor-pointer hover:border-slate-700">SRE</span>
+<span class="text-xs bg-slate-900 border border-slate-800 text-slate-500 px-3 py-1 rounded cursor-pointer hover:border-slate-700">Platform</span>
+<span class="text-xs bg-slate-900 border border-slate-800 text-slate-500 px-3 py-1 rounded cursor-pointer hover:border-slate-700">Security</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-slate-500 cursor-pointer hover:text-on-surface">grid_view</span>
+<span class="material-symbols-outlined text-slate-700 cursor-pointer hover:text-on-surface">format_list_bulleted</span>
+</div>
+</div>
+<!-- Engineering Roster Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Card 1 -->
+<div class="group bg-surface-container border border-slate-800 rounded-lg overflow-hidden hover:border-emerald-500/50 transition-all duration-300">
+<div class="p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="relative">
+<img class="w-14 h-14 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="A portrait of a male lead site reliability engineer named Marcus Thorne. He has a focused, professional expression. The photo is set in a modern, dark-themed office environment with subtle blue and green ambient lighting, creating a high-tech atmosphere. The lighting is crisp, highlighting facial features with a clean, cinematic quality consistent with premium SaaS visual design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCKTjYm9-utDhDcFoKGcIbC2J2AbLGq0vjs4zMBnNMwOrS9Z-XrOS2fcpmJdY0aR8lI_fI-9LvJlrBfb-XiuXjs7K8vHGoZkLaFYMol8vEpRGjlAHMbJ_R7PmkxuwOWEdQaRAvwXv1rqpRx9DbJdISDYZa5tFL3lbA0K8VLwgOklmWcu55EnUydYwKYT8D1t3es3ZOS0bC3vUxYvx7YhVZo2qPJCV6zxrBI8-BxXEUo3d2ea_lEEmoSsbgQfVxnpiRuvvhgKkU6cec"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-950 rounded-full" title="ON-CALL"></div>
+</div>
+<span class="text-[9px] font-label-mono font-bold text-emerald-500 border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 rounded tracking-tighter">ON-CALL</span>
+</div>
+<div>
+<h3 class="text-body-lg font-h3 text-on-surface">Marcus Thorne</h3>
+<p class="text-body-sm font-body-sm text-slate-400">SRE Lead</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Kubernetes</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Go</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Terraform</span>
+</div>
+</div>
+<div class="px-5 py-3 bg-slate-900/50 border-t border-slate-800 flex justify-between items-center">
+<span class="text-[10px] font-label-mono text-slate-500">Tier 1 • London</span>
+<button class="text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-surface-container border border-slate-800 rounded-lg overflow-hidden hover:border-emerald-500/50 transition-all duration-300">
+<div class="p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="relative">
+<img class="w-14 h-14 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="A portrait of Elena Rodriguez, a senior platform engineer. She has a confident, professional look, wearing modern business-casual attire. The background is a minimalist, softly lit tech lab with cool tones. The overall aesthetic is clinical and high-density, with sharp focus and professional studio lighting that emphasizes clarity and authority." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFaQ62EJ9gTOkaRUxazb05f5v5MkOF0qmrkimd4SFrYx9Dz2D9_wYuzhrMQpgqPHJ38ftt2e5aa5zMAo8txDJq-yQs7m3uqjEZCqrOG9Bxe7XUGBk83gETR6evB_jHfqOVNvA3lcTB5C06P-puxOJCkN_YGHJvra2M4F-cKbplh7bsPo9UB_do58XTVcHeasZ0DhjxxnzcwkG2Ii4IVFAEGwnzB_9liFBDhQtpraW1jWvy-ZslAW3QBFauGGJAKCTU_Kmh6IKEC7U"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-700 border-2 border-slate-950 rounded-full" title="OFF-DUTY"></div>
+</div>
+<span class="text-[9px] font-label-mono font-bold text-slate-500 border border-slate-800 bg-slate-800/20 px-2 py-0.5 rounded tracking-tighter uppercase">Available</span>
+</div>
+<div>
+<h3 class="text-body-lg font-h3 text-on-surface">Elena Rodriguez</h3>
+<p class="text-body-sm font-body-sm text-slate-400">Senior Platform Engineer</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">AWS</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Python</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Rust</span>
+</div>
+</div>
+<div class="px-5 py-3 bg-slate-900/50 border-t border-slate-800 flex justify-between items-center">
+<span class="text-[10px] font-label-mono text-slate-500">Tier 2 • Madrid</span>
+<button class="text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-surface-container border border-slate-800 rounded-lg overflow-hidden hover:border-emerald-500/50 transition-all duration-300">
+<div class="p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="relative">
+<img class="w-14 h-14 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="A portrait of Julian Vance, a security operations engineer. He is shown in a professional tech-focused environment with subtle data visualizations projected softly in the background. The color palette is dominated by dark slates and emerald greens. The lighting is precise, with a cool blue rim light, creating a sophisticated and technical atmosphere that fits a premium engineering ops dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCpkPYYn3K3qDwJJPP1e-QSQ20D0OgYlI1JEiEv-zfnNPM2AnLYHHK_RHY6e55-a5No78AqxCkxxBDINdip5ykor_izu1OgDFUHIEYH7csK5frEz-uUGY7o7QrqMZ8NhM9dQDV3l2E1WeWoyWmDuljA_jOcK6FOedFlvgcqCMOlLch0_FDLBm-IQtNwu1qMt45NkHxNGxjwp4uE-I_lC5esVCgyI9TzaoN60So1HvB9wut2MINg1Ajenww_qPiGCUQ8MgUBTg88Gk"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-slate-950 rounded-full" title="ON-CALL"></div>
+</div>
+<span class="text-[9px] font-label-mono font-bold text-emerald-500 border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 rounded tracking-tighter">ON-CALL</span>
+</div>
+<div>
+<h3 class="text-body-lg font-h3 text-on-surface">Julian Vance</h3>
+<p class="text-body-sm font-body-sm text-slate-400">SecOps Engineer</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Docker</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Wazuh</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Bash</span>
+</div>
+</div>
+<div class="px-5 py-3 bg-slate-900/50 border-t border-slate-800 flex justify-between items-center">
+<span class="text-[10px] font-label-mono text-slate-500">Tier 1 • NYC</span>
+<button class="text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="group bg-surface-container border border-slate-800 rounded-lg overflow-hidden hover:border-emerald-500/50 transition-all duration-300">
+<div class="p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="relative">
+<img class="w-14 h-14 rounded-lg object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="A portrait of Sarah Jenkins, a senior devops engineer. She has an analytical and sharp gaze, set against a background of high-end server racks with subtle status LEDs. The lighting is dramatic but clinical, using a mix of deep shadows and precise highlights. The image style is professional, minimalist, and exudes a sense of high-density technical competence." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm4MfCPmcQfXXGB5jgQJH7PKnvYDMMAnQqInsQm2ZJK-ugAc271Q4ZGdHDsX3caIPrQ1Fa73eccPbQrBUDiZ1GGxg6SoKTDtHnktUGltZ0tTaF8ofedwuKpszNltuaz8o7BMCemygRG79zRPshcavKDvl2ybXloKK3iUzZwSweLOQ_x6XkEDfTWx_KHhAIN7BW4BQlAnazO-g5h5IrsIa8EKJ2HHm_Rc_DBWZs3WOYWUU_PRCqBOn-1g506SKYwYrGTY6L62siGE4"/>
+<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-700 border-2 border-slate-950 rounded-full" title="OFF-DUTY"></div>
+</div>
+<span class="text-[9px] font-label-mono font-bold text-slate-500 border border-slate-800 bg-slate-800/20 px-2 py-0.5 rounded tracking-tighter uppercase">Away</span>
+</div>
+<div>
+<h3 class="text-body-lg font-h3 text-on-surface">Sarah Jenkins</h3>
+<p class="text-body-sm font-body-sm text-slate-400">DevOps Specialist</p>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">Ansible</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">CI/CD</span>
+<span class="text-[10px] font-label-mono bg-slate-900 text-slate-400 px-2 py-0.5 rounded border border-slate-800">GCP</span>
+</div>
+</div>
+<div class="px-5 py-3 bg-slate-900/50 border-t border-slate-800 flex justify-between items-center">
+<span class="text-[10px] font-label-mono text-slate-500">Tier 3 • Seattle</span>
+<button class="text-slate-500 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<!-- Add Card Placeholder -->
+<div class="bg-slate-950 border-2 border-dashed border-slate-800 rounded-lg flex flex-col items-center justify-center p-8 group cursor-pointer hover:border-emerald-500/50 transition-all">
+<div class="w-12 h-12 rounded-full border border-slate-700 flex items-center justify-center text-slate-500 group-hover:text-emerald-500 group-hover:border-emerald-500 transition-all">
+<span class="material-symbols-outlined text-2xl">add</span>
+</div>
+<p class="mt-4 text-xs font-label-mono text-slate-500 uppercase tracking-widest group-hover:text-emerald-400 transition-colors">New Engineer</p>
+</div>
+</div>
+<!-- Roster History Table - High Density -->
+<div class="mt-12 bg-surface-container border border-slate-800 rounded-lg overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+<h3 class="font-h3 text-body-lg text-on-surface">Recent On-Call Activity</h3>
+<span class="text-[10px] font-label-mono text-emerald-500 cursor-pointer hover:underline uppercase tracking-wider">Export Logs</span>
+</div>
+<table class="w-full text-left font-body-sm">
+<thead class="bg-slate-900 text-slate-400 uppercase text-[10px] font-label-mono tracking-widest">
+<tr>
+<th class="px-6 py-3 font-medium">Engineer</th>
+<th class="px-6 py-3 font-medium">Duty Cycle</th>
+<th class="px-6 py-3 font-medium">Resolved</th>
+<th class="px-6 py-3 font-medium">Escalated</th>
+<th class="px-6 py-3 font-medium text-right">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-800">
+<tr class="hover:bg-slate-900 transition-colors">
+<td class="px-6 py-3 text-on-surface font-medium">Marcus Thorne</td>
+<td class="px-6 py-3 text-slate-400">Oct 12 - Oct 19</td>
+<td class="px-6 py-3 text-emerald-400">14</td>
+<td class="px-6 py-3 text-slate-500">1</td>
+<td class="px-6 py-3 text-right">
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 font-bold uppercase">Active</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-900 transition-colors">
+<td class="px-6 py-3 text-on-surface font-medium">Elena Rodriguez</td>
+<td class="px-6 py-3 text-slate-400">Oct 05 - Oct 12</td>
+<td class="px-6 py-3 text-emerald-400">22</td>
+<td class="px-6 py-3 text-slate-500">0</td>
+<td class="px-6 py-3 text-right">
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-500 font-bold uppercase">Closed</span>
+</td>
+</tr>
+<tr class="hover:bg-slate-900 transition-colors">
+<td class="px-6 py-3 text-on-surface font-medium">Julian Vance</td>
+<td class="px-6 py-3 text-slate-400">Sep 28 - Oct 05</td>
+<td class="px-6 py-3 text-emerald-400">9</td>
+<td class="px-6 py-3 text-error">4</td>
+<td class="px-6 py-3 text-right">
+<span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-500 font-bold uppercase">Closed</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+<!-- Floating UI Element -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="w-14 h-14 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-2xl font-bold" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</button>
+</div>
+</body></html>
