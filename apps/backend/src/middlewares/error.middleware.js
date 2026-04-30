@@ -1,4 +1,4 @@
-import { ApiError } from "@/utils/ApiError.js";
+import { ApiError } from "@/utils/Error/ApiError.js";
 import { ENV } from "@/configs/env.config.js";
 
 export const globalErrorHandler = (err, req, res, next) => {
