@@ -8,15 +8,15 @@ export interface ApiResponse<T> {
 }
 
 export const memberApi = {
-  getMembers: async (): Promise<ApiResponse<TeamMember[]>> => {
-    const response = await api.get("/members/all");
+  getMembers: async (): Promise<ApiResponse<any[]>> => {
+    const response = await api.get("/members");
     return response.data;
   },
 
   updateMemberRole: async (
     id: string,
     role: string,
-  ): Promise<ApiResponse<TeamMember>> => {
+  ): Promise<ApiResponse<any>> => {
     const response = await api.put(`/members/${id}`, { role });
     return response.data;
   },
@@ -26,14 +26,14 @@ export const memberApi = {
     return response.data;
   },
 
-  // Note: Toggle status (on-duty) is handled by the User model on backend
+  // Note: Toggle status (on-duty) logic can be added here if backend supports it
   toggleOnCall: async (
     id: string,
     oncall: boolean,
   ): Promise<ApiResponse<any>> => {
-    // This is a placeholder since the current backend status module handles incidents
-    // We would ideally have a /user/:id/toggle-oncall
-    const response = await api.patch(`/members/${id}/status`, { oncall });
+    // Current backend doesn't have a specific /status toggle,
+    // but we can use the generic update endpoint if needed.
+    const response = await api.put(`/members/${id}`, { oncall });
     return response.data;
   },
 };

@@ -28,7 +28,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
 
     onAdd({
       name: formData.name,
-      role: formData.role || "Engineer",
+      role: formData.role,
       email: formData.email,
       expertise: formData.expertise
         .split(",")
@@ -101,15 +101,22 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">
                     Role
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. SRE Lead"
-                    className="w-full bg-surface-1 border border-border-soft rounded-md px-5 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/50"
+                  <select
+                    required
+                    className="w-full bg-surface-1 border border-border-soft rounded-md px-5 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all appearance-none cursor-pointer"
                     value={formData.role}
                     onChange={(e) =>
                       setFormData({ ...formData, role: e.target.value })
                     }
-                  />
+                  >
+                    <option value="" disabled>
+                      Select Role
+                    </option>
+                    <option value="developer">Developer</option>
+                    <option value="admin">Administrator</option>
+                    <option value="tester">QA / Tester</option>
+                    <option value="viewer">Viewer / Stakeholder</option>
+                  </select>
                 </div>
               </div>
 

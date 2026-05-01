@@ -22,14 +22,15 @@ export const DashboardPage = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const { team, removeMember, toggleStatus, isLoading } = useTeam();
+  const { team, removeMember, toggleStatus, sendInvite, isLoading } = useTeam();
 
-  const handleAddMember = (
+  const handleAddMember = async (
     data: Omit<TeamMember, "id" | "status" | "avatarColor">,
   ) => {
-    // In a real flow, this would call an "invite" API
-    console.log("Inviting member:", data);
-    setShowAddModal(false);
+    const success = await sendInvite(data.email, data.role);
+    if (success) {
+      setShowAddModal(false);
+    }
   };
 
   const getHeaderTitle = () => {

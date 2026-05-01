@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { memberApi } from "../api/member.api";
+import { inviteApi } from "../api/invite.api";
 import { TeamMember } from "../types";
 
 export const useTeam = () => {
@@ -15,7 +16,7 @@ export const useTeam = () => {
         // Map backend users to TeamMember type
         const mappedMembers: TeamMember[] = response.data.map((m: any) => ({
           id: m._id,
-          name: m.name,
+          name: m.name || "Pending User",
           role: m.role,
           email: m.email,
           expertise: ["SRE", "Infrastructure"], // Mocking expertise for now
@@ -34,6 +35,22 @@ export const useTeam = () => {
   useEffect(() => {
     fetchTeam();
   }, [fetchTeam]);
+
+  const sendInvite = async (email: string, role: string) => {
+    try {
+      const response = await inviteApi.sendInvite(email, role);
+      if (response.success) {
+        // Refresh the team list to show the new invitation if backend creates a user record
+        // or just notify success.
+        await fetchTeam();
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      setError(err.message || "Failed to send invitation");
+      return false;
+    }
+  };
 
   const removeMember = async (id: string) => {
     try {
@@ -57,7 +74,7 @@ export const useTeam = () => {
         prev.map((m) => (m.id === id ? { ...m, status: newStatus } : m)),
       );
 
-      // Call backend (assuming endpoint exists or will exist)
+      // Call backend
       await memberApi.toggleOnCall(id, newStatus === "on-duty").catch(() => {
         // Revert on failure
         setTeam((prev) =>
@@ -73,6 +90,7 @@ export const useTeam = () => {
     team,
     isLoading,
     error,
+    sendInvite,
     removeMember,
     toggleStatus,
     refresh: fetchTeam,
