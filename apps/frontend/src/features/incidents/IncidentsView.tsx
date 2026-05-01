@@ -1,10 +1,10 @@
-"use client";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Server, Incident } from "./types";
 import { ServerCard } from "./components/ServerCard";
 import { IncidentObject } from "./components/IncidentObject";
 import { IncidentDetail } from "./components/IncidentDetail";
+import { useIncidents } from "./hooks/useIncidents";
 
 type ViewState = "SERVERS" | "SERVER_FOCUS" | "INCIDENT_DETAIL";
 
@@ -15,6 +15,9 @@ export const IncidentsView: React.FC = () => {
     null,
   );
 
+  const { incidents: rawIncidents, isLoading } = useIncidents();
+
+  // Mock servers for now (until Instance module is built)
   const servers: Server[] = [
     {
       id: "srv-001",
@@ -48,54 +51,31 @@ export const IncidentsView: React.FC = () => {
     },
   ];
 
-  const allIncidents: Incident[] = [
-    {
-      id: "INC-442",
-      serverId: "srv-002",
-      title: "Memory Leak in JVM Worker",
-      severity: "critical",
+  // Map backend "Status" to frontend "Incident"
+  const allIncidents: Incident[] = useMemo(() => {
+    return rawIncidents.map((ri: any) => ({
+      id: ri._id,
+      serverId: ri.serverId || "srv-002", // Fallback for existing data without serverId
+      title: ri.title,
+      severity: ri.severity as any,
       type: "Infrastructure",
-      status: "Investigating",
-      assignedTo: "Marcus Thorne",
-      createdAt: "18:10:00",
-      description:
-        "Heap usage exceeded 90% threshold. detected recursive loop in auth middleware.",
+      status: ri.status === "resolved" ? "Resolved" : "Investigating",
+      assignedTo: "Team Alpha",
+      createdAt: new Date(ri.createdAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      description: ri.description,
       timeline: [
         {
           id: "1",
           type: "detection",
-          message: "Regex match: 'OutOfMemoryError' found",
-          timestamp: "18:10:00",
-        },
-        {
-          id: "2",
-          type: "assignment",
-          message: "Auto-assigned to Marcus Thorne",
-          timestamp: "18:10:05",
+          message: `Detected: ${ri.title}`,
+          timestamp: new Date(ri.createdAt).toLocaleTimeString(),
         },
       ],
-    },
-    {
-      id: "INC-443",
-      serverId: "srv-003",
-      title: "Connection Pool Exhaustion",
-      severity: "high",
-      type: "Database",
-      status: "Identified",
-      assignedTo: "Sarah Liao",
-      createdAt: "19:05:22",
-      description:
-        "Active connections peaked at 1000. New connection attempts timed out.",
-      timeline: [
-        {
-          id: "1",
-          type: "detection",
-          message: "Connection pool reached 100% capacity",
-          timestamp: "19:05:22",
-        },
-      ],
-    },
-  ];
+    }));
+  }, [rawIncidents]);
 
   const handleServerClick = (server: Server) => {
     setSelectedServer(server);
@@ -116,6 +96,14 @@ export const IncidentsView: React.FC = () => {
     setSelectedIncident(null);
     setViewState("SERVER_FOCUS");
   };
+
+  if (isLoading && viewState === "SERVERS") {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[500px]">
@@ -140,7 +128,12 @@ export const IncidentsView: React.FC = () => {
               {servers.map((server) => (
                 <ServerCard
                   key={server.id}
-                  server={server}
+                  server={{
+                    ...server,
+                    incidentCount: allIncidents.filter(
+                      (i) => i.serverId === server.id,
+                    ).length,
+                  }}
                   isActive={false}
                   onClick={() => handleServerClick(server)}
                 />
@@ -206,7 +199,11 @@ export const IncidentsView: React.FC = () => {
                 <h3 className="text-lg font-display font-bold text-heading tracking-tight flex items-center gap-3 px-1">
                   Active Incidents
                   <span className="px-2 py-0.5 bg-danger-soft text-danger text-[10px] rounded-full border border-danger-border">
-                    {selectedServer.incidentCount}
+                    {
+                      allIncidents.filter(
+                        (i) => i.serverId === selectedServer.id,
+                      ).length
+                    }
                   </span>
                 </h3>
                 <div className="grid gap-4">
@@ -219,7 +216,8 @@ export const IncidentsView: React.FC = () => {
                         onClick={() => handleIncidentClick(incident)}
                       />
                     ))}
-                  {selectedServer.incidentCount === 0 && (
+                  {allIncidents.filter((i) => i.serverId === selectedServer.id)
+                    .length === 0 && (
                     <div className="bg-surface-1 border border-dashed border-border-soft p-12 rounded-md text-center">
                       <span className="material-symbols-outlined text-muted text-4xl mb-3">
                         check_circle
