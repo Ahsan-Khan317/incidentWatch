@@ -1,0 +1,375 @@
+
+════════════════════════════════════════════════════════════
+[MOCK PLATFORM] IncidentWatch mock platform running
+  POST /api/incidents      - Receive incidents from SDK
+  GET  /api/incidents      - List all captured incidents
+  GET  /api/incidents/:id  - Get single incident details
+  DELETE /api/incidents    - Clear all incidents
+  Listening on http://localhost:5000
+════════════════════════════════════════════════════════════
+
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:31:39.197Z
+   Captured Logs (13 lines):
+   > [STDOUT] 21:01:29 [IW] [34mdebug[39m: [34m[IW] Heartbeat manager started (5s interval)[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:01:29 [IW] [34mdebug[39m: [34m[IW] Axios global instance patched[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:01:29 [IW] [34mdebug[39m: [34m[IW] global fetch patched[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:01:29 [IW] [34mdebug[39m: [34m[IW] Express auto-registration set up — will activate on app.listen()[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:01:29 [IW] [32minfo[39m: [32mIncidentWatch SDK ready ✓[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:01:29 [IW] [34mdebug[39m: [34m[IW] Pulse check — SDK is active and watching.[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] [IW] DEBUG: Patched listen called!
+   > [STDOUT] 21:01:29 [IW] [34mdebug[39m: [34m[IW] Morgan HTTP logger attached to Express[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:01:29 [IW] [34mdebug[39m: [34m[IW] IW error middleware auto-attached to Express[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] ════════════════════════════════════════════════════════════
+   > [STDOUT] [CLEAN TEST APP] IncidentWatch SDK
+   > [STDOUT]   Running on http://localhost:4000
+   > [STDOUT] ════════════════════════════════════════════════════════════
+   Uptime: 10s | Memory: 12MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:31:49.165Z
+   (No new logs)
+   Uptime: 20s | Memory: 13MB
+
+════════════════════════════════════════════════════════════════════════════════
+[MOCK PLATFORM] Incident #1 received at 2026-05-01T15:31:59.170Z
+────────────────────────────────────────────────────────────────────────────────
+  Title:       High heap usage: 90% (13MB / 14MB)
+  Severity:    SEV2
+  Source:      sdk-manual
+  Server:      test-server-01
+  App:         app
+  Environment: development
+  Tags:        memory, heap-pressure
+  Breadcrumbs: 0
+────────────────────────────────────────────────────────────────────────────────
+  Runtime: Node v24.14.0 | PID 17888
+────────────────────────────────────────────────────────────────────────────────
+  Context: {
+  "heapUsedMb": 13,
+  "heapTotalMb": 14,
+  "heapPct": 90,
+  "rssMb": 58
+}
+────────────────────────────────────────────────────────────────────────────────
+════════════════════════════════════════════════════════════════════════════════
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:31:59.173Z
+   Captured Logs (2 lines):
+   > [STDOUT] 21:01:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":13,"heapTotalMb":14,"heapPct":90,"rssMb":58}
+   > [STDOUT] 21:01:59 [IW] [33mwarn[39m: [33m[IW] High heap usage: 90% (13MB / 14MB)[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   Uptime: 30s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:32:09.183Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:01:59 [IW] [34mdebug[39m: [34m[IW] Incident sent: 232833c7-bef3-46d8-b7a2-366a147a8e8d[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   Uptime: 40s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:32:19.194Z
+   (No new logs)
+   Uptime: 50s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:32:29.195Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:02:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":13,"heapTotalMb":14,"heapPct":90,"rssMb":59}
+   Uptime: 60s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:32:39.208Z
+   (No new logs)
+   Uptime: 70s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:32:49.217Z
+   (No new logs)
+   Uptime: 80s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:32:59.222Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:02:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":14,"heapPct":95,"rssMb":59}
+   Uptime: 90s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:33:09.227Z
+   (No new logs)
+   Uptime: 100s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:33:19.237Z
+   (No new logs)
+   Uptime: 110s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:33:29.249Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:03:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":13,"heapTotalMb":15,"heapPct":91,"rssMb":60}
+   Uptime: 120s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:33:39.261Z
+   (No new logs)
+   Uptime: 130s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:33:49.274Z
+   (No new logs)
+   Uptime: 140s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:33:59.269Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:03:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":93,"rssMb":60}
+   Uptime: 150s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:34:09.272Z
+   (No new logs)
+   Uptime: 160s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:34:19.286Z
+   (No new logs)
+   Uptime: 170s | Memory: 13MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:34:29.302Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:04:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":90,"rssMb":60}
+   Uptime: 180s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:34:39.299Z
+   (No new logs)
+   Uptime: 190s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:34:49.320Z
+   (No new logs)
+   Uptime: 200s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:34:59.330Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:04:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":92,"rssMb":60}
+   Uptime: 210s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:35:09.351Z
+   (No new logs)
+   Uptime: 220s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:35:19.357Z
+   (No new logs)
+   Uptime: 231s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:35:29.357Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:05:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":91,"rssMb":60}
+   Uptime: 241s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:35:39.368Z
+   (No new logs)
+   Uptime: 251s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:35:49.371Z
+   (No new logs)
+   Uptime: 261s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:35:59.377Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:05:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":93,"rssMb":60}
+   Uptime: 271s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:36:09.380Z
+   (No new logs)
+   Uptime: 281s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:36:19.393Z
+   (No new logs)
+   Uptime: 291s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:36:29.400Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:06:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":92,"rssMb":60}
+   Uptime: 301s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:36:39.400Z
+   (No new logs)
+   Uptime: 311s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:36:49.419Z
+   (No new logs)
+   Uptime: 321s | Memory: 14MB
+
+════════════════════════════════════════════════════════════════════════════════
+[MOCK PLATFORM] Incident #2 received at 2026-05-01T15:36:59.235Z
+────────────────────────────────────────────────────────────────────────────────
+  Title:       High heap usage: 94% (14MB / 15MB)
+  Severity:    SEV2
+  Source:      sdk-manual
+  Server:      test-server-01
+  App:         app
+  Environment: development
+  Tags:        memory, heap-pressure
+  Breadcrumbs: 0
+────────────────────────────────────────────────────────────────────────────────
+  Runtime: Node v24.14.0 | PID 17888
+────────────────────────────────────────────────────────────────────────────────
+  Context: {
+  "heapUsedMb": 14,
+  "heapTotalMb": 15,
+  "heapPct": 94,
+  "rssMb": 61
+}
+────────────────────────────────────────────────────────────────────────────────
+════════════════════════════════════════════════════════════════════════════════
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:36:59.417Z
+   Captured Logs (3 lines):
+   > [STDOUT] 21:06:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":94,"rssMb":61}
+   > [STDOUT] 21:06:59 [IW] [33mwarn[39m: [33m[IW] High heap usage: 94% (14MB / 15MB)[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:06:59 [IW] [34mdebug[39m: [34m[IW] Incident sent: 397abcb1-b07c-45c7-b423-0057c4b4eaf5[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   Uptime: 331s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:37:09.437Z
+   (No new logs)
+   Uptime: 341s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:37:19.436Z
+   (No new logs)
+   Uptime: 351s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:37:29.448Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:07:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":87,"rssMb":61}
+   Uptime: 361s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:37:39.455Z
+   (No new logs)
+   Uptime: 371s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:37:49.468Z
+   (No new logs)
+   Uptime: 381s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:37:59.474Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:07:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":90,"rssMb":61}
+   Uptime: 391s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:38:09.487Z
+   (No new logs)
+   Uptime: 401s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:38:19.491Z
+   (No new logs)
+   Uptime: 411s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:38:29.498Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:08:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":91,"rssMb":61}
+   Uptime: 421s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:38:39.504Z
+   (No new logs)
+   Uptime: 431s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:38:49.515Z
+   (No new logs)
+   Uptime: 441s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:38:59.529Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:08:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":92,"rssMb":61}
+   Uptime: 451s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:39:09.534Z
+   (No new logs)
+   Uptime: 461s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:39:19.541Z
+   (No new logs)
+   Uptime: 471s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:39:29.548Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:09:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":90,"rssMb":61}
+   Uptime: 481s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:39:39.549Z
+   (No new logs)
+   Uptime: 491s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:39:49.565Z
+   (No new logs)
+   Uptime: 501s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:39:59.570Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:09:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":15,"heapTotalMb":16,"heapPct":92,"rssMb":61}
+   Uptime: 511s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:40:09.588Z
+   (No new logs)
+   Uptime: 521s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:40:19.594Z
+   (No new logs)
+   Uptime: 531s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:40:29.600Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:10:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":90,"rssMb":61}
+   Uptime: 541s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:40:39.609Z
+   (No new logs)
+   Uptime: 551s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:40:49.613Z
+   (No new logs)
+   Uptime: 561s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:40:59.616Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:10:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":15,"heapTotalMb":16,"heapPct":93,"rssMb":61}
+   Uptime: 571s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:41:09.617Z
+   (No new logs)
+   Uptime: 581s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:41:19.635Z
+   (No new logs)
+   Uptime: 591s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:41:29.649Z
+   Captured Logs (1 lines):
+   > [STDOUT] 21:11:29 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":91,"rssMb":61}
+   Uptime: 601s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:41:39.649Z
+   (No new logs)
+   Uptime: 611s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:41:49.660Z
+   (No new logs)
+   Uptime: 621s | Memory: 15MB
+
+════════════════════════════════════════════════════════════════════════════════
+[MOCK PLATFORM] Incident #3 received at 2026-05-01T15:41:59.317Z
+────────────────────────────────────────────────────────────────────────────────
+  Title:       High heap usage: 93% (15MB / 16MB)
+  Severity:    SEV2
+  Source:      sdk-manual
+  Server:      test-server-01
+  App:         app
+  Environment: development
+  Tags:        memory, heap-pressure
+  Breadcrumbs: 0
+────────────────────────────────────────────────────────────────────────────────
+  Runtime: Node v24.14.0 | PID 17888
+────────────────────────────────────────────────────────────────────────────────
+  Context: {
+  "heapUsedMb": 15,
+  "heapTotalMb": 16,
+  "heapPct": 93,
+  "rssMb": 61
+}
+────────────────────────────────────────────────────────────────────────────────
+════════════════════════════════════════════════════════════════════════════════
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:41:59.672Z
+   Captured Logs (3 lines):
+   > [STDOUT] 21:11:59 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":15,"heapTotalMb":16,"heapPct":93,"rssMb":61}
+   > [STDOUT] 21:11:59 [IW] [33mwarn[39m: [33m[IW] High heap usage: 93% (15MB / 16MB)[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   > [STDOUT] 21:11:59 [IW] [34mdebug[39m: [34m[IW] Incident sent: dd7d6bfb-2858-4c89-9470-866a5435ca5f[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+   Uptime: 631s | Memory: 14MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:42:09.684Z
+   (No new logs)
+   Uptime: 641s | Memory: 14MB
