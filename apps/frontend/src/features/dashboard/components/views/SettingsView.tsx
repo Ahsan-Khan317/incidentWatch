@@ -243,6 +243,63 @@ export const SettingsView: React.FC = () => {
 
         <hr className="border-border-soft" />
 
+        {/* Section: Infrastructure Provisioning */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="col-span-1 pr-6">
+            <h2 className="font-bold text-2xl text-primary mb-2">
+              Infrastructure
+            </h2>
+            <p className="text-sm text-muted leading-relaxed">
+              Provision new server instances to be monitored by the
+              IncidentWatch npm-probe system.
+            </p>
+          </div>
+          <div className="col-span-2 space-y-4">
+            <div className="bg-surface-1 border border-border-soft p-6 rounded-md shadow-sm space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted">
+                    Server ID
+                  </label>
+                  <input
+                    className="bg-transparent border border-border-soft rounded-md px-4 py-2.5 text-sm focus:border-primary focus:outline-none transition-colors text-heading"
+                    type="text"
+                    placeholder="e.g. srv-prod-01"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-muted">
+                    Display Name
+                  </label>
+                  <input
+                    className="bg-transparent border border-border-soft rounded-md px-4 py-2.5 text-sm focus:border-primary focus:outline-none transition-colors text-heading"
+                    type="text"
+                    placeholder="e.g. Main Gateway"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-muted">
+                  Server URL / IP Address
+                </label>
+                <div className="flex gap-3">
+                  <input
+                    className="flex-1 bg-transparent border border-border-soft rounded-md px-4 py-2.5 text-sm focus:border-primary focus:outline-none transition-colors text-heading"
+                    type="text"
+                    placeholder="https://api.example.com"
+                  />
+                  <button className="bg-primary text-white px-6 py-2.5 rounded-md text-xs font-bold uppercase shadow-lg hover:brightness-110 transition-all flex items-center gap-2">
+                    <PlusCircle size={14} />
+                    <span>Link Instance</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr className="border-border-soft" />
+
         {/* Section: Security */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="col-span-1 pr-6">

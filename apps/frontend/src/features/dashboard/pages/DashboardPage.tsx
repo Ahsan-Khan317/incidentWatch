@@ -9,7 +9,7 @@ import { TeamMember } from "../types";
 
 // View Components
 import { OverviewView } from "../components/views/OverviewView";
-import { IncidentsView } from "../components/views/IncidentsView";
+import { IncidentsView } from "../../incidents/IncidentsView"; // FIXED IMPORT
 import { LogsView } from "../components/views/LogsView";
 import { TeamView } from "../components/views/TeamView";
 import { SettingsView } from "../components/views/SettingsView";
