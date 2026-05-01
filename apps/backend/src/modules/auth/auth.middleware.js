@@ -25,7 +25,7 @@ const verifySession = async (req) => {
     throw new ApiError(401, "Invalid or expired token");
   }
 
-  const { id, orgid, role, sessionId } = decoded;
+  const { id, organizationId, role, sessionId } = decoded;
 
   if (!sessionId) {
     throw new ApiError(401, "Legacy token — please re-login");
@@ -38,7 +38,7 @@ const verifySession = async (req) => {
     throw new ApiError(401, "Session expired or revoked");
   }
 
-  return { id, orgid, role, sessionId };
+  return { id, organizationId, role, sessionId };
 };
 
 export const org_user_Auth = async (req, res, next) => {

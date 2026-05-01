@@ -4,6 +4,7 @@ import app from "./app.js";
 import { initSocket } from "./socket/socket.js";
 import { connectDB } from "./configs/db.config.js";
 import { connectRedis } from "./configs/redis.config.js";
+import { logger } from "./utils/logger.js";
 
 const startServer = async () => {
   try {
@@ -22,10 +23,10 @@ const startServer = async () => {
     const PORT = process.env.PORT || 5000;
 
     server.listen(PORT, () => {
-      console.log(`✅ Backend running on ${PORT}`);
+      logger.success(`Backend running on ${PORT}`);
     });
   } catch (error) {
-    console.error(`Failed to start server: ${error.message}`);
+    logger.error(`Failed to start server`, error);
     process.exit(1);
   }
 };

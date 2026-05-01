@@ -1,49 +1,43 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import crypto from "crypto";
-const organizationSchema = new mongoose.Schema({
-  org_name: {
-    type: String,
-    required: [true, "Organization name is required"],
-    trim: true,
+import mongoose from "mongoose";
+const organizationSchema = new mongoose.Schema(
+  {
+    organizationName: {
+      type: String,
+      required: [true, "Organization name is required"],
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      minlength: 6,
+    },
+    apiKeys: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ApiKey",
+      },
+    ],
+    isVerified: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
-
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-    minlength: 6,
-  },
-  apiKey: {
-    type: String,
-    unique: true,
-  },
-  isverify: {
-    type: Boolean,
-    required: true,
-    default: false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true },
+);
 
 organizationSchema.pre("save", async function () {
   // 🔐 Hash password
   if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 12);
-  }
-
-  // 🔑 Generate API key only once
-  if (!this.apiKey) {
-    this.apiKey = crypto.randomBytes(32).toString("hex");
   }
 });
 

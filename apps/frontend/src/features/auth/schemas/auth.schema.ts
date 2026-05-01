@@ -7,7 +7,7 @@ export const loginSchema = z.object({
 
 export const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  org_name: z
+  organizationName: z
     .string()
     .min(2, "Organization name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email"),

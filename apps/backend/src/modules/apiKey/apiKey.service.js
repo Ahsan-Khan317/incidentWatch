@@ -1,37 +1,57 @@
 import apiKeyDao from "./apiKey.dao.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 import { generateApiKey } from "@/utils/generateToken.js";
+import { authDao } from "../auth/auth.dao.js";
 
 class ApiKeyService {
-  async createApiKey(orgId, name) {
+  async createApiKey(organizationId, name, expiresAt = null) {
     const key = generateApiKey();
-    return await apiKeyDao.create({ key, orgId, name });
+    const apiKey = await apiKeyDao.create({ key, organizationId, name, expiresAt });
+
+    // Sync with Organization
+    await authDao.updateOrganization(organizationId, {
+      $push: { apiKeys: apiKey._id },
+    });
+
+    return apiKey;
   }
 
-  async getAllApiKeys(orgId) {
-    return await apiKeyDao.findAll({ orgId });
+  async getAllApiKeys(organizationId) {
+    return await apiKeyDao.findAll({ organizationId });
   }
 
-  async getApiKeyById(id, orgId) {
+  async getApiKeyById(id, organizationId) {
     const apiKey = await apiKeyDao.findById(id);
     if (!apiKey) {
       throw new ApiError(404, "API Key not found");
     }
-    if (apiKey.orgId.toString() !== orgId.toString()) {
+    if (apiKey.organizationId.toString() !== organizationId.toString()) {
       throw new ApiError(403, "Unauthorized access to this API Key");
     }
     return apiKey;
   }
 
-  async regenerateApiKey(id, orgId) {
-    const apiKey = await this.getApiKeyById(id, orgId);
+  async regenerateApiKey(id, organizationId) {
+    const apiKey = await this.getApiKeyById(id, organizationId);
     const newKey = generateApiKey();
     return await apiKeyDao.updateById(id, { key: newKey });
   }
 
-  async deleteApiKey(id, orgId) {
-    await this.getApiKeyById(id, orgId);
-    return await apiKeyDao.deleteById(id);
+  async deleteApiKey(id, organizationId) {
+    const apiKey = await this.getApiKeyById(id, organizationId);
+    await apiKeyDao.deleteById(id);
+
+    // Sync with Organization
+    await authDao.updateOrganization(organizationId, {
+      $pull: { apiKeys: id },
+    });
+
+    return true;
+  }
+
+  async toggleApiKeyStatus(id, organizationId) {
+    const apiKey = await this.getApiKeyById(id, organizationId);
+    return await apiKeyDao.updateById(id, { isActive: !apiKey.isActive });
   }
 }
 

@@ -6,6 +6,7 @@ export const createApiKeyValidation = [
     .trim()
     .isLength({ min: 2, max: 100 })
     .withMessage("Name must be between 2 and 100 characters"),
+  body("expiresAt").optional().isISO8601().withMessage("Invalid expiration date format"),
 ];
 
 export const apiKeyIdValidation = [param("id").isMongoId().withMessage("Invalid API Key ID")];

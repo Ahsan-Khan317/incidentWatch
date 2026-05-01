@@ -18,8 +18,8 @@ export const authDao = {
   findUserByEmail: async (email) => {
     return await User.findOne({ email }).select("+password");
   },
-  findUserByEmailAndOrgId: async (email, orgid) => {
-    return await User.findOne({ email, orgid });
+  findUserByEmailAndOrgId: async (email, organizationId) => {
+    return await User.findOne({ email, organizationId });
   },
   createUser: async (userData) => {
     return await User.create(userData);
@@ -28,7 +28,7 @@ export const authDao = {
     return await User.findById(id);
   },
   findUserByIdWithOrg: async (id) => {
-    return await User.findById(id).populate("orgid");
+    return await User.findById(id).populate("organizationId");
   },
   findUserByInviteTokenAndEmail: async (email, token) => {
     return await User.findOne({ email, inviteToken: token });

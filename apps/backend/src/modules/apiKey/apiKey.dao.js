@@ -1,4 +1,4 @@
-import ApiKey from "./models/apiKey.model.js";
+import ApiKey from "./apiKey.model.js";
 
 class ApiKeyDAO {
   async create(data) {
@@ -19,7 +19,7 @@ class ApiKeyDAO {
 
   async updateById(id, data) {
     return await ApiKey.findByIdAndUpdate(id, data, {
-      new: true,
+      returnDocument: "after",
       runValidators: true,
     });
   }

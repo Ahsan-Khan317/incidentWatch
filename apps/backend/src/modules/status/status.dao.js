@@ -14,7 +14,10 @@ class StatusDAO {
   }
 
   async updateById(id, data) {
-    return await Status.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    return await Status.findByIdAndUpdate(id, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
   }
 
   async deleteById(id) {

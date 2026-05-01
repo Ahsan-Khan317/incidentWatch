@@ -8,6 +8,7 @@ import {
   PlusCircle,
   History,
 } from "lucide-react";
+import { ApiKeyManager } from "../../apikey/components/ApiKeyManager";
 
 export const SettingsView: React.FC = () => {
   return (
@@ -174,11 +175,11 @@ export const SettingsView: React.FC = () => {
                 <h4 className="text-sm font-bold text-heading">Webhook API</h4>
               </div>
               <p className="text-[11px] text-muted leading-tight">
-                Incoming triggers for automated incident creation.
+                Securely push telemetry and incident data via API.
               </p>
-              <button className="text-[10px] uppercase font-bold tracking-widest text-muted hover:text-heading transition-colors text-left mt-auto">
-                Manage Keys
-              </button>
+              <span className="text-[9px] uppercase font-black tracking-widest text-primary/60 mt-auto">
+                Configured in Security
+              </span>
             </div>
 
             <div className="bg-primary-soft border border-primary/30 p-4 rounded-md flex flex-col gap-4 shadow-sm hover:bg-primary/10 transition-colors group cursor-pointer">
@@ -253,6 +254,10 @@ export const SettingsView: React.FC = () => {
                   VIEW AUDIT LOGS
                 </button>
               </div>
+            </div>
+
+            <div className="bg-surface-1 border border-border-soft p-6 rounded-md shadow-sm">
+              <ApiKeyManager />
             </div>
           </div>
         </section>

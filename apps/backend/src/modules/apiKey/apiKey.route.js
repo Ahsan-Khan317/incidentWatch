@@ -5,6 +5,7 @@ import {
   getApiKeyById,
   regenerateApiKey,
   deleteApiKey,
+  toggleApiKeyStatus,
 } from "./apiKey.controller.js";
 import { createApiKeyValidation, apiKeyIdValidation } from "./apiKey.schema.js";
 import validate from "../../middlewares/validate.middleware.js";
@@ -19,6 +20,7 @@ apiKeyRouter.post("/create", createApiKeyValidation, validate, createApiKey);
 apiKeyRouter.get("/all", getAllApiKeys);
 apiKeyRouter.get("/:id", apiKeyIdValidation, validate, getApiKeyById);
 apiKeyRouter.put("/:id/regenerate", apiKeyIdValidation, validate, regenerateApiKey);
+apiKeyRouter.patch("/:id/toggle-status", apiKeyIdValidation, validate, toggleApiKeyStatus);
 apiKeyRouter.delete("/:id", apiKeyIdValidation, validate, deleteApiKey);
 
 export default apiKeyRouter;

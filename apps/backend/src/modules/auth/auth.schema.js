@@ -2,7 +2,9 @@ import { body } from "express-validator";
 
 // Organization Registration Schema
 export const orgRegisterSchema = [
-  body("name")
+  body("name").notEmpty().withMessage("Admin name is required").trim(),
+
+  body("organizationName")
     .notEmpty()
     .withMessage("Organization name is required")
     .trim()

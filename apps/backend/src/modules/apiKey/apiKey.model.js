@@ -8,7 +8,7 @@ const apiKeySchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-    orgId: {
+    organizationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
       required: [true, "Organization ID is required"],
@@ -17,6 +17,17 @@ const apiKeySchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: "Default API Key",
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    lastUsed: {
+      type: Date,
+    },
+    expiresAt: {
+      type: Date,
+      default: null, // null means infinite
     },
   },
   { timestamps: true },

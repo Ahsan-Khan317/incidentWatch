@@ -10,14 +10,14 @@ export const sessionService = {
    * @param {Object} data - { orgId, role, ip, agent }
    * @returns {Promise<string>} sessionId
    */
-  createSession: async (userId, { orgId, role, ip, agent }) => {
+  createSession: async (userId, { organizationId, role, ip, agent }) => {
     const redis = getRedis();
     const sessionId = generateSessionId();
     const key = getSessionKey(userId, sessionId);
 
     const sessionData = {
       userId: userId.toString(),
-      orgId: orgId?.toString() || "",
+      organizationId: organizationId?.toString() || "",
       role: role || "",
       ip: ip || "unknown",
       agent: agent || "unknown",

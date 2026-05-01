@@ -3,7 +3,7 @@ export interface AuthUser {
   name: string;
   email: string;
   role?: string;
-  org_name?: string;
+  organizationName?: string;
   oncall?: boolean;
 }
 
@@ -13,7 +13,7 @@ export interface LoginPayload {
 }
 
 export interface RegisterPayload {
-  org_name: string;
+  organizationName: string;
   name: string;
   email: string;
   password: string;

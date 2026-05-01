@@ -1,5 +1,7 @@
-"use client";
 import React, { useState, useEffect } from "react";
+import { useAuthStore } from "../../auth/store/auth-store";
+import { useRouter } from "next/navigation";
+import { LogOut, User, Settings, MoreVertical } from "lucide-react";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -15,10 +17,36 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   activeView,
   setActiveView,
-  user,
+  user: initialUser,
 }) => {
   const [isDark, setIsDark] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const { user: storeUser, logout } = useAuthStore();
+  const router = useRouter();
+
+  const user = storeUser || initialUser;
+
+  const handleLogout = async () => {
+    if (confirm("Are you sure you want to logout?")) {
+      await logout();
+      router.push("/login");
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".user-menu-container")) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener("click", handleClickOutside);
+    }
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [showUserMenu]);
 
   useEffect(() => {
     if (isDark) {
@@ -147,9 +175,64 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     {user.role}
                   </p>
                 </div>
-                <span className="material-symbols-outlined text-muted ml-auto text-sm cursor-pointer hover:text-heading transition-colors">
-                  more_vert
-                </span>
+                <div className="relative ml-auto user-menu-container">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className={`w-9 h-9 flex items-center justify-center transition-all rounded-lg border ${
+                      showUserMenu
+                        ? "text-primary bg-primary-soft border-primary/20 shadow-inner scale-95"
+                        : "text-muted border-transparent hover:text-heading hover:bg-surface-2 hover:border-border-soft"
+                    }`}
+                  >
+                    <MoreVertical size={20} />
+                  </button>
+
+                  {/* Tooltip-style Menu */}
+                  <div
+                    className={`absolute bottom-[calc(100%+12px)] right-0 w-52 bg-surface-0 border border-border-soft rounded-xl shadow-2xl transition-all duration-300 z-50 overflow-hidden ${
+                      showUserMenu
+                        ? "opacity-100 translate-y-0 pointer-events-auto"
+                        : "opacity-0 translate-y-4 pointer-events-none"
+                    }`}
+                  >
+                    <div className="bg-surface-1/80 backdrop-blur-md px-4 py-3 border-b border-border-soft flex items-center justify-between">
+                      <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
+                        Management
+                      </p>
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    </div>
+
+                    <div className="p-2 space-y-1">
+                      <button
+                        onClick={() => {
+                          setActiveView("settings");
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full px-3 py-3 text-left text-[11px] font-bold text-muted hover:text-primary hover:bg-primary-soft rounded-lg flex items-center gap-4 transition-all group/item"
+                      >
+                        <div className="w-8 h-8 rounded-md bg-surface-2 flex items-center justify-center group-hover/item:bg-primary/10 transition-colors border border-border-soft group-hover/item:border-primary/20">
+                          <Settings
+                            size={14}
+                            className="group-hover/item:text-primary transition-colors"
+                          />
+                        </div>
+                        SETTINGS
+                      </button>
+                      <button
+                        onClick={() => {
+                          handleLogout();
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full px-3 py-3 text-left text-[11px] font-bold text-danger hover:bg-danger-soft rounded-lg flex items-center gap-4 transition-all group/item"
+                      >
+                        <div className="w-8 h-8 rounded-md bg-danger-soft flex items-center justify-center group-hover/item:bg-danger/20 transition-colors border border-danger/10 group-hover/item:border-danger/30">
+                          <LogOut size={14} />
+                        </div>
+                        LOGOUT
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </div>

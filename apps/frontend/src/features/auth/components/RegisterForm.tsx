@@ -22,7 +22,7 @@ export function RegisterForm() {
     formState: { errors },
   } = useForm<RegisterSchema>({
     defaultValues: {
-      org_name: "",
+      organizationName: "",
       name: "",
       email: "",
       password: "",
@@ -40,7 +40,7 @@ export function RegisterForm() {
     }
 
     registerMutation.mutate({
-      org_name: result.data.org_name,
+      organizationName: result.data.organizationName,
       name: result.data.name,
       email: result.data.email,
       password: result.data.password,
@@ -61,16 +61,16 @@ export function RegisterForm() {
             Organization Name
           </label>
           <input
-            id="org_name"
+            id="organizationName"
             type="text"
             placeholder="Acme Inc."
-            autoComplete="org_name"
-            {...register("org_name")}
+            autoComplete="organizationName"
+            {...register("organizationName")}
             className="rounded-none"
           />
-          {errors.org_name && (
+          {errors.organizationName && (
             <p className="mt-1 text-sm text-danger">
-              {errors.org_name.message}
+              {errors.organizationName.message}
             </p>
           )}
         </div>

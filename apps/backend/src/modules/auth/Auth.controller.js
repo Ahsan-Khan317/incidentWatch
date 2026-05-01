@@ -28,9 +28,9 @@ export const registerOrganization = asyncHandler(async (req, res, next) => {
       {
         organization: {
           id: result.organization._id,
-          name: result.organization.name,
+          name: result.organization.organizationName,
           email: result.organization.email,
-          apiKey: result.organization.apiKey,
+          apiKeys: result.organization.apiKeys,
         },
         user: {
           id: result.adminUser._id,
@@ -105,7 +105,7 @@ export const get_me = asyncHandler(async (req, res, next) => {
     new ApiResponse(
       200,
       {
-        org_name: isuser.orgid?.org_name,
+        organizationName: isuser.organizationId?.organizationName,
         name: isuser.name,
         email: isuser.email,
         role: isuser.role,
@@ -121,7 +121,7 @@ export const get_me = asyncHandler(async (req, res, next) => {
 // @access Admin Only
 export const inviteUser = asyncHandler(async (req, res) => {
   const { name, email, role } = req.body;
-  const orgId = req.user.orgid;
+  const orgId = req.user.organizationId;
 
   const user = await authService.inviteUser({ name, email, role, orgId });
 
