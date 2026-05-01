@@ -1,0 +1,54 @@
+{
+  "sdk_name": "@incidentwatch/sdk",
+  "version": "1.0.0",
+  "description": "Zero-config, modular monitoring SDK for Node.js applications.",
+  "core_concepts": {
+    "zero_config_magic": "SDK automatically patches popular frameworks (Express, Axios, Fetch) so developers don't have to write manual try/catch or middleware.",
+    "breadcrumb_timeline": "Captures a circular buffer of last 50 events (requests, db calls, custom logs) to provide context for every incident.",
+    "severity_levels": {
+      "SEV1": "Critical crash (e.g., Uncaught Exception) - process exit.",
+      "SEV2": "Significant failure (e.g., Unhandled Rejection, 5xx Express errors).",
+      "SEV3": "Warning/Notice (e.g., Slow operations, console.error)."
+    },
+    "heartbeat_system": "Sends a 'pulse' every 5 seconds (configurable via heartbeatIntervalMs) containing the latest terminal logs (stdout/stderr) and system health metrics (uptime, memory, CPU) for real-time monitoring.",
+    "breadcrumb_types": ["http.request", "log.*", "timer.*", "db.*"]
+  },
+  "bootstrap_flow": [
+    "User calls init({ apiKey, serverId })",
+    "Config module validates inputs and merges with defaults.",
+    "Winston Logger initialized for structured logging.",
+    "HttpTransport setup with Axios, Retries, and Circuit Breaker.",
+    "GlobalHooks attach to process ('uncaughtException', 'unhandledRejection', 'SIGTERM').",
+    "MemoryMonitor starts a timer to check heap usage every 30 seconds.",
+    "Integrations (Express, Axios, Fetch) are monkey-patched to intercept activity."
+  ],
+  "integrations": {
+    "express": {
+      "mechanism": "Monkey-patches express.application.listen.",
+      "features": [
+        "Auto-injects Error Middleware at the end of the stack.",
+        "Auto-injects Morgan HTTP Logger at the start of the stack.",
+        "Wraps async route handlers to catch hidden promise rejections."
+      ]
+    },
+    "axios": {
+      "mechanism": "Global and Instance interceptors.",
+      "features": [
+        "Captures outgoing request metadata as breadcrumbs.",
+        "Captures 5xx and network errors as incidents."
+      ]
+    },
+    "fetch": {
+      "mechanism": "Monkey-patches globalThis.fetch.",
+      "features": [
+        "Monitors built-in Node 18+ fetch calls.",
+        "Tracks response duration and failure status."
+      ]
+    }
+  },
+  "reliability_features": {
+    "exponential_backoff": "Retries failed incident delivery with increasing delays (1s, 2s, 4s).",
+    "circuit_breaker": "Temporarily stops sending incidents if the platform is unreachable for 5+ consecutive attempts to prevent memory bloat.",
+    "unref_timers": "Uses .unref() on internal timers so the SDK doesn't prevent the Node process from exiting naturally."
+  }
+}

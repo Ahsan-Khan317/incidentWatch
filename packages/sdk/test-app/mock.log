@@ -1,0 +1,147 @@
+
+════════════════════════════════════════════════════════════
+[MOCK PLATFORM] IncidentWatch mock platform running
+  POST /api/incidents      - Receive incidents from SDK
+  GET  /api/incidents      - List all captured incidents
+  GET  /api/incidents/:id  - Get single incident details
+  DELETE /api/incidents    - Clear all incidents
+  Listening on http://localhost:5000
+════════════════════════════════════════════════════════════
+
+
+════════════════════════════════════════════════════════════════════════════════
+[MOCK PLATFORM] Incident #1 received at 2026-05-01T15:23:44.128Z
+────────────────────────────────────────────────────────────────────────────────
+  Title:       [Error] Error: Synchronous route crash — /error-sync
+    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\test-app.js:66:9
+    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:284:15
+    at router.process_params (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:280:10)
+    at jsonParser (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\body-parser\lib\types\json.js:113:7)
+    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+  Severity:    SEV3
+  Source:      sdk-auto
+  Server:      test-server-01
+  App:         @incidentwatch/test-app
+  Environment: development
+  Tags:        console-error
+  Breadcrumbs: 0
+────────────────────────────────────────────────────────────────────────────────
+  Description:
+Error: Error: Synchronous route crash — /error-sync
+    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\test-app.js:66:9
+    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_module...
+────────────────────────────────────────────────────────────────────────────────
+  Runtime: Node v24.14.0 | PID 17888
+────────────────────────────────────────────────────────────────────────────────
+════════════════════════════════════════════════════════════════════════════════
+
+════════════════════════════════════════════════════════════════════════════════
+[MOCK PLATFORM] Incident #2 received at 2026-05-01T15:23:44.190Z
+────────────────────────────────────────────────────────────────────────────────
+  Title:       [Error] Asynchronous route failure — /error-async
+  Severity:    SEV2
+  Source:      sdk-auto
+  Server:      test-server-01
+  App:         @incidentwatch/test-app
+  Environment: development
+  Tags:        unhandled-rejection, async-error
+  Breadcrumbs: 0
+────────────────────────────────────────────────────────────────────────────────
+  Description:
+Error: Asynchronous route failure — /error-async
+
+Stack trace:
+Error: Asynchronous route failure — /error-async
+    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\test-app.js:71:9
+    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\AD...
+────────────────────────────────────────────────────────────────────────────────
+  Runtime: Node v24.14.0 | PID 17888
+────────────────────────────────────────────────────────────────────────────────
+  Context: {
+  "processId": 17888
+}
+────────────────────────────────────────────────────────────────────────────────
+════════════════════════════════════════════════════════════════════════════════
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:23:49.435Z
+   Captured Logs (40 lines):
+   > [STDOUT] 20:53:39 [IW] [34mdebug[39m: [34m[IW] Heartbeat manager started (5s interval)[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDOUT] 20:53:39 [IW] [34mdebug[39m: [34m[IW] Axios global instance patched[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDOUT] 20:53:39 [IW] [34mdebug[39m: [34m[IW] global fetch patched[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDOUT] 20:53:39 [IW] [34mdebug[39m: [34m[IW] Express auto-registration set up — will activate on app.listen()[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDOUT] 20:53:39 [IW] [32minfo[39m: [32mIncidentWatch SDK ready ✓[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDOUT] ════════════════════════════════════════════════════════════
+   > [STDOUT] [TEST APP] IncidentWatch SDK Test Server
+   > [STDOUT]   Running on http://localhost:4000
+   > [STDOUT]   SDK pointing to http://localhost:5000
+   > [STDOUT] ────────────────────────────────────────────────────────────
+   > [STDOUT]   Quick reference: GET /help
+   > [STDOUT] ════════════════════════════════════════════════════════════
+   > [STDOUT] 20:53:44 [IW] [32minfo[39m: [32m[TEST] /error-sync — throwing sync error, expect SEV2 incident[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDERR] Error: Synchronous route crash — /error-sync
+   > [STDERR]     at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\test-app.js:66:9
+   > [STDERR]     at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+   > [STDERR]     at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:149:13)
+   > [STDERR]     at Route.dispatch (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:119:3)
+   > [STDERR]     at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+   > [STDERR]     at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:284:15
+   > [STDERR]     at router.process_params (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:346:12)
+   > [STDERR]     at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:280:10)
+   > [STDERR]     at jsonParser (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\body-parser\lib\types\json.js:113:7)
+   > [STDERR]     at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)
+   > [STDOUT] 20:53:44 [IW] [31merror[39m: [31mIncident captured: Error: Synchronous route crash — /error-sync[39m
+   > [STDOUT] [31m    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\test-app.js:66:9[39m
+   > [STDOUT] [31m    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)[39m
+   > [STDOUT] [31m    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:149:13)[39m
+   > [STDOUT] [31m    at Route.dispatch (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:119:3)[39m
+   > [STDOUT] [31m    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)[39m
+   > [STDOUT] [31m    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:284:15[39m
+   > [STDOUT] [31m    at router.process_params (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:346:12)[39m
+   > [STDOUT] [31m    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:280:10)[39m
+   > [STDOUT] [31m    at jsonParser (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\body-parser\lib\types\json.js:113:7)[39m
+   > [STDOUT] [31m    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0","incidentId":"4d878ce5-eb32-4840-a46c-cc4ffe844e1c","severity":"SEV3"}
+   > [STDOUT] 20:53:44 [IW] [34mdebug[39m: [34m[IW] Incident sent: 4d878ce5-eb32-4840-a46c-cc4ffe844e1c[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDOUT] 20:53:44 [IW] [32minfo[39m: [32m[TEST] /error-async — throwing async error, expect SEV2 incident[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   > [STDOUT] 20:53:44 [IW] [31merror[39m: [31m[IW] unhandledRejection[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0","error":"Asynchronous route failure — /error-async","stack":"Error: Asynchronous route failure — /error-async\n    at C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\test-app.js:71:9\n    at Layer.handle [as handle_request] (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at next (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\route.js:149:13)\n    at Route.dispatch (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\route.js:119:3)\n    at Layer.handle [as handle_request] (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\index.js:284:15\n    at router.process_params (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at jsonParser (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\body-parser\\lib\\types\\json.js:113:7)\n    at Layer.handle [as handle_request] (C:\\Users\\ADITYA\\Desktop\\incidentWatch\\packages\\sdk\\test-app\\node_modules\\express\\lib\\router\\layer.js:95:5)"}
+   > [STDOUT] 20:53:44 [IW] [31merror[39m: [31mIncident captured: Asynchronous route failure — /error-async[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0","incidentId":"8b86344a-3c4d-47f3-8495-8c271307f2ec","severity":"SEV2"}
+   > [STDOUT] 20:53:44 [IW] [34mdebug[39m: [34m[IW] Incident sent: 8b86344a-3c4d-47f3-8495-8c271307f2ec[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0"}
+   Uptime: 10s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:23:59.438Z
+   (No new logs)
+   Uptime: 20s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:24:09.440Z
+   Captured Logs (1 lines):
+   > [STDOUT] 20:54:09 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0","heapUsedMb":15,"heapTotalMb":18,"heapPct":86,"rssMb":63}
+   Uptime: 30s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:24:19.440Z
+   (No new logs)
+   Uptime: 40s | Memory: 15MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:24:29.454Z
+   (No new logs)
+   Uptime: 50s | Memory: 16MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:24:39.469Z
+   Captured Logs (1 lines):
+   > [STDOUT] 20:54:39 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"1.0.0","heapUsedMb":16,"heapTotalMb":18,"heapPct":89,"rssMb":63}
+   Uptime: 60s | Memory: 16MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:24:49.472Z
+   (No new logs)
+   Uptime: 70s | Memory: 16MB
+
+💓 [HEARTBEAT] Received from test-server-01 (development) at 2026-05-01T15:24:59.487Z
+   (No new logs)
+   Uptime: 80s | Memory: 16MB

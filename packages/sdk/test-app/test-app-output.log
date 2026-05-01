@@ -1,0 +1,74 @@
+21:32:11 [IW] [32minfo[39m: [32mIncidentWatch SDK initializing...[39m {"serverId":"test-server-01","environment":"development","release":"unknown","node":"v24.14.0"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] console.error patched[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Global hooks attached[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Memory monitor started[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Heartbeat manager started (5s interval)[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Axios global instance patched[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] global fetch patched[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Express auto-registration set up — will activate on app.listen()[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [32minfo[39m: [32mIncidentWatch SDK ready ✓[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Tag set: app=test-app[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Tag set: team=backend[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Context set: appVersion[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] User set: test-user-1[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] Morgan HTTP logger attached to Express[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:11 [IW] [34mdebug[39m: [34m[IW] IW error middleware auto-attached to Express[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+
+════════════════════════════════════════════════════════════
+[TEST APP] IncidentWatch SDK Test Server
+  Running on http://localhost:4000
+  SDK → http://localhost:5000
+────────────────────────────────────────────────────────────
+  Quick reference: GET /help
+════════════════════════════════════════════════════════════
+
+21:32:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":13,"heapTotalMb":14,"heapPct":90,"rssMb":57}
+21:32:41 [IW] [33mwarn[39m: [33m[IW] High heap usage: 90% (13MB / 14MB)[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:32:41 [IW] [34mdebug[39m: [34m[IW] Incident sent: 7b9dd3b2-f69d-419a-bb09-e0c7e5325fe8[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:33:11 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":13,"heapTotalMb":15,"heapPct":88,"rssMb":58}
+21:33:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":13,"heapTotalMb":15,"heapPct":93,"rssMb":59}
+21:34:11 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":13,"heapTotalMb":15,"heapPct":91,"rssMb":60}
+21:34:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":93,"rssMb":60}
+21:35:11 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":90,"rssMb":60}
+21:35:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":92,"rssMb":60}
+21:36:11 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":91,"rssMb":60}
+21:36:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":15,"heapPct":93,"rssMb":60}
+21:37:11 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":87,"rssMb":61}
+21:37:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":16,"heapPct":90,"rssMb":61}
+21:37:41 [IW] [33mwarn[39m: [33m[IW] High heap usage: 90% (14MB / 16MB)[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:37:41 [IW] [34mdebug[39m: [34m[IW] Incident sent: 75540341-6778-4eff-84ea-27ab1ddbb46a[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:11 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":14,"heapTotalMb":17,"heapPct":84,"rssMb":61}
+21:38:34 [IW] [32minfo[39m: [32m[TEST] /health — normal request[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:38 [IW] [32minfo[39m: [32m[TEST] /error-sync — sync throw, expect SEV2[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:38 [IW] [31merror[39m: [31mIncident captured: Synchronous route crash — /error-sync[39m {"serverId":"test-server-01","environment":"development","release":"unknown","incidentId":"05b0a6c9-aeeb-4243-92fd-8ded334150ce","severity":"SEV2"}
+21:38:38 [IW] [34mdebug[39m: [34m[IW] Incident sent: 05b0a6c9-aeeb-4243-92fd-8ded334150ce[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:38 [IW] [31merror[39m: [31mIncident captured: Error: Synchronous route crash — /error-sync[39m
+[31m    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\test-app.js:68:9[39m
+[31m    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)[39m
+[31m    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:149:13)[39m
+[31m    at Route.dispatch (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\route.js:119:3)[39m
+[31m    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)[39m
+[31m    at C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:284:15[39m
+[31m    at router.process_params (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:346:12)[39m
+[31m    at next (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\index.js:280:10)[39m
+[31m    at jsonParser (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\body-parser\lib\types\json.js:113:7)[39m
+[31m    at Layer.handle [as handle_request] (C:\Users\ADITYA\Desktop\incidentWatch\packages\sdk\test-app\node_modules\express\lib\router\layer.js:95:5)[39m {"serverId":"test-server-01","environment":"development","release":"unknown","incidentId":"5e4842a9-e0a1-40ec-9185-ae0f3de30a76","severity":"SEV3"}
+21:38:38 [IW] [34mdebug[39m: [34m[IW] Incident sent: 5e4842a9-e0a1-40ec-9185-ae0f3de30a76[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":15,"heapTotalMb":16,"heapPct":91,"rssMb":61}
+21:38:42 [IW] [32minfo[39m: [32m[TEST] /manual-incident — manual incident[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:42 [IW] [34mdebug[39m: [34m[IW] Incident sent: 17a6fff0-4beb-40f4-98d6-dc0cc95d56fd[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:47 [IW] [32minfo[39m: [32m[TEST] /capture-message — non-error incident[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:47 [IW] [34mdebug[39m: [34m[IW] Incident sent: 8d22ff11-9866-450f-8334-f4b169c33ec3[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:47 [IW] [32minfo[39m: [32m[TEST] /set-tag-dynamic — dynamic tag during request[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:47 [IW] [34mdebug[39m: [34m[IW] Tag set: request-type=api-call[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:47 [IW] [34mdebug[39m: [34m[IW] Incident sent: 06b780ec-6a8a-47a7-a991-1fd8e911ca1e[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:47 [IW] [32minfo[39m: [32m[TEST] /with-scope — isolated scope for operation[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:47 [IW] [34mdebug[39m: [34m[IW] Incident sent: 2233a40f-6969-4601-b2af-4fc5588d884c[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:50 [IW] [32minfo[39m: [32m[TEST] /status — SDK health status[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:55 [IW] [32minfo[39m: [32m[TEST] /wrap-async — wrapping non-Express async function[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:55 [IW] [31merror[39m: [31mIncident captured: Operation failed inside wrapped async function[39m {"serverId":"test-server-01","environment":"development","release":"unknown","incidentId":"98d2660c-de4e-4157-8d88-53faccb8e169","severity":"SEV2"}
+21:38:55 [IW] [34mdebug[39m: [34m[IW] Incident sent: 98d2660c-de4e-4157-8d88-53faccb8e169[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:55 [IW] [32minfo[39m: [32m[TEST] /request-id — tracking with request ID[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:38:55 [IW] [34mdebug[39m: [34m[IW] Incident sent: 53568b47-4561-4382-acc5-aecfbf409332[39m {"serverId":"test-server-01","environment":"development","release":"unknown"}
+21:39:11 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":15,"heapTotalMb":16,"heapPct":91,"rssMb":62}
+21:39:41 [IW] [34mdebug[39m: [34m[IW] Memory check[39m {"serverId":"test-server-01","environment":"development","release":"unknown","heapUsedMb":15,"heapTotalMb":16,"heapPct":90,"rssMb":62}

@@ -1,16 +1,41 @@
 {
-  "name": "sdk",
-  "module": "index.ts",
+  "name": "@incidentwatch/sdk",
+  "version": "1.0.0",
+  "description": "One-line setup. Zero manual try/catch. Full incident coverage for Node.js apps.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/node": "^25.6.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun run build:js && bun run build:types",
+    "build:js": "bun build ./src/index.ts --outfile ./dist/index.mjs --target node --format esm --minify --external express --external axios --external morgan --external winston --external p-queue --external uuid && bun build ./src/index.ts --outfile ./dist/index.cjs --target node --format cjs --minify --external express --external axios --external morgan --external winston --external p-queue --external uuid",
+    "build:types": "tsc --emitDeclarationOnly"
   },
   "dependencies": {
-    "axios": "^1.15.2"
+    "axios": "^1.6.0",
+    "morgan": "^1.10.0",
+    "p-queue": "^7.3.4",
+    "uuid": "^9.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^20.0.0",
+    "@types/uuid": "9",
+    "express": "^4.18.2",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "express": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "express": {
+      "optional": true
+    }
   }
 }
