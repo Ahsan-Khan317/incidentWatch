@@ -3,6 +3,10 @@ import { ApiError } from "@/utils/Error/ApiError.js";
 
 class StatusService {
   async createStatus(statusData) {
+    const { orgId } = statusData;
+    if (!orgId) {
+      throw new ApiError(400, "Organization ID missing");
+    }
     return await statusDao.create(statusData);
   }
 

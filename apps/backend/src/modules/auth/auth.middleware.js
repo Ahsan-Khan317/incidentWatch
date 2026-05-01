@@ -38,7 +38,27 @@ const verifySession = async (req) => {
     throw new ApiError(401, "Session expired or revoked");
   }
 
-  return { id, organizationId, role, sessionId };
+  // Normalize organizationId from token or session
+  let finalOrganizationId = organizationId || decoded.orgid;
+
+  if (!finalOrganizationId) {
+    const sessionOrgId = session.organizationId || session.orgid;
+    if (sessionOrgId) {
+      console.log("[AUTH] organizationId recovered from session:", sessionOrgId);
+      finalOrganizationId = sessionOrgId;
+    }
+  }
+
+  if (!finalOrganizationId) {
+    console.error(
+      "[AUTH] organizationId/orgid missing in both token and session. Decoded:",
+      decoded,
+      "Session:",
+      session,
+    );
+  }
+
+  return { id, organizationId: finalOrganizationId, role, sessionId };
 };
 
 export const org_user_Auth = async (req, res, next) => {

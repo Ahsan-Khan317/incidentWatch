@@ -35,6 +35,7 @@ export const authService = {
       password: password,
       role: "admin",
       organizationId: organization._id,
+      orgid: organization._id,
       isActive: true,
     });
 
@@ -46,7 +47,12 @@ export const authService = {
       agent: "registration",
     });
 
-    const accessToken = generateAccessToken(adminUser._id, organization._id, "admin", sessionId);
+    const accessToken = generateAccessToken({
+      id: adminUser._id,
+      organizationId: organization._id.toString(),
+      role: "admin",
+      sessionId,
+    });
     const refreshToken = generateRefreshToken(adminUser._id, sessionId);
 
     await sendEmail({
@@ -88,23 +94,33 @@ export const authService = {
 
     if (!isuser.isVerified) throw new ApiError(401, "User not verified");
 
+    console.log("USER:", isuser);
+
+    const userObj = isuser.toObject();
+    const organizationId = userObj.organizationId || userObj.orgid;
+
+    if (!organizationId) {
+      console.error("USER OBJ:", userObj);
+      throw new ApiError(500, "Organization ID missing in DB");
+    }
+
     // Create session via sessionService
-    const sessionId = await sessionService.createSession(isuser._id, {
-      organizationId: isuser.organizationId,
-      role: isuser.role || "admin",
+    const sessionId = await sessionService.createSession(userObj._id, {
+      organizationId: organizationId,
+      role: userObj.role || "admin",
       ip,
       agent: userAgent,
     });
 
-    const accessToken = generateAccessToken(
-      isuser._id,
-      isuser.organizationId,
-      isuser.role || "admin",
+    const accessToken = generateAccessToken({
+      id: userObj._id,
+      organizationId: organizationId.toString(),
+      role: userObj.role || "admin",
       sessionId,
-    );
-    const refreshToken = generateRefreshToken(isuser._id, sessionId);
+    });
+    const refreshToken = generateRefreshToken(userObj._id, sessionId);
 
-    return { user: isuser, accessToken, refreshToken, sessionId };
+    return { user: userObj, accessToken, refreshToken, sessionId };
   },
 
   getMe: async (userId) => {
@@ -113,11 +129,11 @@ export const authService = {
     return isuser;
   },
 
-  inviteUser: async ({ name, email, role, orgId }) => {
-    const organization = await authDao.findOrganizationById(orgId);
+  inviteUser: async ({ name, email, role, organizationId }) => {
+    const organization = await authDao.findOrganizationById(organizationId);
     if (!organization) throw new ApiError(404, "Organization not found");
 
-    const existingUser = await authDao.findUserByEmailAndOrgId(email, orgId);
+    const existingUser = await authDao.findUserByEmailAndOrganizationId(email, organizationId);
     if (existingUser) throw new ApiError(400, "User already exists in this organization");
 
     const inviteToken = generateInviteToken();
@@ -125,7 +141,7 @@ export const authService = {
       name,
       email,
       role,
-      organizationId: orgId,
+      organizationId,
       password: crypto.randomBytes(16).toString("hex"),
       isActive: false,
       isVerified: false,
@@ -181,12 +197,20 @@ export const authService = {
     const user = await authDao.findUserById(userId);
     if (!user) throw new ApiError(404, "User not found");
 
-    const newAccessToken = generateAccessToken(
-      user._id,
-      user.organizationId,
-      session.role || user.role,
+    const userObj = user.toObject();
+    const organizationId = userObj.organizationId || userObj.orgid;
+
+    if (!organizationId) {
+      console.error("[REFRESH] organizationId/orgid missing for user object:", userObj);
+      throw new ApiError(500, "User organizationId/orgid missing in DB");
+    }
+
+    const newAccessToken = generateAccessToken({
+      id: userObj._id,
+      organizationId: organizationId.toString(),
+      role: session.role || userObj.role,
       sessionId,
-    );
+    });
     return newAccessToken;
   },
 
