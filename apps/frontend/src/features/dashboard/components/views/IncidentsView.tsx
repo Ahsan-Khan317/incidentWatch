@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { motion } from "framer-motion";
 
 export const IncidentsView: React.FC = () => {
   const incidents = [
@@ -92,7 +93,14 @@ export const IncidentsView: React.FC = () => {
   };
 
   return (
-    <div className="animate-in fade-in duration-300 space-y-6">
+    <motion.div
+      key="incidents"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      className="space-y-6"
+    >
       {/* Stats Overview Bento */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-surface-1 border border-border-soft p-4 rounded-md flex flex-col gap-1 shadow-sm">
@@ -203,7 +211,7 @@ export const IncidentsView: React.FC = () => {
               {incidents.map((incident, idx) => (
                 <tr
                   key={incident.id}
-                  className="hover:bg-surface-2 transition-colors group"
+                  className="hover:bg-primary/5 transition-colors group"
                 >
                   <td className="px-6 py-4">
                     <span className="font-mono text-heading text-sm font-bold">
@@ -348,7 +356,16 @@ export const IncidentsView: React.FC = () => {
                 <span className="text-heading">42%</span>
               </div>
               <div className="h-2 w-full bg-surface-2 rounded-md overflow-hidden border border-border-soft">
-                <div className="h-full bg-danger w-[42%] rounded-md"></div>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "42%" }}
+                  transition={{
+                    duration: 1,
+                    ease: [0.4, 0, 0.2, 1],
+                    delay: 0.2,
+                  }}
+                  className="h-full bg-danger rounded-md"
+                />
               </div>
             </div>
             <div className="space-y-1.5">
@@ -357,7 +374,16 @@ export const IncidentsView: React.FC = () => {
                 <span className="text-heading">28%</span>
               </div>
               <div className="h-2 w-full bg-surface-2 rounded-md overflow-hidden border border-border-soft">
-                <div className="h-full bg-primary w-[28%] rounded-md"></div>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "28%" }}
+                  transition={{
+                    duration: 1,
+                    ease: [0.4, 0, 0.2, 1],
+                    delay: 0.35,
+                  }}
+                  className="h-full bg-primary rounded-md"
+                />
               </div>
             </div>
             <div className="space-y-1.5">
@@ -366,12 +392,21 @@ export const IncidentsView: React.FC = () => {
                 <span className="text-heading">15%</span>
               </div>
               <div className="h-2 w-full bg-surface-2 rounded-md overflow-hidden border border-border-soft">
-                <div className="h-full bg-warning w-[15%] rounded-md"></div>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "15%" }}
+                  transition={{
+                    duration: 1,
+                    ease: [0.4, 0, 0.2, 1],
+                    delay: 0.5,
+                  }}
+                  className="h-full bg-warning rounded-md"
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

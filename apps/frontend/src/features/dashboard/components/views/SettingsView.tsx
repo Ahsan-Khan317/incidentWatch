@@ -16,9 +16,10 @@ export const SettingsView: React.FC = () => {
   return (
     <motion.div
       key="settings"
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className="max-w-5xl mx-auto pb-20 pt-8"
     >
       <div className="space-y-12">

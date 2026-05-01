@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuthStore } from "../../auth/store/auth-store";
 import { useRouter } from "next/navigation";
 import { LogOut, User, Settings, MoreVertical } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -140,16 +141,32 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <a
                 key={item.id}
                 onClick={() => setActiveView(item.id)}
-                className={`flex items-center py-2.5 rounded-md transition-all cursor-pointer ${isSidebarOpen ? "gap-3 px-3" : "justify-center px-0"} ${
+                className={`relative flex items-center py-2.5 rounded-md transition-all duration-200 cursor-pointer ${isSidebarOpen ? "gap-3 px-3" : "justify-center px-0"} ${
                   activeView === item.id
-                    ? "text-primary font-bold bg-primary-soft shadow-inner"
+                    ? "text-primary font-bold"
                     : "text-muted hover:text-heading hover:bg-surface-1 font-medium"
                 }`}
                 title={!isSidebarOpen ? item.label : undefined}
               >
-                <span className="material-symbols-outlined">{item.icon}</span>
+                {activeView === item.id && (
+                  <motion.div
+                    layoutId="sidebar-active-indicator"
+                    className="absolute inset-0 bg-primary-soft border border-primary/20 rounded-md shadow-inner"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="material-symbols-outlined relative z-10">
+                  {item.icon}
+                </span>
                 {isSidebarOpen && (
-                  <span className="text-sm tracking-tight">{item.label}</span>
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                    className="text-sm tracking-tight relative z-10 whitespace-nowrap overflow-hidden"
+                  >
+                    {item.label}
+                  </motion.span>
                 )}
               </a>
             ))}
@@ -189,10 +206,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
                   {/* Tooltip-style Menu */}
                   <div
-                    className={`absolute bottom-[calc(100%+12px)] right-0 w-52 bg-surface-0 border border-border-soft rounded-xl shadow-2xl transition-all duration-300 z-50 overflow-hidden ${
+                    className={`absolute bottom-[calc(100%+12px)] right-0 w-52 bg-surface-0 border border-border-soft rounded-xl shadow-2xl transition-all duration-200 z-50 overflow-hidden origin-bottom-right ${
                       showUserMenu
-                        ? "opacity-100 translate-y-0 pointer-events-auto"
-                        : "opacity-0 translate-y-4 pointer-events-none"
+                        ? "opacity-100 scale-100 pointer-events-auto"
+                        : "opacity-0 scale-95 pointer-events-none"
                     }`}
                   >
                     <div className="bg-surface-1/80 backdrop-blur-md px-4 py-3 border-b border-border-soft flex items-center justify-between">
@@ -277,13 +294,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
 
       {/* Floating Action Button */}
-      {activeView === "dashboard" && (
-        <button className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-md shadow-lg flex items-center justify-center hover:scale-105 hover:bg-primary-hover active:scale-95 transition-all z-50">
-          <span className="material-symbols-outlined text-2xl">
-            support_agent
-          </span>
-        </button>
-      )}
+      <motion.button
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 20 }}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-md shadow-lg flex items-center justify-center hover:scale-110 hover:bg-primary-hover active:scale-95 transition-all z-50 hover:shadow-primary"
+      >
+        <span className="material-symbols-outlined text-2xl">
+          support_agent
+        </span>
+      </motion.button>
     </div>
   );
 };

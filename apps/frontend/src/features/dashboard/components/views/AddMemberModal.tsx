@@ -55,7 +55,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative w-full max-w-xl bg-[#0c0c0e] border border-white/[0.08] rounded-[2.5rem] p-10 shadow-2xl overflow-hidden"
+            className="relative w-full max-w-xl bg-surface-0 border border-border-soft rounded-md p-10 shadow-2xl overflow-hidden"
           >
             <div className="flex items-center justify-between mb-8 relative z-10">
               <div className="flex items-center gap-4">
@@ -90,7 +90,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                     required
                     type="text"
                     placeholder="e.g. Marcus Thorne"
-                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-md px-5 py-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full bg-surface-1 border border-border-soft rounded-md px-5 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/50"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -104,7 +104,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                   <input
                     type="text"
                     placeholder="e.g. SRE Lead"
-                    className="w-full bg-white/[0.03] border border-white/[0.08] rounded-md px-5 py-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-all"
+                    className="w-full bg-surface-1 border border-border-soft rounded-md px-5 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/50"
                     value={formData.role}
                     onChange={(e) =>
                       setFormData({ ...formData, role: e.target.value })
@@ -121,7 +121,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                   required
                   type="email"
                   placeholder="name@organization.com"
-                  className="w-full bg-white/[0.03] border border-white/[0.08] rounded-md px-5 py-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-all"
+                  className="w-full bg-surface-1 border border-border-soft rounded-md px-5 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/50"
                   value={formData.email}
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
@@ -136,7 +136,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 <input
                   type="text"
                   placeholder="AWS, Kubernetes, React (comma separated)"
-                  className="w-full bg-white/[0.03] border border-white/[0.08] rounded-md px-5 py-3 text-sm text-white focus:outline-none focus:border-primary/50 transition-all"
+                  className="w-full bg-surface-1 border border-border-soft rounded-md px-5 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/50"
                   value={formData.expertise}
                   onChange={(e) =>
                     setFormData({ ...formData, expertise: e.target.value })
@@ -154,7 +154,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
               <div className="pt-6">
                 <button
                   type="submit"
-                  className="w-full bg-white text-black py-4 rounded-md text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all shadow-xl shadow-white/5"
+                  className="w-full bg-primary text-on-primary py-4 rounded-md text-xs font-bold uppercase tracking-[0.2em] hover:bg-primary-hover transition-all shadow-lg"
                 >
                   Confirm Onboarding
                 </button>

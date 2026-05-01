@@ -30,9 +30,10 @@ export const TeamView: React.FC<TeamViewProps> = ({
   return (
     <motion.div
       key="team"
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className="space-y-8"
     >
       {/* Dashboard Statistics */}
@@ -122,7 +123,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
               <div className="flex justify-between items-start">
                 <div className="relative">
                   <div
-                    className={`w-14 h-14 rounded-md flex items-center justify-center text-xl font-bold ${member.avatarColor} border border-border-soft shadow-sm grayscale group-hover:grayscale-0 transition-all`}
+                    className={`w-14 h-14 rounded-md flex items-center justify-center text-xl font-bold ${member.avatarColor} border border-border-soft shadow-sm opacity-80 group-hover:opacity-100 transition-all`}
                   >
                     {member.name
                       .split(" ")
@@ -252,7 +253,7 @@ export const TeamView: React.FC<TeamViewProps> = ({
                   </span>
                 </td>
               </tr>
-              <tr className="hover:bg-surface-2 transition-colors">
+              <tr className="hover:bg-primary/5 transition-colors">
                 <td className="px-6 py-3 text-heading font-bold">
                   Julian Vance
                 </td>
