@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { IncidentSimulator } from "./IncidentSimulator/index";
 
 export const Hero = () => {
@@ -32,12 +33,12 @@ export const Hero = () => {
           </p>
 
           <div className="flex flex-wrap gap-4">
-            <button className="btn btn-primary btn-lg px-10">
+            <Link href="/dashboard" className="btn btn-primary btn-lg px-10">
               <span className="btn-slide">
                 <span>Start Monitoring</span>
                 <span>Start Monitoring</span>
               </span>
-            </button>
+            </Link>
 
             <button className="btn btn-outline btn-lg px-10">
               Book a Demo
