@@ -7,6 +7,8 @@ import {
   Webhook,
   PlusCircle,
   History,
+  Terminal,
+  Key,
 } from "lucide-react";
 import { ApiKeyManager } from "../../apikey/components/ApiKeyManager";
 
@@ -178,7 +180,7 @@ export const SettingsView: React.FC = () => {
                 Securely push telemetry and incident data via API.
               </p>
               <span className="text-[9px] uppercase font-black tracking-widest text-primary/60 mt-auto">
-                Configured in Security
+                Configured in API
               </span>
             </div>
 
@@ -195,6 +197,44 @@ export const SettingsView: React.FC = () => {
               </p>
               <button className="text-[10px] uppercase font-bold tracking-widest text-primary hover:underline text-left mt-auto">
                 Browse Catalog
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <hr className="border-border-soft" />
+
+        {/* Section: API */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="col-span-1 pr-6">
+            <h2 className="font-bold text-2xl text-primary mb-2">API</h2>
+            <p className="text-sm text-muted leading-relaxed">
+              Generate and manage API keys for programmatic access to your
+              incidents and telemetry data.
+            </p>
+          </div>
+          <div className="col-span-2 space-y-4">
+            <div className="bg-surface-1 border border-border-soft p-6 rounded-md shadow-sm">
+              <ApiKeyManager />
+            </div>
+
+            <div className="bg-surface-1 border border-border-soft p-6 rounded-md shadow-sm flex items-center justify-between group cursor-pointer hover:bg-surface-2 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-primary-soft rounded-md">
+                  <Terminal size={18} className="text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-heading">
+                    API Documentation
+                  </h4>
+                  <p className="text-xs text-muted">
+                    Explore our comprehensive API reference and integration
+                    guides.
+                  </p>
+                </div>
+              </div>
+              <button className="text-[10px] uppercase font-bold tracking-widest text-primary hover:underline">
+                View Docs
               </button>
             </div>
           </div>
@@ -254,10 +294,6 @@ export const SettingsView: React.FC = () => {
                   VIEW AUDIT LOGS
                 </button>
               </div>
-            </div>
-
-            <div className="bg-surface-1 border border-border-soft p-6 rounded-md shadow-sm">
-              <ApiKeyManager />
             </div>
           </div>
         </section>
