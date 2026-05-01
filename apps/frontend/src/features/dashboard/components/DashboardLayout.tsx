@@ -314,7 +314,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </header>
 
         {/* Main Content */}
-        <main className="p-8 flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
+          {children}
+        </main>
       </motion.div>
 
       {/* Floating Action Button */}

@@ -64,10 +64,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
   return (
     <motion.div
       key="overview"
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      exit={{ opacity: 0, y: -10 }}
+      className="space-y-8 p-8 overflow-y-auto h-[calc(100vh-4rem)] custom-scrollbar"
     >
       {/* Metric Cards Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

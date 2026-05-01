@@ -20,7 +20,7 @@ export const SettingsView: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="max-w-5xl mx-auto pb-20 pt-8"
+      className="max-w-5xl mx-auto pb-20 pt-8 p-8 overflow-y-auto"
     >
       <div className="space-y-12">
         {/* Section: Organization */}

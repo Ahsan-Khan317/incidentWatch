@@ -140,7 +140,7 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
   }
 
   return (
-    <div className="min-h-[500px]">
+    <div className="space-y-6 p-8 overflow-y-auto h-[calc(100vh-4rem)] custom-scrollbar">
       <AnimatePresence mode="wait">
         {viewState === "SERVERS" && (
           <motion.div
