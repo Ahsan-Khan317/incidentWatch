@@ -8,7 +8,49 @@ import { useIncidents } from "./hooks/useIncidents";
 
 type ViewState = "SERVERS" | "SERVER_FOCUS" | "INCIDENT_DETAIL";
 
-export const IncidentsView: React.FC = () => {
+interface IncidentsViewProps {
+  initialIncidentId?: string | null;
+  onClearInitial?: () => void;
+}
+
+// Mock servers for now (until Instance module is built)
+const MOCK_SERVERS: Server[] = [
+  {
+    id: "srv-001",
+    name: "API-GATEWAY-PROD",
+    url: "https://api.prod.example.com",
+    status: "online",
+    incidentCount: 0,
+    region: "US-EAST-1",
+    lastPulse: "2s ago",
+    tags: ["gateway"],
+  },
+  {
+    id: "srv-002",
+    name: "AUTH-SERVICE-V2",
+    url: "https://auth.example.com",
+    status: "degraded",
+    incidentCount: 1,
+    region: "EU-WEST-1",
+    lastPulse: "14s ago",
+    tags: ["auth", "java"],
+  },
+  {
+    id: "srv-003",
+    name: "DB-CLUSTER-MASTER",
+    url: "10.0.4.12",
+    status: "online",
+    incidentCount: 1,
+    region: "US-EAST-1",
+    lastPulse: "1s ago",
+    tags: ["database"],
+  },
+];
+
+export const IncidentsView: React.FC<IncidentsViewProps> = ({
+  initialIncidentId,
+  onClearInitial,
+}) => {
   const [viewState, setViewState] = useState<ViewState>("SERVERS");
   const [selectedServer, setSelectedServer] = useState<Server | null>(null);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
@@ -17,39 +59,7 @@ export const IncidentsView: React.FC = () => {
 
   const { incidents: rawIncidents, isLoading } = useIncidents();
 
-  // Mock servers for now (until Instance module is built)
-  const servers: Server[] = [
-    {
-      id: "srv-001",
-      name: "API-GATEWAY-PROD",
-      url: "https://api.prod.example.com",
-      status: "online",
-      incidentCount: 0,
-      region: "US-EAST-1",
-      lastPulse: "2s ago",
-      tags: ["gateway"],
-    },
-    {
-      id: "srv-002",
-      name: "AUTH-SERVICE-V2",
-      url: "https://auth.example.com",
-      status: "degraded",
-      incidentCount: 1,
-      region: "EU-WEST-1",
-      lastPulse: "14s ago",
-      tags: ["auth", "java"],
-    },
-    {
-      id: "srv-003",
-      name: "DB-CLUSTER-MASTER",
-      url: "10.0.4.12",
-      status: "online",
-      incidentCount: 1,
-      region: "US-EAST-1",
-      lastPulse: "1s ago",
-      tags: ["database"],
-    },
-  ];
+  const servers = MOCK_SERVERS;
 
   // Map backend "Status" to frontend "Incident"
   const allIncidents: Incident[] = useMemo(() => {
@@ -77,6 +87,26 @@ export const IncidentsView: React.FC = () => {
     }));
   }, [rawIncidents]);
 
+  // Handle Initial Incident Selection
+  React.useEffect(() => {
+    if (initialIncidentId && allIncidents.length > 0) {
+      const incident = allIncidents.find((i) => i.id === initialIncidentId);
+      if (incident) {
+        setSelectedIncident(incident);
+
+        // Also find and select the server so "Back" works as expected
+        const parentServer = servers.find((s) => s.id === incident.serverId);
+        if (parentServer) {
+          setSelectedServer(parentServer);
+        }
+
+        setViewState("INCIDENT_DETAIL");
+        // Clear the initial ID from parent state once we've consumed it
+        onClearInitial?.();
+      }
+    }
+  }, [initialIncidentId, allIncidents, servers, onClearInitial]);
+
   const handleServerClick = (server: Server) => {
     setSelectedServer(server);
     setViewState("SERVER_FOCUS");
@@ -94,7 +124,11 @@ export const IncidentsView: React.FC = () => {
 
   const handleBackToFocus = () => {
     setSelectedIncident(null);
-    setViewState("SERVER_FOCUS");
+    if (selectedServer) {
+      setViewState("SERVER_FOCUS");
+    } else {
+      setViewState("SERVERS");
+    }
   };
 
   if (isLoading && viewState === "SERVERS") {

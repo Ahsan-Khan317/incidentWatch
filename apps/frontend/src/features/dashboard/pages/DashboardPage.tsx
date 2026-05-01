@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { DashboardLayout } from "../components/DashboardLayout";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserPlus } from "lucide-react";
@@ -17,12 +17,34 @@ import { AddMemberModal } from "../components/views/AddMemberModal";
 
 // Hooks
 import { useTeam } from "../hooks/useTeam";
+import { useIncidents } from "../../incidents/hooks/useIncidents";
 
 export const DashboardPage = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(
+    null,
+  );
 
-  const { team, removeMember, toggleStatus, sendInvite, isLoading } = useTeam();
+  const {
+    team,
+    removeMember,
+    toggleStatus,
+    sendInvite,
+    isLoading: teamLoading,
+  } = useTeam();
+  const { incidents, isLoading: incidentsLoading } = useIncidents();
+
+  const handleNavigate = useCallback((view: string, incidentId?: string) => {
+    if (incidentId) {
+      setSelectedIncidentId(incidentId);
+    }
+    setActiveView(view);
+  }, []);
+
+  const handleClearInitialIncident = useCallback(() => {
+    setSelectedIncidentId(null);
+  }, []);
 
   const handleAddMember = async (
     data: Omit<TeamMember, "id" | "status" | "avatarColor">,
@@ -50,6 +72,8 @@ export const DashboardPage = () => {
     }
   };
 
+  const isLoading = teamLoading || incidentsLoading;
+
   if (isLoading && activeView === "team") {
     return (
       <DashboardLayout
@@ -67,7 +91,7 @@ export const DashboardPage = () => {
   return (
     <DashboardLayout
       activeView={activeView}
-      setActiveView={setActiveView}
+      setActiveView={handleNavigate}
       user={{ name: "Alex Chen", role: "On-Call Lead" }}
     >
       <div className="space-y-10">
@@ -85,8 +109,19 @@ export const DashboardPage = () => {
 
         {/* Content Switcher */}
         <AnimatePresence mode="wait">
-          {activeView === "dashboard" && <OverviewView team={team} />}
-          {activeView === "incidents" && <IncidentsView />}
+          {activeView === "dashboard" && (
+            <OverviewView
+              team={team}
+              incidents={incidents}
+              setActiveView={handleNavigate}
+            />
+          )}
+          {activeView === "incidents" && (
+            <IncidentsView
+              initialIncidentId={selectedIncidentId}
+              onClearInitial={handleClearInitialIncident}
+            />
+          )}
           {activeView === "logs" && <LogsView />}
           {activeView === "team" && (
             <TeamView
