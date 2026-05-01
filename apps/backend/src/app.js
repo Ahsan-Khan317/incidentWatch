@@ -3,11 +3,13 @@ import cookieParser from "cookie-parser";
 import { getIO } from "./socket/socket.js";
 import { API_PREFIX } from "@/constants/index.js";
 import rootRouter from "./router/root.router.js";
+import Auth_router from "./modules/auth/Auth.route.js";
 import { ENV } from "./configs/env.config.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 import { globalErrorHandler } from "@/middlewares/error.middleware.js";
 import { corsMiddleware } from "./middlewares/cors.middleware.js";
 import statusRouter from "./modules/status/status.route.js";
+import apiKeyRouter from "./modules/apiKey/apiKey.route.js";
 
 const app = express();
 app.use(corsMiddleware);
@@ -26,6 +28,7 @@ app.use(API_PREFIX, rootRouter);
 // Auth routes
 app.use(`/incidentwatch`, Auth_router);
 app.use(`/incidentwatch/status`, statusRouter);
+app.use(`/incidentwatch/apikey`, apiKeyRouter);
 
 app.post("/logs", (req, res) => {
   console.log("LOG:", req.body);
