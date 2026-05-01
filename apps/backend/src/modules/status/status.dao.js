@@ -2,7 +2,11 @@ import Status from "./models/status.model.js";
 
 class StatusDAO {
   async create(data) {
-    return await Status.create(data);
+    const { orgId, ...rest } = data;
+    return await Status.create({
+      ...rest,
+      orgId,
+    });
   }
 
   async findAll(filter = {}) {

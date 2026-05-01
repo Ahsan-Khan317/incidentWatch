@@ -6,7 +6,11 @@ import { ApiError } from "@/utils/Error/ApiError.js";
 export const createStatus = asyncHandler(async (req, res, next) => {
   const { title, description, severity, status } = req.body;
   const createdBy = req.user.id;
-  const orgId = req.user.orgid;
+  const orgId = req.user.organizationId || req.user.orgid;
+
+  if (!orgId) {
+    return next(new ApiError(400, "Organization ID missing"));
+  }
 
   if (!title) {
     return next(new ApiError(400, "Title is required"));
@@ -25,7 +29,7 @@ export const createStatus = asyncHandler(async (req, res, next) => {
 });
 
 export const getAllStatus = asyncHandler(async (req, res, next) => {
-  const orgId = req.user.orgid;
+  const orgId = req.user.organizationId || req.user.orgid;
   const statuses = await statusService.getAllStatus({ orgId });
 
   return res.status(200).json(new ApiResponse(200, statuses, "Statuses fetched successfully"));
@@ -34,9 +38,10 @@ export const getAllStatus = asyncHandler(async (req, res, next) => {
 export const getStatusById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const status = await statusService.getStatusById(id);
+  const orgId = req.user.organizationId || req.user.orgid;
 
   // Check if status belongs to the same org
-  if (status.orgId.toString() !== req.user.orgid.toString()) {
+  if (status.orgId.toString() !== orgId.toString()) {
     return next(new ApiError(403, "Unauthorized to access this status"));
   }
 
@@ -46,10 +51,11 @@ export const getStatusById = asyncHandler(async (req, res, next) => {
 export const updateStatus = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const updateData = req.body;
+  const orgId = req.user.organizationId || req.user.orgid;
 
   // Check if status belongs to the same org before update
   const existingStatus = await statusService.getStatusById(id);
-  if (existingStatus.orgId.toString() !== req.user.orgid.toString()) {
+  if (existingStatus.orgId.toString() !== orgId.toString()) {
     return next(new ApiError(403, "Unauthorized to update this status"));
   }
 
@@ -60,10 +66,11 @@ export const updateStatus = asyncHandler(async (req, res, next) => {
 
 export const deleteStatus = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
+  const orgId = req.user.organizationId || req.user.orgid;
 
   // Check if status belongs to the same org before delete
   const existingStatus = await statusService.getStatusById(id);
-  if (existingStatus.orgId.toString() !== req.user.orgid.toString()) {
+  if (existingStatus.orgId.toString() !== orgId.toString()) {
     return next(new ApiError(403, "Unauthorized to delete this status"));
   }
 

@@ -8,8 +8,8 @@ export const generateSessionId = () => {
 };
 
 // Generate access token — now includes sessionId for stateful verification
-export const generateAccessToken = (userId, organizationId, role, sessionId) => {
-  return jwt.sign({ id: userId, organizationId, role, sessionId }, ENV.ACCESS_TOKEN_SECRET, {
+export const generateAccessToken = ({ id, organizationId, role, sessionId }) => {
+  return jwt.sign({ id, organizationId, role, sessionId }, ENV.ACCESS_TOKEN_SECRET, {
     expiresIn: ENV.ACCESS_TOKEN_EXPIRY || "15m",
   });
 };

@@ -25,9 +25,6 @@ app.use(cookieParser());
 // Setup global API prefix with root router
 app.use(API_PREFIX, rootRouter);
 
-// Legacy/Alternative prefixes if needed
-app.use(`/incidentwatch/status`, statusRouter);
-
 app.post("/logs", (req, res) => {
   console.log("LOG:", req.body);
 

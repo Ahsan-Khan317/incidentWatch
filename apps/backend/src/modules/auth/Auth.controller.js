@@ -1,5 +1,6 @@
 import asyncHandler from "../../utils/Error/asyncHandler.js";
 import { ApiResponse } from "../../utils/Error/ApiResponse.js";
+import { ApiError } from "../../utils/Error/ApiError.js";
 import { authService } from "./auth.service.js";
 
 // @desc    Register Organization
@@ -121,9 +122,13 @@ export const get_me = asyncHandler(async (req, res, next) => {
 // @access Admin Only
 export const inviteUser = asyncHandler(async (req, res) => {
   const { name, email, role } = req.body;
-  const orgId = req.user.organizationId;
+  const organizationId = req.user.organizationId;
+  if (!organizationId) {
+    console.error("[AUTH-INVITE] organizationId is undefined in req.user. User context:", req.user);
+    throw new ApiError(403, "Organization context missing. Please re-login.");
+  }
 
-  const user = await authService.inviteUser({ name, email, role, orgId });
+  const user = await authService.inviteUser({ name, email, role, organizationId });
 
   return res.status(200).json(
     new ApiResponse(
