@@ -85,33 +85,44 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   return (
     <div className="bg-page text-body font-body antialiased min-h-screen transition-colors duration-300">
       {/* SideNavBar */}
-      <aside
-        className={`fixed left-0 top-0 h-screen bg-surface-0 border-r border-border-soft flex flex-col justify-between py-6 z-40 shadow-soft transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-20"}`}
+      <motion.aside
+        initial={false}
+        animate={{ width: isSidebarOpen ? 256 : 80 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed left-0 top-0 h-screen bg-surface-0 border-r border-border-soft flex flex-col justify-between py-6 z-40 shadow-soft overflow-hidden"
       >
         <div>
           {/* Brand Area */}
           <div
-            className={`px-5 flex items-center ${isSidebarOpen ? "gap-3" : "justify-center"}`}
+            className={`px-5 flex items-center h-8 ${isSidebarOpen ? "gap-3" : "justify-center"}`}
           >
             <div className="w-8 h-8 bg-primary rounded flex shrink-0 items-center justify-center shadow-primary">
               <span className="material-symbols-outlined text-white text-xl">
                 security
               </span>
             </div>
-            {isSidebarOpen && (
-              <div>
-                <h1 className="text-primary font-display font-black text-lg leading-none">
-                  IncidentWatch
-                </h1>
-                <p className="text-muted text-[12px] font-bold uppercase mt-1 tracking-widest">
-                  Ops Control
-                </p>
-              </div>
-            )}
+            <AnimatePresence>
+              {isSidebarOpen && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="whitespace-nowrap"
+                >
+                  <h1 className="text-primary font-display font-black text-lg leading-none">
+                    IncidentWatch
+                  </h1>
+                  <p className="text-muted text-[12px] font-bold uppercase mt-1 tracking-widest">
+                    Ops Control
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Divider + Toggle Row */}
-          <div className={`mt-5 mb-5 mx-4 border-t border-border-soft`} />
+          <div className="mt-5 mb-5 mx-4 border-t border-border-soft" />
           <div
             className={`px-3 mb-4 ${isSidebarOpen ? "" : "flex justify-center"}`}
           >
@@ -120,9 +131,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               className={`flex items-center gap-3 py-2 px-3 rounded-md text-muted hover:text-primary hover:bg-primary-soft transition-all w-full ${!isSidebarOpen ? "justify-center w-auto" : ""}`}
               title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
-              <span className="material-symbols-outlined text-[20px]">
-                {isSidebarOpen ? "menu_open" : "menu"}
-              </span>
+              <motion.span
+                animate={{ rotate: isSidebarOpen ? 0 : 180 }}
+                className="material-symbols-outlined text-[20px]"
+              >
+                menu_open
+              </motion.span>
               {isSidebarOpen && (
                 <span className="text-xs font-bold uppercase tracking-widest">
                   Collapse
@@ -152,16 +166,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <span className="material-symbols-outlined relative z-10">
                   {item.icon}
                 </span>
-                {isSidebarOpen && (
-                  <motion.span
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: "auto" }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="text-sm tracking-tight relative z-10 whitespace-nowrap overflow-hidden"
-                  >
-                    {item.label}
-                  </motion.span>
-                )}
+                <AnimatePresence>
+                  {isSidebarOpen && (
+                    <motion.span
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-sm tracking-tight relative z-10 whitespace-nowrap"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
               </a>
             ))}
           </nav>
@@ -176,83 +193,96 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 .map((n) => n[0])
                 .join("")}
             </div>
-            {isSidebarOpen && (
-              <>
-                <div className="overflow-hidden">
-                  <p className="text-sm font-bold text-heading truncate">
-                    {user.name}
-                  </p>
-                  <p className="text-xs text-muted truncate font-medium">
-                    {user.role}
-                  </p>
-                </div>
-                <div className="relative ml-auto user-menu-container">
-                  <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className={`w-9 h-9 flex items-center justify-center transition-all rounded-lg border ${
-                      showUserMenu
-                        ? "text-primary bg-primary-soft border-primary/20 shadow-inner scale-95"
-                        : "text-muted border-transparent hover:text-heading hover:bg-surface-2 hover:border-border-soft"
-                    }`}
-                  >
-                    <MoreVertical size={20} />
-                  </button>
-
-                  {/* Tooltip-style Menu */}
-                  <div
-                    className={`absolute bottom-[calc(100%+12px)] right-0 w-52 bg-surface-0 border border-border-soft rounded-xl shadow-2xl transition-all duration-200 z-50 overflow-hidden origin-bottom-right ${
-                      showUserMenu
-                        ? "opacity-100 scale-100 pointer-events-auto"
-                        : "opacity-0 scale-95 pointer-events-none"
-                    }`}
-                  >
-                    <div className="bg-surface-1/80 backdrop-blur-md px-4 py-3 border-b border-border-soft flex items-center justify-between">
-                      <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
-                        Management
-                      </p>
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    </div>
-
-                    <div className="p-2 space-y-1">
-                      <button
-                        onClick={() => {
-                          setActiveView("settings");
-                          setShowUserMenu(false);
-                        }}
-                        className="w-full px-3 py-3 text-left text-[11px] font-bold text-muted hover:text-primary hover:bg-primary-soft rounded-lg flex items-center gap-4 transition-all group/item"
-                      >
-                        <div className="w-8 h-8 rounded-md bg-surface-2 flex items-center justify-center group-hover/item:bg-primary/10 transition-colors border border-border-soft group-hover/item:border-primary/20">
-                          <Settings
-                            size={14}
-                            className="group-hover/item:text-primary transition-colors"
-                          />
-                        </div>
-                        SETTINGS
-                      </button>
-                      <button
-                        onClick={() => {
-                          handleLogout();
-                          setShowUserMenu(false);
-                        }}
-                        className="w-full px-3 py-3 text-left text-[11px] font-bold text-danger hover:bg-danger-soft rounded-lg flex items-center gap-4 transition-all group/item"
-                      >
-                        <div className="w-8 h-8 rounded-md bg-danger-soft flex items-center justify-center group-hover/item:bg-danger/20 transition-colors border border-danger/10 group-hover/item:border-danger/30">
-                          <LogOut size={14} />
-                        </div>
-                        LOGOUT
-                      </button>
-                    </div>
+            <AnimatePresence>
+              {isSidebarOpen && (
+                <motion.div
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="flex items-center flex-1 overflow-hidden"
+                >
+                  <div className="overflow-hidden flex-1 ml-3">
+                    <p className="text-sm font-bold text-heading truncate">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-muted truncate font-medium">
+                      {user.role}
+                    </p>
                   </div>
-                </div>
-              </>
-            )}
+                  <div className="relative ml-auto user-menu-container">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className={`w-9 h-9 flex items-center justify-center transition-all rounded-lg border ${
+                        showUserMenu
+                          ? "text-primary bg-primary-soft border-primary/20 shadow-inner scale-95"
+                          : "text-muted border-transparent hover:text-heading hover:bg-surface-2 hover:border-border-soft"
+                      }`}
+                    >
+                      <MoreVertical size={20} />
+                    </button>
+
+                    {/* Tooltip-style Menu */}
+                    <AnimatePresence>
+                      {showUserMenu && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                          className="absolute bottom-[calc(100%+12px)] right-0 w-52 bg-surface-0 border border-border-soft rounded-xl shadow-2xl z-50 overflow-hidden origin-bottom-right"
+                        >
+                          <div className="bg-surface-1/80 backdrop-blur-md px-4 py-3 border-b border-border-soft flex items-center justify-between">
+                            <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
+                              Management
+                            </p>
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                          </div>
+
+                          <div className="p-2 space-y-1">
+                            <button
+                              onClick={() => {
+                                setActiveView("settings");
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full px-3 py-3 text-left text-[11px] font-bold text-muted hover:text-primary hover:bg-primary-soft rounded-lg flex items-center gap-4 transition-all group/item"
+                            >
+                              <div className="w-8 h-8 rounded-md bg-surface-2 flex items-center justify-center group-hover/item:bg-primary/10 transition-colors border border-border-soft group-hover/item:border-primary/20">
+                                <Settings
+                                  size={14}
+                                  className="group-hover/item:text-primary transition-colors"
+                                />
+                              </div>
+                              SETTINGS
+                            </button>
+                            <button
+                              onClick={() => {
+                                handleLogout();
+                                setShowUserMenu(false);
+                              }}
+                              className="w-full px-3 py-3 text-left text-[11px] font-bold text-danger hover:bg-danger-soft rounded-lg flex items-center gap-4 transition-all group/item"
+                            >
+                              <div className="w-8 h-8 rounded-md bg-danger-soft flex items-center justify-center group-hover/item:bg-danger/20 transition-colors border border-danger/10 group-hover/item:border-danger/30">
+                                <LogOut size={14} />
+                              </div>
+                              LOGOUT
+                            </button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-      </aside>
+      </motion.aside>
 
       {/* Main Wrapper */}
-      <div
-        className={`flex flex-col min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-20"}`}
+      <motion.div
+        initial={false}
+        animate={{ marginLeft: isSidebarOpen ? 256 : 80 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="flex flex-col min-h-screen"
       >
         {/* TopAppBar */}
         <header className="h-16 sticky top-0 bg-surface-0 border-b border-border-soft px-8 flex justify-between items-center z-30 transition-colors duration-300">
@@ -285,7 +315,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Main Content */}
         <main className="p-8 flex-1 overflow-y-auto">{children}</main>
-      </div>
+      </motion.div>
 
       {/* Floating Action Button */}
       <motion.button
