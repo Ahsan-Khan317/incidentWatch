@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuthStore } from "../../auth/store/auth-store";
 import { useRouter } from "next/navigation";
 import { LogOut, User, Settings, MoreVertical } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -102,54 +103,79 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <aside
         className={`fixed left-0 top-0 h-screen bg-surface-0 border-r border-border-soft flex flex-col justify-between py-6 z-40 shadow-soft transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-20"}`}
       >
-        {/* Floating Toggle Button */}
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-surface-1 border border-border-soft rounded-md flex items-center justify-center text-muted hover:text-primary hover:border-primary shadow-sm transition-all z-50"
-          title="Toggle Sidebar"
-        >
-          <span className="material-symbols-outlined text-[14px]">
-            {isSidebarOpen ? "chevron_left" : "chevron_right"}
-          </span>
-        </button>
-
         <div>
+          {/* Brand Area */}
           <div
-            className={`px-6 mb-8 flex items-center ${isSidebarOpen ? "gap-3" : "justify-center flex-col gap-4"}`}
+            className={`px-5 flex items-center ${isSidebarOpen ? "gap-3" : "justify-center"}`}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded flex shrink-0 items-center justify-center shadow-primary">
-                <span className="material-symbols-outlined text-white text-xl">
-                  security
-                </span>
-              </div>
-              {isSidebarOpen && (
-                <div>
-                  <h1 className="text-primary font-display font-black text-lg leading-none">
-                    IncidentWatch
-                  </h1>
-                  <p className="text-muted text-[12px] font-bold uppercase mt-1 tracking-widest">
-                    Ops Control
-                  </p>
-                </div>
-              )}
+            <div className="w-8 h-8 bg-primary rounded flex shrink-0 items-center justify-center shadow-primary">
+              <span className="material-symbols-outlined text-white text-xl">
+                security
+              </span>
             </div>
+            {isSidebarOpen && (
+              <div>
+                <h1 className="text-primary font-display font-black text-lg leading-none">
+                  IncidentWatch
+                </h1>
+                <p className="text-muted text-[12px] font-bold uppercase mt-1 tracking-widest">
+                  Ops Control
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Divider + Toggle Row */}
+          <div className={`mt-5 mb-5 mx-4 border-t border-border-soft`} />
+          <div
+            className={`px-3 mb-4 ${isSidebarOpen ? "" : "flex justify-center"}`}
+          >
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className={`flex items-center gap-3 py-2 px-3 rounded-md text-muted hover:text-primary hover:bg-primary-soft transition-all w-full ${!isSidebarOpen ? "justify-center w-auto" : ""}`}
+              title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+            >
+              <span className="material-symbols-outlined text-[20px]">
+                {isSidebarOpen ? "menu_open" : "menu"}
+              </span>
+              {isSidebarOpen && (
+                <span className="text-xs font-bold uppercase tracking-widest">
+                  Collapse
+                </span>
+              )}
+            </button>
           </div>
           <nav className="flex flex-col gap-1 px-3">
             {navItems.map((item) => (
               <a
                 key={item.id}
                 onClick={() => setActiveView(item.id)}
-                className={`flex items-center py-2.5 rounded-md transition-all cursor-pointer ${isSidebarOpen ? "gap-3 px-3" : "justify-center px-0"} ${
+                className={`relative flex items-center py-2.5 rounded-md transition-all duration-200 cursor-pointer ${isSidebarOpen ? "gap-3 px-3" : "justify-center px-0"} ${
                   activeView === item.id
-                    ? "text-primary font-bold bg-primary-soft shadow-inner"
+                    ? "text-primary font-bold"
                     : "text-muted hover:text-heading hover:bg-surface-1 font-medium"
                 }`}
                 title={!isSidebarOpen ? item.label : undefined}
               >
-                <span className="material-symbols-outlined">{item.icon}</span>
+                {activeView === item.id && (
+                  <motion.div
+                    layoutId="sidebar-active-indicator"
+                    className="absolute inset-0 bg-primary-soft border border-primary/20 rounded-md shadow-inner"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="material-symbols-outlined relative z-10">
+                  {item.icon}
+                </span>
                 {isSidebarOpen && (
-                  <span className="text-sm tracking-tight">{item.label}</span>
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                    className="text-sm tracking-tight relative z-10 whitespace-nowrap overflow-hidden"
+                  >
+                    {item.label}
+                  </motion.span>
                 )}
               </a>
             ))}
@@ -189,10 +215,10 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
                   {/* Tooltip-style Menu */}
                   <div
-                    className={`absolute bottom-[calc(100%+12px)] right-0 w-52 bg-surface-0 border border-border-soft rounded-xl shadow-2xl transition-all duration-300 z-50 overflow-hidden ${
+                    className={`absolute bottom-[calc(100%+12px)] right-0 w-52 bg-surface-0 border border-border-soft rounded-xl shadow-2xl transition-all duration-200 z-50 overflow-hidden origin-bottom-right ${
                       showUserMenu
-                        ? "opacity-100 translate-y-0 pointer-events-auto"
-                        : "opacity-0 translate-y-4 pointer-events-none"
+                        ? "opacity-100 scale-100 pointer-events-auto"
+                        : "opacity-0 scale-95 pointer-events-none"
                     }`}
                   >
                     <div className="bg-surface-1/80 backdrop-blur-md px-4 py-3 border-b border-border-soft flex items-center justify-between">
@@ -244,7 +270,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         className={`flex flex-col min-h-screen transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-20"}`}
       >
         {/* TopAppBar */}
-        <header className="h-16 sticky top-0 bg-surface-0/80 backdrop-blur-md border-b border-border-soft px-8 flex justify-between items-center z-30 transition-colors duration-300">
+        <header className="h-16 sticky top-0 bg-surface-0 border-b border-border-soft px-8 flex justify-between items-center z-30 transition-colors duration-300">
           <div className="flex items-center gap-4">
             <h2 className="font-display text-xl font-bold tracking-tight text-heading">
               {getHeaderTitle()}
@@ -277,13 +303,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
 
       {/* Floating Action Button */}
-      {activeView === "dashboard" && (
-        <button className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-md shadow-lg flex items-center justify-center hover:scale-105 hover:bg-primary-hover active:scale-95 transition-all z-50">
-          <span className="material-symbols-outlined text-2xl">
-            support_agent
-          </span>
-        </button>
-      )}
+      <motion.button
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 20 }}
+        className="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-md shadow-lg flex items-center justify-center hover:scale-110 hover:bg-primary-hover active:scale-95 transition-all z-50 hover:shadow-primary"
+      >
+        <span className="material-symbols-outlined text-2xl">
+          support_agent
+        </span>
+      </motion.button>
     </div>
   );
 };

@@ -290,12 +290,12 @@
   --color-accent-soft: rgba(251, 191, 36, 0.12);
 
   /* ── Page / Surfaces ────────────────────────────────  */
-  --color-page: #030303;
-  --color-surface-0: #0c0e14;
-  --color-surface-1: #0b0c0d;
-  --color-surface-2: #14181f;
-  --color-surface-3: #191e27;
-  --color-surface-inverse: #f1f5f9;
+  --color-page: #000000;
+  --color-surface-0: #000000;
+  --color-surface-1: #09090b;
+  --color-surface-2: #121214;
+  --color-surface-3: #1a1a1c;
+  --color-surface-inverse: #ffffff;
 
   /* ── Typography ─────────────────────────────────────  */
   --color-heading: #f1f5f9;

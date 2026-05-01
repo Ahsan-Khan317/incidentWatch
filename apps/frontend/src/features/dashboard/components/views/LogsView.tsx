@@ -9,7 +9,8 @@ export const LogsView: React.FC = () => {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.98 }}
-      className="flex flex-col h-full bg-surface-1 rounded-md border border-border-soft overflow-hidden relative"
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      className="flex flex-col h-full min-h-[calc(100vh-12rem)] bg-surface-1 rounded-md border border-border-soft overflow-hidden relative"
     >
       <style
         dangerouslySetInnerHTML={{

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { motion } from "framer-motion";
 import { TeamMember } from "../../types";
 
 interface OverviewViewProps {
@@ -8,10 +9,20 @@ interface OverviewViewProps {
 
 export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
   return (
-    <div className="animate-in fade-in duration-300">
+    <motion.div
+      key="overview"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+    >
       {/* Metric Cards Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-border transition-all">
+        <motion.div
+          whileHover={{ y: -2 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-default"
+        >
           <div className="flex justify-between items-start">
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
               Active Incidents
@@ -34,9 +45,13 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
           <p className="text-xs text-muted font-medium mt-2">
             1 Resolved in last 12h
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-border transition-all">
+        <motion.div
+          whileHover={{ y: -2 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-default"
+        >
           <div className="flex justify-between items-start">
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
               MTTR
@@ -54,9 +69,13 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
           <p className="text-xs text-success font-medium mt-2">
             ↓ 4.2% from average
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-border transition-all">
+        <motion.div
+          whileHover={{ y: -2 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-default"
+        >
           <div className="flex justify-between items-start">
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
               On-Call Engineers
@@ -76,9 +95,13 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
           <p className="text-xs text-muted font-medium mt-2">
             Next rotation in 4h
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-border transition-all">
+        <motion.div
+          whileHover={{ y: -2 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-default"
+        >
           <div className="flex justify-between items-start">
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
               System Health
@@ -92,9 +115,14 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
             <span className="text-muted font-mono text-[13px]">%</span>
           </div>
           <div className="w-full bg-surface-2 h-1.5 mt-2 rounded-md overflow-hidden border border-border-soft">
-            <div className="bg-success h-full w-[99.9%] rounded-md"></div>
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: "99.9%" }}
+              transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1], delay: 0.3 }}
+              className="bg-success h-full rounded-md"
+            />
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Dashboard Content Layout */}
@@ -131,7 +159,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
                 {team.map((member, i) => (
                   <tr
                     key={member.id}
-                    className="hover:bg-surface-2 transition-colors group"
+                    className="hover:bg-primary/5 transition-colors group"
                   >
                     <td className="px-6 py-4 flex items-center gap-4">
                       <div
@@ -338,6 +366,6 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
