@@ -4,6 +4,8 @@ import ApiKey_router from "../modules/apiKey/apiKey.route.js";
 import statusRouter from "../modules/status/status.route.js";
 import Invite_router from "../modules/invite/Invite.route.js";
 import Member_router from "../modules/member/Member.route.js";
+import postmortemRouter from "@/modules/posmortem/postmortem.route.js";
+import incidentRouter from "@/modules/incident/incident.route.js";
 
 const rootRouter = express.Router();
 
@@ -13,6 +15,8 @@ rootRouter.use("/api-keys", ApiKey_router);
 rootRouter.use("/status", statusRouter);
 rootRouter.use("/members", Member_router);
 rootRouter.use("/", Invite_router);
+rootRouter.use("/incident", incidentRouter);
+rootRouter.use("/postmortem", postmortemRouter);
 
 // Add more routes here as you expand
 
