@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, UserPlus, Info, Palette, ShieldCheck } from "lucide-react";
+import { X, UserPlus, Palette, ShieldCheck } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { teamInviteSchema } from "../schema/team.schema";
 
 const COLORS = [
   "bg-blue-500/10 text-blue-500",
@@ -16,17 +15,25 @@ const COLORS = [
   "bg-indigo-500/10 text-indigo-500",
 ];
 
-interface AddMemberModalProps {
+const inviteSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  role: z.string().min(1, "Role is required"),
+  expertise: z.string().optional(),
+  tier: z.number().min(1).max(3),
+  avatarColor: z.string(),
+});
+
+interface InviteModalProps {
   show: boolean;
   onClose: () => void;
-  onAdd: (data: any) => void;
+  onInvite: (data: any) => Promise<boolean>;
   isLoading?: boolean;
 }
 
-export const AddMemberModal: React.FC<AddMemberModalProps> = ({
+export const InviteModal: React.FC<InviteModalProps> = ({
   show,
   onClose,
-  onAdd,
+  onInvite,
   isLoading,
 }) => {
   const {
@@ -37,13 +44,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(
-      teamInviteSchema.extend({
-        expertise: z.string().optional(),
-        tier: z.number().min(1).max(3),
-        avatarColor: z.string(),
-      }),
-    ),
+    resolver: zodResolver(inviteSchema),
     defaultValues: {
       email: "",
       role: "",
@@ -55,8 +56,8 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
 
   const selectedColor = watch("avatarColor");
 
-  const onSubmit = (data: any) => {
-    onAdd({
+  const onSubmit = async (data: any) => {
+    const payload = {
       ...data,
       expertise: data.expertise
         ? data.expertise
@@ -64,8 +65,12 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
             .map((s: string) => s.trim())
             .filter((s: string) => s !== "")
         : [],
-    });
-    reset();
+    };
+
+    const success = await onInvite(payload);
+    if (success) {
+      reset();
+    }
   };
 
   return (
@@ -85,7 +90,6 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="relative w-full max-w-xl bg-surface-0 border border-border rounded-none p-10 shadow-2xl overflow-hidden"
           >
-            {/* Background Accent */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 -mr-16 -mt-16 rounded-full blur-3xl pointer-events-none" />
 
             <div className="flex items-center justify-between mb-8 relative z-10">
@@ -95,10 +99,10 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-white uppercase tracking-tight">
-                    Add Engineer
+                    Invite member
                   </h3>
                   <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-1">
-                    Command Center Onboarding
+                    System Access Authorization
                   </p>
                 </div>
               </div>
@@ -133,19 +137,19 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                    Role
+                    Access Role
                   </label>
                   <select
                     {...register("role")}
-                    className={`w-full bg-surface-1 border ${errors.role ? "border-danger/50" : "border-border"} rounded-none px-4 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all cursor-pointer`}
+                    className={`w-full bg-surface-1 border ${errors.role ? "border-danger/50" : "border-border"} rounded-none px-4 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all cursor-pointer appearance-none`}
                   >
                     <option value="" disabled>
                       Select Role
                     </option>
-                    <option value="developer">Developer</option>
-                    <option value="admin">Administrator</option>
-                    <option value="tester">QA / Tester</option>
-                    <option value="viewer">Viewer</option>
+                    <option value="developer">Active Developer</option>
+                    <option value="admin">System Administrator</option>
+                    <option value="tester">Field Tester</option>
+                    <option value="viewer">Tactical Viewer</option>
                   </select>
                   {errors.role && (
                     <p className="text-[10px] text-danger mt-1 font-bold uppercase tracking-tight">
@@ -208,25 +212,15 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
                   placeholder="AWS, Kubernetes, React"
                   className="w-full bg-surface-1 border border-border rounded-none px-4 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/30"
                 />
-                <div className="flex items-start gap-2 mt-3 px-1">
-                  <ShieldCheck
-                    size={14}
-                    className="text-primary shrink-0 mt-0.5"
-                  />
-                  <p className="text-[9px] text-zinc-500 font-bold uppercase leading-relaxed tracking-wider">
-                    Tags help AI auto-route incidents. qualified engineers
-                    resolve incidents 40% faster.
-                  </p>
-                </div>
               </div>
 
               <div className="pt-6">
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary text-black py-4 rounded-none text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-primary/90 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group"
+                  className="w-full bg-primary text-black py-4 rounded-none text-[11px] font-bold uppercase tracking-[0.3em] hover:bg-primary/90 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading ? "Processing Data..." : "Confirm Deployment"}
+                  {isLoading ? "Synchronizing..." : "Dispatch Invitation"}
                 </button>
               </div>
             </form>

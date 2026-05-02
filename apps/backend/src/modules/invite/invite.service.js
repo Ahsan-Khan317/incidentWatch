@@ -7,7 +7,7 @@ import sendEmail from "../../services/Email/sendEmail.js";
 import { getInviteEmailTemplate } from "../../services/Email/Email_msg.js";
 
 export const inviteService = {
-  inviteMember: async ({ email, role, organizationId }) => {
+  inviteMember: async ({ email, role, organizationId, expertise, tier, avatarColor }) => {
     console.log("INVITE SERVICE ORG ID:", organizationId);
     // 1. Check if user already exists
     const user = await authDao.findUserByEmail(email);
@@ -37,6 +37,9 @@ export const inviteService = {
       organizationId: organizationId,
       role: role || "viewer",
       inviteToken,
+      expertise: expertise || [],
+      tier: tier || 1,
+      avatarColor: avatarColor || "bg-blue-500/10 text-blue-500",
     });
 
     // 5. Send email
@@ -87,7 +90,6 @@ export const inviteService = {
     }
 
     // 4. Create Member entry
-    // Check if member already exists (redundant but safe)
     const existingMember = await memberDao.findMemberByUserAndOrg(user._id, invite.organizationId);
     if (existingMember) {
       throw new ApiError(400, "User is already a member of this organization");
@@ -97,10 +99,21 @@ export const inviteService = {
       userId: user._id,
       organizationId: invite.organizationId,
       role: invite.role,
+      expertise: invite.expertise,
+      tier: invite.tier,
+      avatarColor: invite.avatarColor,
     });
 
     // 5. Mark invite as accepted
     await inviteDao.updateInviteStatus(invite._id, true);
     return { user, invite };
+  },
+
+  getInvitesByOrg: async (organizationId) => {
+    return await inviteDao.findAllPendingByOrganizationId(organizationId);
+  },
+
+  deleteInvite: async (id) => {
+    return await inviteDao.deleteInvite(id);
   },
 };

@@ -25,6 +25,18 @@ const memberSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    expertise: {
+      type: [String],
+      default: [],
+    },
+    tier: {
+      type: Number,
+      default: 1,
+    },
+    avatarColor: {
+      type: String,
+      default: "bg-blue-500/10 text-blue-500",
+    },
   },
   { timestamps: true },
 );

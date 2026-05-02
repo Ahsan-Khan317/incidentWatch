@@ -1,13 +1,24 @@
 import Invite from "./invite.model.js";
 
 export const inviteDao = {
-  createInvite: async ({ email, organizationId, role, inviteToken }) => {
+  createInvite: async ({
+    email,
+    organizationId,
+    role,
+    inviteToken,
+    expertise,
+    tier,
+    avatarColor,
+  }) => {
     console.log("INVITE DAO ORG ID:", organizationId);
     return await Invite.create({
       email,
       organizationId,
       role,
       inviteToken,
+      expertise,
+      tier,
+      avatarColor,
     });
   },
 
@@ -25,5 +36,13 @@ export const inviteDao = {
 
   deleteInvite: async (id) => {
     return await Invite.findByIdAndDelete(id);
+  },
+
+  countPendingByOrganizationId: async (organizationId) => {
+    return await Invite.countDocuments({ organizationId, isAccepted: false });
+  },
+
+  findAllPendingByOrganizationId: async (organizationId) => {
+    return await Invite.find({ organizationId, isAccepted: false });
   },
 };

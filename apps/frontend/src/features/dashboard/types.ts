@@ -6,4 +6,6 @@ export interface TeamMember {
   expertise: string[];
   status: "on-duty" | "off-duty" | "away";
   avatarColor: string;
+  tier?: number;
+  userId?: string;
 }

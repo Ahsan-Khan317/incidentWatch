@@ -2,7 +2,7 @@
 import React from "react";
 import { Plus, Trash2, Shield, Users, User } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { useTeam } from "../../dashboard/hooks/useTeam";
+import { useTeam } from "../../team/hooks/useTeam";
 
 export const AssignmentRulesForm: React.FC = () => {
   const { register, control } = useFormContext();

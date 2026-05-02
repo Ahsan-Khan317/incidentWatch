@@ -23,17 +23,23 @@ export const getMemberById = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, member, "Member fetched successfully"));
 });
 
-// @desc    Update Member Role
-// @route   PUT /api/v1/members/:id
+// @desc    Update Member Fields
+// @route   PATCH /api/v1/members/:id
 // @access  Admin Only
-export const updateMemberRole = asyncHandler(async (req, res) => {
+export const updateMemberFields = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { role } = req.body;
+  const { role, expertise, tier, avatarColor, oncall } = req.body;
   const organizationId = req.user.organizationId;
 
-  const member = await memberService.updateMemberRole(id, organizationId, role);
+  const member = await memberService.updateMemberFields(id, organizationId, {
+    role,
+    expertise,
+    tier,
+    avatarColor,
+    oncall,
+  });
 
-  return res.status(200).json(new ApiResponse(200, member, "Member role updated successfully"));
+  return res.status(200).json(new ApiResponse(200, member, "Member updated successfully"));
 });
 
 // @desc    Delete Member
@@ -47,4 +53,14 @@ export const deleteMember = asyncHandler(async (req, res) => {
   await memberService.deleteMember(id, organizationId, currentUserId);
 
   return res.status(200).json(new ApiResponse(200, null, "Member deleted successfully"));
+});
+
+// @desc    Get Member Stats
+// @route   GET /api/v1/members/stats
+// @access  Admin Only
+export const getMemberStats = asyncHandler(async (req, res) => {
+  const organizationId = req.user.organizationId;
+  const stats = await memberService.getTeamStats(organizationId);
+
+  return res.status(200).json(new ApiResponse(200, stats, "Member stats fetched successfully"));
 });

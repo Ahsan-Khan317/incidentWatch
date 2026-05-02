@@ -20,7 +20,7 @@ rootRouter.use("/api-keys", ApiKey_router);
 rootRouter.use("/status", statusRouter);
 rootRouter.use("/members", Member_router);
 rootRouter.use("/logs", logsRouter);
-rootRouter.use("/", Invite_router);
+rootRouter.use("/invite", Invite_router);
 rootRouter.use("/incident", incidentRouter);
 rootRouter.use("/postmortem", postmortemRouter);
 rootRouter.use("/sdk", sdkRouter);

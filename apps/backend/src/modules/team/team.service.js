@@ -1,5 +1,5 @@
 import teamDao from "./team.dao.js";
-import { ApiError } from "@/utils/Error/ApiError.js";
+import { ApiError } from "../../utils/Error/ApiError.js";
 
 class TeamService {
   async createTeam(orgId, data) {

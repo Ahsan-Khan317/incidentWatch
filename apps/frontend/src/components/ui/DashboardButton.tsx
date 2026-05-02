@@ -3,20 +3,22 @@
 import React from "react";
 
 interface DashboardButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "danger";
+  variant?: "primary" | "secondary" | "outline" | "danger" | "ghost";
   size?: "sm" | "md" | "lg";
   children: React.ReactNode;
+  icon?: React.ElementType;
 }
 
 const DashboardButton = ({
   variant = "primary",
   size = "md",
   children,
+  icon: Icon,
   className = "",
   ...props
 }: DashboardButtonProps) => {
   const baseStyles =
-    "inline-flex items-center justify-center rounded font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50";
+    "inline-flex items-center justify-center rounded-none font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50";
 
   const variants = {
     primary: "bg-primary text-black hover:bg-primary-strong",
@@ -25,6 +27,7 @@ const DashboardButton = ({
       "border border-border bg-transparent text-heading hover:bg-white/5",
     danger:
       "bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20",
+    ghost: "bg-transparent text-heading hover:bg-white/5",
   };
 
   const sizes = {

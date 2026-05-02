@@ -39,7 +39,7 @@ const sideNavGroups = [
   {
     title: "System",
     items: [
-      { label: "Team", href: "/dashboard/team", icon: Users },
+      { label: "Team & member", href: "/dashboard/team", icon: Users },
       { label: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },

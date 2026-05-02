@@ -1,11 +1,7 @@
 "use client";
 import { AnimatePresence } from "framer-motion";
-import { UserPlus } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { DashboardLayout } from "../layouts/DashboardLayout";
-
-// Types
-import { TeamMember } from "../types";
 
 // View Components
 import { IncidentsView } from "../../incidents/pages/IncidentsView";
@@ -17,23 +13,13 @@ import ServicePage from "../../service/pages/ServicePage";
 
 // Hooks
 import { useIncidents } from "../../incidents/hooks/useIncidents";
-import { AddMemberModal } from "../../team/components/AddMemberModal";
-import { useTeam } from "../hooks/useTeam";
 import { useViewStore } from "../store/view-store";
 
 export const DashboardPage = () => {
   const { activeView, setActiveView, selectedId, clearSelectedId } =
     useViewStore();
-  const [showAddModal, setShowAddModal] = useState(false);
 
-  const {
-    team,
-    removeMember,
-    toggleStatus,
-    sendInvite,
-    isLoading: teamLoading,
-  } = useTeam();
-  const { incidents, isLoading: incidentsLoading } = useIncidents();
+  const { isLoading: incidentsLoading } = useIncidents();
 
   const handleNavigate = useCallback(
     (view: any, incidentId?: string) => {
@@ -46,26 +32,7 @@ export const DashboardPage = () => {
     clearSelectedId();
   }, [clearSelectedId]);
 
-  const handleAddMember = async (
-    data: Omit<TeamMember, "id" | "status" | "avatarColor">,
-  ) => {
-    const success = await sendInvite(data.email, data.role);
-    if (success) {
-      setShowAddModal(false);
-    }
-  };
-
-  const isLoading = teamLoading || incidentsLoading;
-
-  if (isLoading && activeView === "team") {
-    return (
-      <DashboardLayout user={{ name: "Alex Chen", role: "On-Call Lead" }}>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      </DashboardLayout>
-    );
-  }
+  const isLoading = incidentsLoading;
 
   return (
     <DashboardLayout
@@ -86,23 +53,10 @@ export const DashboardPage = () => {
           </div>
         )}
         {activeView === "logs" && <LogsView />}
-        {activeView === "team" && (
-          <TeamView
-            team={team}
-            removeMember={removeMember}
-            toggleStatus={toggleStatus}
-            setShowAddModal={setShowAddModal}
-          />
-        )}
+        {activeView === "team" && <TeamView />}
         {activeView === "services" && <ServicePage />}
         {activeView === "settings" && <SettingsView />}
       </AnimatePresence>
-
-      <AddMemberModal
-        show={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAdd={handleAddMember}
-      />
     </DashboardLayout>
   );
 };

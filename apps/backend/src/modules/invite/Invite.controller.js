@@ -7,7 +7,7 @@ import { inviteService } from "./invite.service.js";
 // @route   POST /api/invite
 // @access  Admin Only
 export const inviteMember = asyncHandler(async (req, res) => {
-  const { email, role } = req.body;
+  const { email, role, expertise, tier, avatarColor } = req.body;
   const organizationId = req.user.organizationId;
 
   if (!organizationId) {
@@ -17,7 +17,14 @@ export const inviteMember = asyncHandler(async (req, res) => {
 
   console.log("ORG ID:", organizationId);
 
-  const invite = await inviteService.inviteMember({ email, role, organizationId });
+  const invite = await inviteService.inviteMember({
+    email,
+    role,
+    organizationId,
+    expertise,
+    tier,
+    avatarColor,
+  });
 
   return res.status(201).json(
     new ApiResponse(
@@ -52,4 +59,24 @@ export const acceptInvite = asyncHandler(async (req, res) => {
       "Invitation accepted successfully",
     ),
   );
+});
+
+// @desc    Get All Invites
+// @route   GET /api/invite
+// @access  Admin Only
+export const getInvites = asyncHandler(async (req, res) => {
+  const organizationId = req.user.organizationId;
+  const invites = await inviteService.getInvitesByOrg(organizationId);
+
+  return res.status(200).json(new ApiResponse(200, invites, "Invitations fetched successfully"));
+});
+
+// @desc    Delete/Revoke Invite
+// @route   DELETE /api/invite/:id
+// @access  Admin Only
+export const deleteInvite = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  await inviteService.deleteInvite(id);
+
+  return res.status(200).json(new ApiResponse(200, null, "Invitation revoked successfully"));
 });

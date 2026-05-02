@@ -1,5 +1,5 @@
-import asyncHandler from "@/utils/Error/asyncHandler.js";
-import { ApiResponse } from "@/utils/Error/ApiResponse.js";
+import asyncHandler from "../../utils/Error/asyncHandler.js";
+import { ApiResponse } from "../../utils/Error/ApiResponse.js";
 import teamService from "./team.service.js";
 
 export const getTeams = asyncHandler(async (req, res) => {

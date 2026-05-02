@@ -432,7 +432,7 @@ Pre-define thresholds. When agent reports a metric crossing a threshold, an inci
 {
   "name": "High CPU Alert",
   "metric": "cpu_usage",
-  "operator": "gt",
+  "member": "gt",
   "threshold": 85,
   "duration": 60,
   "severity": "SEV2",
@@ -834,7 +834,7 @@ model AlertRule {
   orgId       String
   name        String
   metric      String
-  operator    String  // gt | lt | eq
+  member    String  // gt | lt | eq
   threshold   Float
   duration    Int     // seconds threshold must be exceeded
   severity    Severity

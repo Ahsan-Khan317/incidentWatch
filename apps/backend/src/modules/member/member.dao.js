@@ -37,4 +37,12 @@ export const memberDao = {
   findMembersByUserId: async (userId) => {
     return await Member.find({ userId }).populate("organizationId", "organizationName email");
   },
+
+  countByOrganizationId: async (organizationId) => {
+    return await Member.countDocuments({ organizationId });
+  },
+
+  countOnCallByOrganizationId: async (organizationId) => {
+    return await Member.countDocuments({ organizationId, oncall: true });
+  },
 };

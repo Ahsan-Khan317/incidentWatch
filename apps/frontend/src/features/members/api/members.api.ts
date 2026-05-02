@@ -1,5 +1,4 @@
 import api from "@/src/lib/api";
-import { TeamMember } from "../types";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -7,17 +6,19 @@ export interface ApiResponse<T> {
   message: string;
 }
 
-export const memberApi = {
+export const membersApi = {
   getMembers: async (): Promise<ApiResponse<any[]>> => {
     const response = await api.get("/members");
     return response.data;
   },
 
-  updateMemberRole: async (
-    id: string,
-    role: string,
-  ): Promise<ApiResponse<any>> => {
-    const response = await api.put(`/members/${id}`, { role });
+  getStats: async (): Promise<ApiResponse<any>> => {
+    const response = await api.get("/members/stats");
+    return response.data;
+  },
+
+  updateMember: async (id: string, data: any): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/members/${id}`, data);
     return response.data;
   },
 
@@ -26,13 +27,10 @@ export const memberApi = {
     return response.data;
   },
 
-  // Note: Toggle status (on-duty) logic can be added here if backend supports it
   toggleOnCall: async (
     id: string,
     oncall: boolean,
   ): Promise<ApiResponse<any>> => {
-    // Current backend doesn't have a specific /status toggle,
-    // but we can use the generic update endpoint if needed.
     const response = await api.put(`/members/${id}`, { oncall });
     return response.data;
   },

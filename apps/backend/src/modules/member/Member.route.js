@@ -2,8 +2,9 @@ import express from "express";
 import {
   getAllMembers,
   getMemberById,
-  updateMemberRole,
+  updateMemberFields,
   deleteMember,
+  getMemberStats,
 } from "./Member.controller.js";
 import { updateMemberRoleSchema, memberIdSchema } from "./member.schema.js";
 import validate from "../../middlewares/validate.middleware.js";
@@ -15,10 +16,12 @@ const Member_router = express.Router();
 Member_router.use(org_admin_Auth);
 
 Member_router.get("/", getAllMembers);
+Member_router.get("/stats", getMemberStats);
 
 Member_router.get("/:id", memberIdSchema, validate, getMemberById);
 
-Member_router.put("/:id", updateMemberRoleSchema, validate, updateMemberRole);
+Member_router.put("/:id", updateMemberRoleSchema, validate, updateMemberFields);
+Member_router.patch("/:id", validate, updateMemberFields);
 
 Member_router.delete("/:id", memberIdSchema, validate, deleteMember);
 

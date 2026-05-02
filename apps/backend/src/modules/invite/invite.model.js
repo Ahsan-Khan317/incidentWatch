@@ -18,6 +18,18 @@ const inviteSchema = new mongoose.Schema(
       enum: ["admin", "developer", "tester", "viewer"],
       default: "viewer",
     },
+    expertise: {
+      type: [String],
+      default: [],
+    },
+    tier: {
+      type: Number,
+      default: 1,
+    },
+    avatarColor: {
+      type: String,
+      default: "bg-blue-500/10 text-blue-500",
+    },
     inviteToken: {
       type: String,
       required: true,
