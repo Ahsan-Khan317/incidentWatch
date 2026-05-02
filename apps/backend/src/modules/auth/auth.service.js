@@ -1,4 +1,6 @@
 import { authDao } from "./auth.dao.js";
+import { memberDao } from "../member/member.dao.js";
+import Member from "../member/member.model.js";
 import { ApiError } from "../../utils/Error/ApiError.js";
 import sendEmail from "../../services/Email/sendEmail.js";
 import crypto from "crypto";
@@ -33,9 +35,15 @@ export const authService = {
       name: `${name} Admin`,
       email: organization.email,
       password: password,
-      role: "admin",
+      isVerified: false,
+      isActive: true,
+    });
+
+    // Create Member entry for admin
+    await Member.create({
+      userId: adminUser._id,
       organizationId: organization._id,
-      orgid: organization._id,
+      role: "admin",
       isActive: true,
     });
 
@@ -74,11 +82,16 @@ export const authService = {
     const isuser = await authDao.findUserById(userid);
     if (!isuser) throw new ApiError(404, "User not found");
 
-    const isOrganization = await authDao.findOrganizationById(isuser.organizationId);
+    const membership = await Member.findOne({ userId: userid });
+    if (!membership) throw new ApiError(404, "Organization membership not found");
+
+    const isOrganization = await authDao.findOrganizationById(membership.organizationId);
     if (!isOrganization) throw new ApiError(404, "Organization not found");
 
     const updateuser = await authDao.updateUser(userid, { isVerified: true });
-    const updateorg = await authDao.updateOrganization(isuser.organizationId, { isVerified: true });
+    const updateorg = await authDao.updateOrganization(membership.organizationId, {
+      isVerified: true,
+    });
 
     if (!updateuser && !updateorg) throw new ApiError(400, "Account not verified.");
 
@@ -94,20 +107,24 @@ export const authService = {
 
     if (!isuser.isVerified) throw new ApiError(401, "User not verified");
 
-    console.log("USER:", isuser);
-
     const userObj = isuser.toObject();
-    const organizationId = userObj.organizationId || userObj.orgid;
 
-    if (!organizationId) {
-      console.error("USER OBJ:", userObj);
-      throw new ApiError(500, "Organization ID missing in DB");
+    // Fetch memberships
+    const memberships = await memberDao.findMembersByUserId(userObj._id);
+
+    if (!memberships || memberships.length === 0) {
+      throw new ApiError(403, "User is not part of any organization");
     }
+
+    // Use the first membership as the default context
+    const primaryMembership = memberships[0];
+    const organizationId = primaryMembership.organizationId._id || primaryMembership.organizationId;
+    const role = primaryMembership.role;
 
     // Create session via sessionService
     const sessionId = await sessionService.createSession(userObj._id, {
-      organizationId: organizationId,
-      role: userObj.role || "admin",
+      organizationId: organizationId.toString(),
+      role: role,
       ip,
       agent: userAgent,
     });
@@ -115,16 +132,16 @@ export const authService = {
     const accessToken = generateAccessToken({
       id: userObj._id,
       organizationId: organizationId.toString(),
-      role: userObj.role || "admin",
+      role: role,
       sessionId,
     });
     const refreshToken = generateRefreshToken(userObj._id, sessionId);
 
-    return { user: userObj, accessToken, refreshToken, sessionId };
+    return { user: userObj, memberships, accessToken, refreshToken, sessionId };
   },
 
   getMe: async (userId) => {
-    const isuser = await authDao.findUserByIdWithOrg(userId);
+    const isuser = await authDao.findUserById(userId);
     if (!isuser) throw new ApiError(403, "User data not fetched");
     return isuser;
   },
@@ -140,13 +157,19 @@ export const authService = {
     const user = await authDao.createUser({
       name,
       email,
-      role,
-      organizationId,
       password: crypto.randomBytes(16).toString("hex"),
       isActive: false,
       isVerified: false,
       inviteToken,
       inviteTokenExpiry: Date.now() + 1000 * 60 * 60 * 24, // 24 hours
+    });
+
+    // Store membership in Member model (inactive)
+    await Member.create({
+      userId: user._id,
+      organizationId,
+      role: role || "viewer",
+      isActive: false,
     });
 
     const html = getInviteEmailTemplate(inviteToken, organization.organizationName, email);
@@ -175,6 +198,9 @@ export const authService = {
     user.inviteToken = null;
     await user.save();
 
+    // Activate membership
+    await Member.findOneAndUpdate({ userId: user._id, isActive: false }, { isActive: true });
+
     return user;
   },
 
@@ -198,11 +224,19 @@ export const authService = {
     if (!user) throw new ApiError(404, "User not found");
 
     const userObj = user.toObject();
-    const organizationId = userObj.organizationId || userObj.orgid;
+
+    // Get organizationId from session or fallback to first membership
+    let organizationId = session.organizationId || session.orgid;
 
     if (!organizationId) {
-      console.error("[REFRESH] organizationId/orgid missing for user object:", userObj);
-      throw new ApiError(500, "User organizationId/orgid missing in DB");
+      const memberships = await memberDao.findMembersByUserId(userId);
+      if (memberships && memberships.length > 0) {
+        organizationId = memberships[0].organizationId._id || memberships[0].organizationId;
+      }
+    }
+
+    if (!organizationId) {
+      throw new ApiError(403, "User is not part of any organization");
     }
 
     const newAccessToken = generateAccessToken({

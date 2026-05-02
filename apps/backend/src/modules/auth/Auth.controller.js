@@ -2,6 +2,7 @@ import asyncHandler from "../../utils/Error/asyncHandler.js";
 import { ApiResponse } from "../../utils/Error/ApiResponse.js";
 import { ApiError } from "../../utils/Error/ApiError.js";
 import { authService } from "./auth.service.js";
+import { authDao } from "./auth.dao.js";
 
 // @desc    Register Organization
 // @route   POST /api/auth/orgregister
@@ -87,7 +88,10 @@ export const loginOrganization = asyncHandler(async (req, res, next) => {
         id: result.user._id,
         name: result.user.name,
         email: result.user.email,
-        role: result.user.role,
+        organizations: result.memberships.map((m) => ({
+          organizationId: m.organizationId?._id || m.organizationId,
+          role: m.role,
+        })),
         accessToken: result.accessToken,
       },
       "Login successful",
@@ -100,17 +104,19 @@ export const loginOrganization = asyncHandler(async (req, res, next) => {
 // @access  Private
 export const get_me = asyncHandler(async (req, res, next) => {
   const id = req.user.id;
-  const isuser = await authService.getMe(id);
+  const isuser = await authDao.findUserById(id);
+
+  if (!isuser) throw new ApiError(404, "User not found");
 
   return res.status(200).json(
     new ApiResponse(
       200,
       {
-        organizationName: isuser.organizationId?.organizationName,
+        id: isuser._id,
         name: isuser.name,
         email: isuser.email,
-        role: isuser.role,
-        oncall: isuser.oncall,
+        role: req.user.role,
+        organizationId: req.user.organizationId,
       },
       "Data fetched successfully",
     ),

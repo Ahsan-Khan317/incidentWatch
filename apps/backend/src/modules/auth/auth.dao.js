@@ -1,7 +1,12 @@
 import Organization from "../organisation/organisation.model.js";
 import User from "../user/user.model.js";
+import Member from "../member/member.model.js";
 
 export const authDao = {
+  // ... existing functions
+  findUserMemberships: async (userId) => {
+    return await Member.find({ userId }).populate("organizationId", "organizationName email");
+  },
   findOrganizationByEmail: async (email) => {
     return await Organization.findOne({ email });
   },
@@ -19,19 +24,16 @@ export const authDao = {
     return await User.findOne({ email }).select("+password");
   },
   findUserByEmailAndOrganizationId: async (email, organizationId) => {
-    return await User.findOne({
-      email,
-      $or: [{ organizationId }, { orgid: organizationId }],
-    });
+    const user = await User.findOne({ email });
+    if (!user) return null;
+    const membership = await Member.findOne({ userId: user._id, organizationId });
+    return membership ? user : null;
   },
   createUser: async (userData) => {
     return await User.create(userData);
   },
   findUserById: async (id) => {
     return await User.findById(id);
-  },
-  findUserByIdWithOrg: async (id) => {
-    return await User.findById(id).populate("organizationId");
   },
   findUserByInviteTokenAndEmail: async (email, token) => {
     return await User.findOne({ email, inviteToken: token });

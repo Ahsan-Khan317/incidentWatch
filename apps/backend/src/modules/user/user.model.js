@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
       required: [true, "Email is required"],
       lowercase: true,
       trim: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -20,19 +21,20 @@ const userSchema = new mongoose.Schema(
       minlength: 6,
       select: false,
     },
+    // Deprecated: Moved to Member model
     role: {
       type: String,
       enum: ["admin", "developer", "tester", "viewer"],
       default: "viewer",
     },
+    // Deprecated: Moved to Member model
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Organization",
-      required: true,
     },
+    // Deprecated: Moved to Member model
     oncall: {
       type: Boolean,
-      required: true,
       default: false,
     },
     isVerified: {
