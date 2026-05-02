@@ -37,9 +37,9 @@ export const inviteMember = asyncHandler(async (req, res) => {
 // @route   POST /api/accept-invite
 // @access  Public
 export const acceptInvite = asyncHandler(async (req, res) => {
-  const { token } = req.body;
+  const { token, name, password } = req.body;
 
-  const result = await inviteService.acceptInvite({ token });
+  const result = await inviteService.acceptInvite({ token, name, password });
 
   return res.status(200).json(
     new ApiResponse(
