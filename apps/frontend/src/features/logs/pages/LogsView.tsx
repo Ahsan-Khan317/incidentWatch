@@ -5,7 +5,6 @@ import Container from "@/src/components/dashboard/common/Container";
 import SectionHeading from "@/src/components/dashboard/common/SectionHeading";
 import { Download, Pause, Play } from "lucide-react";
 import LogTerminal from "../components/LogTerminal";
-import LogStats from "../components/LogStats";
 import { socketService } from "@/src/lib/socket";
 import { useLogs } from "../hooks/useLogs";
 import { useServiceStore } from "@/src/features/dashboard/store/service-store";
@@ -33,11 +32,7 @@ export const LogsView: React.FC = () => {
 
   // Helper to map MongoDB log to UI LogEntry
   const mapToLogEntry = (data: any, indexOffset: number = 0): LogEntry => {
-    // Clean ANSI escape codes
-    const cleanMessage =
-      typeof data.message === "string"
-        ? data.message.replace(/\u001b\[\d+m/g, "").replace(/\[\d+m/g, "")
-        : data.message;
+    const cleanMessage = data.message; // Keep ANSI codes for rendering
 
     return {
       id: data.id || data._id || Date.now().toString() + indexOffset,
@@ -151,10 +146,6 @@ export const LogsView: React.FC = () => {
             </div>
           )}
           <LogTerminal logs={logs} isPaused={isPaused} />
-        </div>
-
-        <div className="hidden w-72 flex-col gap-6 xl:flex">
-          <LogStats logs={logs} isPaused={isPaused} />
         </div>
       </div>
     </Container>
