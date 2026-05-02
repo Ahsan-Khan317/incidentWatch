@@ -11,7 +11,10 @@ export const inviteMemberSchema = [
     .optional()
     .isIn(["admin", "developer", "tester", "viewer"])
     .withMessage("Invalid role"),
-  body("expertise").optional().isArray().withMessage("Expertise must be an array"),
+  body("expertise")
+    .optional()
+    .custom((val) => Array.isArray(val) || typeof val === "string")
+    .withMessage("Expertise must be an array or string"),
   body("tier").optional().isNumeric().withMessage("Tier must be a number"),
   body("avatarColor").optional().isString().withMessage("Avatar color must be a string"),
 ];

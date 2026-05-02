@@ -18,7 +18,9 @@ const COLORS = [
 const inviteSchema = z.object({
   email: z.string().email("Invalid email address"),
   role: z.string().min(1, "Role is required"),
-  expertise: z.string().optional(),
+  expertise: z
+    .string()
+    .min(1, "At least one expertise tag is required (e.g. AWS, React)"),
   tier: z.number().min(1).max(3),
   avatarColor: z.string(),
 });
@@ -210,8 +212,13 @@ export const InviteModal: React.FC<InviteModalProps> = ({
                   {...register("expertise")}
                   type="text"
                   placeholder="AWS, Kubernetes, React"
-                  className="w-full bg-surface-1 border border-border rounded-none px-4 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/30"
+                  className={`w-full bg-surface-1 border ${errors.expertise ? "border-danger/50" : "border-border"} rounded-none px-4 py-3 text-sm text-heading focus:outline-none focus:border-primary/50 transition-all placeholder:text-muted/30`}
                 />
+                {errors.expertise && (
+                  <p className="text-[10px] text-danger mt-1 font-bold uppercase tracking-tight">
+                    {errors.expertise.message as string}
+                  </p>
+                )}
               </div>
 
               <div className="pt-6">
