@@ -68,11 +68,11 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-surface-0 border border-border-soft rounded-lg shadow-2xl z-[101] overflow-hidden"
+            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-surface-0 border border-border-soft rounded-none shadow-2xl z-[101] overflow-hidden"
           >
             <div className="p-6 border-b border-border-soft flex items-center justify-between bg-surface-1">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary-soft rounded-md flex items-center justify-center text-primary border border-primary/20">
+                <div className="w-10 h-10 bg-primary-soft rounded-none flex items-center justify-center text-primary border border-primary/20">
                   <Key size={20} />
                 </div>
                 <div>
@@ -86,7 +86,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
               </div>
               <button
                 onClick={onClose}
-                className="p-2 text-muted hover:text-heading hover:bg-surface-2 rounded-md transition-all"
+                className="p-2 text-muted hover:text-heading hover:bg-surface-2 rounded-none transition-all"
               >
                 <X size={18} />
               </button>
@@ -100,7 +100,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                   </label>
                   <input
                     autoFocus
-                    className="w-full bg-surface-2 border border-border-soft rounded-md px-4 py-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all text-heading placeholder:text-muted/50"
+                    className="w-full bg-surface-2 border border-border-soft rounded-none px-4 py-3 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all text-heading placeholder:text-muted/50"
                     placeholder="e.g. Production Webhook, Grafana Sync"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -118,7 +118,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                         key={opt.value}
                         type="button"
                         onClick={() => setExpiry(opt.value)}
-                        className={`flex items-center justify-between px-4 py-3 rounded-md border text-[11px] font-bold transition-all ${
+                        className={`flex items-center justify-between px-4 py-3 rounded-none border text-[11px] font-bold transition-all ${
                           expiry === opt.value
                             ? "bg-primary-soft border-primary text-primary shadow-inner"
                             : "bg-surface-2 border-border-soft text-muted hover:border-border hover:bg-surface-3"
@@ -149,7 +149,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                   </div>
                 </div>
 
-                <div className="p-4 bg-primary-soft/30 border border-primary/10 rounded-md flex gap-3">
+                <div className="p-4 bg-primary-soft/30 border border-primary/10 rounded-none flex gap-3">
                   <Info className="text-primary shrink-0 mt-0.5" size={16} />
                   <p className="text-[11px] text-muted leading-relaxed">
                     {expiry === "infinite"
@@ -159,7 +159,7 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                 </div>
 
                 {error && (
-                  <div className="p-3 bg-danger-soft border border-danger/20 rounded-md text-danger text-[11px] font-bold">
+                  <div className="p-3 bg-danger-soft border border-danger/20 rounded-none text-danger text-[11px] font-bold">
                     {error}
                   </div>
                 )}
@@ -169,14 +169,14 @@ export const CreateApiKeyModal: React.FC<CreateApiKeyModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 border border-border-soft text-xs font-bold text-muted hover:text-heading hover:bg-surface-1 rounded-md transition-all uppercase tracking-widest"
+                  className="flex-1 py-3 border border-border-soft text-xs font-bold text-muted hover:text-heading hover:bg-surface-1 rounded-none transition-all uppercase tracking-widest"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading || !name.trim()}
-                  className="flex-1 py-3 bg-primary text-on-primary text-xs font-bold rounded-md hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-widest shadow-lg shadow-primary/20"
+                  className="flex-1 py-3 bg-primary text-on-primary text-xs font-bold rounded-none hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase tracking-widest shadow-lg shadow-primary/20"
                 >
                   {isLoading ? "Generating..." : "Generate Key"}
                 </button>

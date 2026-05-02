@@ -7,8 +7,10 @@ import {
   LayoutGrid,
   LogOut,
   Logs,
+  Settings,
   Terminal,
   TriangleAlert,
+  Users,
 } from "lucide-react";
 import { useAuthStore } from "@/src/features/auth/store/auth-store";
 import Link from "next/link";
@@ -30,6 +32,14 @@ const sideNavGroups = [
         icon: Bell,
         children: [{ label: "Channel", href: "/dashboard/alerts/channel" }],
       },
+    ],
+  },
+  // Management
+  {
+    title: "System",
+    items: [
+      { label: "Team", href: "/dashboard/team", icon: Users },
+      { label: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },
 ];

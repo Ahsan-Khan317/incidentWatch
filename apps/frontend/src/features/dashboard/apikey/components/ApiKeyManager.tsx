@@ -72,7 +72,7 @@ export const ApiKeyManager: React.FC = () => {
 
   if (error) {
     return (
-      <div className="p-4 bg-danger-soft border border-danger/20 rounded-md text-danger text-sm">
+      <div className="p-4 bg-danger-soft border border-danger/20 rounded-none text-danger text-sm">
         {error}
       </div>
     );
@@ -89,14 +89,14 @@ export const ApiKeyManager: React.FC = () => {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-primary text-on-primary text-[11px] font-bold rounded-md hover:bg-primary-hover transition-all uppercase tracking-wider shadow-sm"
+          className="flex items-center gap-2 px-3 py-1.5 bg-primary text-on-primary text-[11px] font-bold rounded-none hover:bg-primary-hover transition-all uppercase tracking-wider shadow-sm"
         >
           <Plus size={14} />
           Create Key
         </button>
       </div>
 
-      <div className="bg-surface-2 border border-border-soft rounded-md overflow-hidden shadow-sm">
+      <div className="bg-surface-2 border border-border-soft rounded-none overflow-hidden shadow-sm">
         {isLoading && apiKeys.length === 0 ? (
           <div className="p-12 text-center text-muted text-xs animate-pulse">
             Loading API keys...
@@ -138,7 +138,7 @@ export const ApiKeyManager: React.FC = () => {
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-2 h-2 rounded-full ${isEffectivelyActive ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-muted-soft"}`}
+                          className={`w-2 h-2 rounded-nonell ${isEffectivelyActive ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.4)]" : "bg-muted-soft"}`}
                         />
                         <span className="text-sm font-bold text-heading">
                           {key.name}
@@ -147,14 +147,14 @@ export const ApiKeyManager: React.FC = () => {
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
-                        <code className="text-[11px] bg-surface-3 px-2 py-1 rounded border border-border-soft font-mono text-muted max-w-[180px] truncate">
+                        <code className="text-[11px] bg-surface-3 px-2 py-1 rounded-nonerder border-border-soft font-mono text-muted max-w-[180px] truncate">
                           {visibleKeys[key._id]
                             ? key.key
                             : "••••••••••••••••••••••••••••••••"}
                         </code>
                         <button
                           onClick={() => toggleKeyVisibility(key._id)}
-                          className="p-1.5 text-muted hover:text-primary transition-colors rounded-md hover:bg-surface-2"
+                          className="p-1.5 text-muted hover:text-primary transition-colors rounded-none hover:bg-surface-2"
                         >
                           {visibleKeys[key._id] ? (
                             <EyeOff size={14} />
@@ -164,7 +164,7 @@ export const ApiKeyManager: React.FC = () => {
                         </button>
                         <button
                           onClick={() => copyToClipboard(key.key)}
-                          className="p-1.5 text-muted hover:text-primary transition-colors rounded-md hover:bg-surface-2"
+                          className="p-1.5 text-muted hover:text-primary transition-colors rounded-none hover:bg-surface-2"
                         >
                           <Copy size={14} />
                         </button>
@@ -177,7 +177,7 @@ export const ApiKeyManager: React.FC = () => {
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => toggleApiKeyStatus(key._id)}
-                          className={`p-1.5 transition-colors rounded-md ${
+                          className={`p-1.5 transition-colors rounded-none ${
                             key.isActive
                               ? "text-success hover:bg-success-soft"
                               : "text-muted hover:text-success hover:bg-success-soft"
@@ -196,7 +196,7 @@ export const ApiKeyManager: React.FC = () => {
                               regenerateApiKey(key._id);
                             }
                           }}
-                          className="p-1.5 text-muted hover:text-primary transition-colors rounded-md hover:bg-surface-2"
+                          className="p-1.5 text-muted hover:text-primary transition-colors rounded-none hover:bg-surface-2"
                           title="Regenerate Key"
                         >
                           <RefreshCw size={14} />
@@ -211,7 +211,7 @@ export const ApiKeyManager: React.FC = () => {
                               deleteApiKey(key._id);
                             }
                           }}
-                          className="p-1.5 text-muted hover:text-danger transition-colors rounded-md hover:bg-danger-soft"
+                          className="p-1.5 text-muted hover:text-danger transition-colors rounded-none hover:bg-danger-soft"
                           title="Delete Key"
                         >
                           <Trash2 size={14} />

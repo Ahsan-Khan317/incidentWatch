@@ -116,7 +116,7 @@ export const SettingsView: React.FC = () => {
           title="API Keys"
           description="Programmatic access tokens for custom instrumentation and automation."
         >
-          <div className="rounded border border-border bg-surface-1 p-6 shadow-sm">
+          <div className="rounded-none border border-border bg-surface-1 p-6">
             <ApiKeyManager />
           </div>
         </SettingsSection>
