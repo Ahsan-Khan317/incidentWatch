@@ -2,7 +2,10 @@ import { z } from "zod";
 
 export const assignmentRuleSchema = z.object({
   tagsRegex: z.string().min(1, "Regex is required"),
-  teams: z.array(z.string()).default([]),
+  teams: z
+    .union([z.string(), z.array(z.string())])
+    .optional()
+    .default([]),
   members: z.array(z.string()).default([]),
 });
 

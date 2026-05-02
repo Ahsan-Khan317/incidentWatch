@@ -8,6 +8,7 @@ import LogTerminal from "../components/LogTerminal";
 import LogStats from "../components/LogStats";
 import { socketService } from "@/src/lib/socket";
 import { useLogs } from "../hooks/useLogs";
+import { useServiceStore } from "@/src/features/dashboard/store/service-store";
 
 export interface LogEntry {
   id: string;
@@ -19,9 +20,15 @@ export interface LogEntry {
 }
 
 export const LogsView: React.FC = () => {
+  const { selectedServiceId, services } = useServiceStore();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isPaused, setIsPaused] = useState(false);
-  const { initialLogs, isLoading } = useLogs();
+  const selectedServiceName =
+    services.find((s: any) => (s._id || s.id) === selectedServiceId)?.name ||
+    "All Services";
+  const { initialLogs, isLoading } = useLogs(
+    selectedServiceId === "all" ? "all" : selectedServiceName,
+  );
   const [lastLineNumber, setLastLineNumber] = useState(1000);
 
   // Helper to map MongoDB log to UI LogEntry
@@ -44,9 +51,14 @@ export const LogsView: React.FC = () => {
     };
   };
 
+  // Clear logs immediately when service selection changes to show loading state
+  useEffect(() => {
+    setLogs([]);
+  }, [selectedServiceId]);
+
   // Load historical logs once they arrive
   useEffect(() => {
-    if (initialLogs && initialLogs.length > 0) {
+    if (initialLogs) {
       console.log("📚 Historical logs loaded:", initialLogs.length, "entries");
       // Reverse so newest is at the bottom
       const reversedLogs = [...initialLogs].reverse();
@@ -63,6 +75,11 @@ export const LogsView: React.FC = () => {
     const socket = socketService.getSocket();
 
     const handleNewLog = (data: any) => {
+      // Filter logs by selected service if not "all"
+      if (selectedServiceId !== "all" && data.service !== selectedServiceName) {
+        return;
+      }
+
       console.log("📥 New log received via Socket:", data);
       const newEntry = mapToLogEntry(data);
       setLogs((prev) => {
@@ -79,13 +96,17 @@ export const LogsView: React.FC = () => {
       console.log("🔌 Cleaning up socket listener");
       socket.off("log", handleNewLog);
     };
-  }, [isPaused]);
+  }, [isPaused, selectedServiceId, selectedServiceName]);
 
   return (
     <Container className="flex flex-col h-full overflow-hidden">
       <SectionHeading
-        title="Live Logs"
-        description="Real-time telemetry and system event logging across all services."
+        title={`Live Logs: ${selectedServiceName}`}
+        description={
+          selectedServiceId === "all"
+            ? "Real-time telemetry and system event logging across all services."
+            : `Monitoring real-time telemetry specifically for ${selectedServiceName}.`
+        }
       >
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-end">

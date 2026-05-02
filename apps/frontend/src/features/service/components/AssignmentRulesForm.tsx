@@ -2,7 +2,7 @@
 import React from "react";
 import { Plus, Trash2, Shield, Users, User } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { useTeam } from "../../team/hooks/useTeam";
+import { useMembers } from "../../members/hooks/useMembers";
 
 export const AssignmentRulesForm: React.FC = () => {
   const { register, control } = useFormContext();
@@ -10,7 +10,7 @@ export const AssignmentRulesForm: React.FC = () => {
     control,
     name: "assignmentRules",
   });
-  const { team: members } = useTeam();
+  const { members } = useMembers();
 
   return (
     <div className="space-y-6">
@@ -85,7 +85,7 @@ export const AssignmentRulesForm: React.FC = () => {
                     {...register(`assignmentRules.${index}.members` as const)}
                     className="w-full bg-surface-2 border border-border-soft rounded-none px-4 py-2.5 text-xs text-heading focus:outline-none focus:border-primary/50 transition-all appearance-none h-24"
                   >
-                    {members.map((m) => (
+                    {members?.map((m: any) => (
                       <option key={m.id} value={m.id}>
                         {m.name} ({m.email})
                       </option>

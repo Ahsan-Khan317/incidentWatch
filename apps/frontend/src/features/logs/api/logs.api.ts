@@ -11,9 +11,11 @@ export interface Log {
 }
 
 export const logsApi = {
-  getLogs: async () => {
+  getLogs: async (serviceId?: string) => {
     try {
-      const response = await api.get("/logs");
+      const params =
+        serviceId && serviceId !== "all" ? { service: serviceId } : {};
+      const response = await api.get("/logs", { params });
       console.log("📡 API Response [/logs]:", response.data);
       return response.data.data as Log[];
     } catch (error) {

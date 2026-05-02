@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { logsApi, Log } from "../api/logs.api";
 
-export const useLogs = () => {
+export const useLogs = (serviceId?: string) => {
   const [initialLogs, setInitialLogs] = useState<Log[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -10,7 +10,7 @@ export const useLogs = () => {
     const fetchLogs = async () => {
       try {
         setIsLoading(true);
-        const data = await logsApi.getLogs();
+        const data = await logsApi.getLogs(serviceId);
         setInitialLogs(data);
       } catch (err: any) {
         console.error("Failed to fetch logs:", err);
@@ -21,7 +21,7 @@ export const useLogs = () => {
     };
 
     fetchLogs();
-  }, []);
+  }, [serviceId]);
 
   return { initialLogs, isLoading, error };
 };
