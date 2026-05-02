@@ -30,7 +30,7 @@ const logSchema = new Schema(
       type: String,
       required: true,
     },
-    meta: {
+    metadata: {
       type: Schema.Types.Mixed,
       default: {},
     },

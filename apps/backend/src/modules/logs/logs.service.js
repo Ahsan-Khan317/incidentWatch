@@ -1,9 +1,65 @@
 import logsDao from "./logs.dao.js";
+import apiKeyDao from "../apiKey/apiKey.dao.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
 
 class LogsService {
-  async createLog(data) {
-    return await logsDao.create(data);
+  async createLog(body, auth) {
+    const { message, title, level, severity, service, tags, context, breadcrumbs, meta } = body;
+    const { apiKeyHeader, user } = auth;
+
+    // 1. Resolve orgId and apiKey
+    let orgId;
+    let apiKey = "none";
+
+    if (apiKeyHeader) {
+      const apiKeyDoc = await apiKeyDao.findOne({ key: apiKeyHeader, isActive: true });
+      if (!apiKeyDoc) {
+        throw new ApiError(401, "Invalid or inactive API Key");
+      }
+      orgId = apiKeyDoc.organizationId;
+      apiKey = apiKeyHeader;
+    } else if (user) {
+      orgId = user.organizationId || user.orgid;
+      apiKey = "jwt_auth";
+    }
+
+    if (!orgId) {
+      throw new ApiError(401, "Authentication required (API Key or JWT)");
+    }
+
+    // 2. Normalize data
+    const normalizedMessage = message || title;
+
+    // Severity mapping: SEV1 -> error, SEV2 -> warn, SEV3 -> info
+    const sevMap = {
+      SEV1: "error",
+      SEV2: "warn",
+      SEV3: "info",
+    };
+
+    // Determine level: prioritize mapping from severity, then mapping from level, then raw values
+    const normalizedLevel = sevMap[severity] || sevMap[level] || level || severity || "info";
+
+    // Extract service: SDK uses context.service, legacy uses body.service
+    const resolvedService = context?.service || service || "unknown";
+
+    // Metadata construction
+    const metadata = {
+      tags: tags || [],
+      context: context || {},
+      breadcrumbs: breadcrumbs || [],
+      ...meta, // Backward compatibility: merge existing meta if present
+    };
+
+    // 3. Call DAO
+    return await logsDao.create({
+      message: normalizedMessage,
+      level: normalizedLevel.toLowerCase(),
+      orgId,
+      apiKey,
+      service: resolvedService,
+      metadata,
+    });
   }
 
   async getAllLogs(filter) {
