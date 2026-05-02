@@ -30,11 +30,11 @@ export const TeamView: React.FC<TeamViewProps> = ({
   return (
     <motion.div
       key="team"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-      className="space-y-8"
+      className="p-8 overflow-y-auto h-[calc(100vh-4rem)] space-y-8"
     >
       {/* Dashboard Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

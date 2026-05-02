@@ -5,45 +5,102 @@ import { TeamMember } from "../../types";
 
 interface OverviewViewProps {
   team: TeamMember[];
+  incidents: any[];
+  setActiveView: (view: string, targetId?: string) => void;
 }
 
-export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
+export const OverviewView: React.FC<OverviewViewProps> = ({
+  team,
+  incidents,
+  setActiveView,
+}) => {
+  // --- Dynamic Logic ---
+  const activeIncidents = incidents.filter((inc) => inc.status !== "resolved");
+  const criticalIncidents = activeIncidents.filter(
+    (inc) => inc.severity === "critical",
+  );
+  const highIncidents = activeIncidents.filter(
+    (inc) => inc.severity === "high",
+  );
+
+  // Calculate System Health: Start at 100%, subtract for each active issue
+  const healthPenalty =
+    criticalIncidents.length * 15 + highIncidents.length * 5;
+  const systemHealth = Math.max(0, 100 - healthPenalty).toFixed(1);
+  const healthColor =
+    parseFloat(systemHealth) > 90
+      ? "text-success"
+      : parseFloat(systemHealth) > 70
+        ? "text-warning"
+        : "text-danger";
+  const healthBarColor =
+    parseFloat(systemHealth) > 90
+      ? "bg-success"
+      : parseFloat(systemHealth) > 70
+        ? "bg-warning"
+        : "bg-danger";
+
+  // Format recent events for the timeline (limit to last 5)
+  const recentEvents = [...incidents]
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, 5);
+
+  const getSeverityColor = (sev: string) => {
+    switch (sev) {
+      case "critical":
+        return "border-danger text-danger bg-danger/10";
+      case "high":
+        return "border-warning text-warning bg-warning/10";
+      case "medium":
+        return "border-info text-info bg-info/10";
+      default:
+        return "border-muted text-muted bg-muted/10";
+    }
+  };
+
   return (
     <motion.div
       key="overview"
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+      exit={{ opacity: 0, y: -10 }}
+      className="space-y-8 p-8 overflow-y-auto h-[calc(100vh-4rem)] custom-scrollbar"
     >
       {/* Metric Cards Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <motion.div
           whileHover={{ y: -2 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-default"
+          onClick={() => setActiveView("incidents")}
+          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-pointer group"
         >
           <div className="flex justify-between items-start">
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
               Active Incidents
             </span>
             <span
-              className="material-symbols-outlined text-danger"
+              className={`material-symbols-outlined ${activeIncidents.length > 0 ? "text-danger" : "text-success"}`}
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
-              warning
+              {activeIncidents.length > 0 ? "warning" : "check_circle"}
             </span>
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-4xl font-display font-bold text-heading tracking-tight">
-              2
+              {activeIncidents.length}
             </span>
-            <span className="text-danger font-mono text-[13px] px-2 py-0.5 bg-danger-soft rounded border border-danger-border font-bold">
-              Critical
-            </span>
+            {criticalIncidents.length > 0 && (
+              <span className="text-danger font-mono text-[13px] px-2 py-0.5 bg-danger-soft rounded border border-danger-border font-bold animate-pulse">
+                {criticalIncidents.length} Critical
+              </span>
+            )}
           </div>
           <p className="text-xs text-muted font-medium mt-2">
-            1 Resolved in last 12h
+            {incidents.filter((inc) => inc.status === "resolved").length}{" "}
+            Resolved in history
           </p>
         </motion.div>
 
@@ -54,27 +111,31 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
         >
           <div className="flex justify-between items-start">
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
-              MTTR
+              Average Severity
             </span>
-            <span className="material-symbols-outlined text-success">
-              timer
+            <span className="material-symbols-outlined text-info">
+              analytics
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-display font-bold text-heading tracking-tight">
-              14
+            <span className="text-2xl font-display font-bold text-heading tracking-tight uppercase">
+              {highIncidents.length > 0
+                ? "High"
+                : activeIncidents.length > 0
+                  ? "Moderate"
+                  : "Nominal"}
             </span>
-            <span className="text-muted font-mono text-[13px]">mins</span>
           </div>
-          <p className="text-xs text-success font-medium mt-2">
-            ↓ 4.2% from average
+          <p className="text-xs text-muted font-medium mt-2">
+            Based on current fleet state
           </p>
         </motion.div>
 
         <motion.div
           whileHover={{ y: -2 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-default"
+          onClick={() => setActiveView("team")}
+          className="bg-surface-1 border border-border-soft p-6 flex flex-col gap-2 rounded-md shadow-sm hover:shadow-md hover:border-primary/30 transition-all cursor-pointer group"
         >
           <div className="flex justify-between items-start">
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
@@ -93,7 +154,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
             </span>
           </div>
           <p className="text-xs text-muted font-medium mt-2">
-            Next rotation in 4h
+            {team.length} total responders
           </p>
         </motion.div>
 
@@ -106,20 +167,24 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
             <span className="text-muted text-[12px] font-bold tracking-widest uppercase">
               System Health
             </span>
-            <span className="material-symbols-outlined text-success">bolt</span>
+            <span className={`material-symbols-outlined ${healthColor}`}>
+              bolt
+            </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-display font-bold text-heading tracking-tight">
-              99.9
+            <span
+              className={`text-4xl font-display font-bold ${healthColor} tracking-tight`}
+            >
+              {systemHealth}
             </span>
             <span className="text-muted font-mono text-[13px]">%</span>
           </div>
           <div className="w-full bg-surface-2 h-1.5 mt-2 rounded-md overflow-hidden border border-border-soft">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: "99.9%" }}
+              animate={{ width: `${systemHealth}%` }}
               transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1], delay: 0.3 }}
-              className="bg-success h-full rounded-md"
+              className={`${healthBarColor} h-full rounded-md`}
             />
           </div>
         </motion.div>
@@ -133,7 +198,10 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
             <h3 className="text-xl font-display font-bold text-heading tracking-tight">
               Team Roster
             </h3>
-            <button className="text-primary text-sm font-bold hover:text-primary-hover transition-colors">
+            <button
+              onClick={() => setActiveView("team")}
+              className="text-primary text-sm font-bold hover:text-primary-hover transition-colors"
+            >
               View All
             </button>
           </div>
@@ -148,7 +216,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
                     Status
                   </th>
                   <th className="px-6 py-4 text-[11px] font-bold tracking-widest text-muted uppercase">
-                    Assigned
+                    Expertise
                   </th>
                   <th className="px-6 py-4 text-[11px] font-bold tracking-widest text-muted uppercase">
                     Load
@@ -156,10 +224,11 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-soft">
-                {team.map((member, i) => (
+                {team.slice(0, 5).map((member, i) => (
                   <tr
                     key={member.id}
-                    className="hover:bg-primary/5 transition-colors group"
+                    onClick={() => setActiveView("team")}
+                    className="hover:bg-primary/5 transition-colors group cursor-pointer"
                   >
                     <td className="px-6 py-4 flex items-center gap-4">
                       <div
@@ -190,10 +259,17 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm font-medium text-body">
-                      {member.status === "on-duty"
-                        ? "1 Incident"
-                        : "0 Incidents"}
+                    <td className="px-6 py-4">
+                      <div className="flex gap-1">
+                        {member.expertise.slice(0, 2).map((exp) => (
+                          <span
+                            key={exp}
+                            className="px-1.5 py-0.5 bg-surface-2 border border-border-soft text-[9px] text-muted rounded uppercase font-bold"
+                          >
+                            {exp}
+                          </span>
+                        ))}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="w-24 bg-surface-3 border border-border-soft h-1.5 rounded-md overflow-hidden">
@@ -208,35 +284,25 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
             </table>
           </div>
 
-          {/* System Health Chart Simulation */}
+          {/* Activity Trends Visualization (Static Placeholder with Dynamic Context) */}
           <div className="mt-4 p-8 bg-surface-1 border border-border-soft rounded-md shadow-sm">
             <div className="flex justify-between items-center mb-8">
               <h4 className="font-display font-bold text-lg text-heading tracking-tight">
-                Regional Infrastructure Health
+                System Activity (24h)
               </h4>
               <div className="flex gap-4">
                 <span className="flex items-center gap-2 text-xs font-bold text-muted">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-success shadow-sm"></span>{" "}
-                  US-East
-                </span>
-                <span className="flex items-center gap-2 text-xs font-bold text-muted">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-info shadow-sm"></span>{" "}
-                  EU-West
+                  {incidents.length} Events Logged
                 </span>
               </div>
             </div>
             <div className="h-32 flex items-end gap-1 px-2 border-b border-border-soft pb-1">
-              {[80, 85, 90, 92, 95, 100, 98, 99].map((h, i) => (
+              {[
+                60, 45, 90, 32, 55, 100, 48, 99, 40, 70, 85, 30, 45, 60, 20, 10,
+              ].map((h, i) => (
                 <div
-                  key={`us-${i}`}
-                  className="flex-1 bg-success-soft hover:bg-success border-t border-success-border rounded-t-sm transition-all"
-                  style={{ height: `${h}%` }}
-                ></div>
-              ))}
-              {[70, 75, 85, 82, 90, 88, 92, 91].map((h, i) => (
-                <div
-                  key={`eu-${i}`}
-                  className="flex-1 bg-info-soft hover:bg-info border-t border-info-border rounded-t-sm transition-all"
+                  key={`chart-${i}`}
+                  className={`flex-1 ${h > 80 ? "bg-danger/40" : "bg-primary/20"} border-t border-border-soft rounded-t-sm transition-all`}
                   style={{ height: `${h}%` }}
                 ></div>
               ))}
@@ -255,113 +321,79 @@ export const OverviewView: React.FC<OverviewViewProps> = ({ team }) => {
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center px-2">
             <h3 className="text-xl font-display font-bold text-heading tracking-tight">
-              System Events
+              Recent Activity
             </h3>
             <span className="material-symbols-outlined text-muted text-sm cursor-pointer hover:text-heading">
-              filter_list
+              history
             </span>
           </div>
           <div className="bg-surface-1 border border-border-soft p-8 rounded-md shadow-sm h-full relative overflow-hidden">
             <div className="absolute left-10 top-10 bottom-10 w-px bg-border-soft"></div>
             <div className="flex flex-col gap-8 relative z-10">
-              {/* Event 1 */}
-              <div className="flex gap-5 relative group">
-                <div className="w-5 h-5 rounded-md bg-surface-1 border-2 border-danger z-10 flex items-center justify-center shadow-sm group-hover:scale-125 transition-transform">
-                  <div className="w-1.5 h-1.5 rounded-sm bg-danger animate-pulse"></div>
-                </div>
-                <div className="flex-1 -mt-1">
-                  <div className="flex justify-between items-start mb-1.5">
-                    <p className="text-sm font-bold text-heading">
-                      Critical: API Latency Spike
-                    </p>
-                    <span className="text-[10px] font-mono font-bold text-muted">
-                      14m ago
-                    </span>
+              {recentEvents.length > 0 ? (
+                recentEvents.map((event, idx) => (
+                  <div
+                    key={event._id || idx}
+                    onClick={() => setActiveView("incidents", event._id)}
+                    className="flex gap-5 relative group cursor-pointer"
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-md bg-surface-1 border-2 ${event.status === "resolved" ? "border-success" : "border-danger"} z-10 flex items-center justify-center shadow-sm group-hover:scale-125 transition-transform`}
+                    >
+                      {event.status === "resolved" ? (
+                        <span className="material-symbols-outlined text-[12px] text-success font-bold">
+                          check
+                        </span>
+                      ) : (
+                        <div
+                          className={`w-1.5 h-1.5 rounded-sm ${event.severity === "critical" ? "bg-danger animate-pulse" : "bg-warning"}`}
+                        ></div>
+                      )}
+                    </div>
+                    <div className="flex-1 -mt-1">
+                      <div className="flex justify-between items-start mb-1.5">
+                        <p className="text-sm font-bold text-heading line-clamp-1">
+                          {event.title}
+                        </p>
+                        <span className="text-[9px] font-mono font-bold text-muted whitespace-nowrap ml-2">
+                          {new Date(event.createdAt).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-body font-medium leading-relaxed mb-3 line-clamp-2">
+                        {event.description || "No description provided."}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`px-2 py-0.5 border rounded text-[9px] font-bold font-mono uppercase ${getSeverityColor(event.severity)}`}
+                        >
+                          {event.severity}
+                        </span>
+                        <span className="px-2 py-0.5 bg-surface-2 border border-border-soft text-muted text-[9px] font-bold font-mono rounded uppercase">
+                          {event.status}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-body font-medium leading-relaxed mb-3">
-                    P95 latency exceeded 1500ms in us-east-1 region. Traffic
-                    rerouted to secondary cluster.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 bg-surface-2 border border-border-soft text-muted text-[10px] font-bold font-mono rounded">
-                      us-east-1
-                    </span>
-                    <span className="px-2.5 py-1 bg-surface-2 border border-border-soft text-muted text-[10px] font-bold font-mono rounded">
-                      LB-02
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Event 2 */}
-              <div className="flex gap-5 relative group">
-                <div className="w-5 h-5 rounded-md bg-surface-1 border-2 border-success z-10 flex items-center justify-center shadow-sm group-hover:scale-125 transition-transform">
-                  <span className="material-symbols-outlined text-[12px] text-success font-bold">
-                    check
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-center opacity-40">
+                  <span className="material-symbols-outlined text-4xl mb-2">
+                    visibility_off
                   </span>
-                </div>
-                <div className="flex-1 -mt-1">
-                  <div className="flex justify-between items-start mb-1.5">
-                    <p className="text-sm font-bold text-heading">
-                      Resolved: Database Lock
-                    </p>
-                    <span className="text-[10px] font-mono font-bold text-muted">
-                      2h ago
-                    </span>
-                  </div>
-                  <p className="text-xs text-body font-medium leading-relaxed mb-2">
-                    Deadlock cleared on master node. Performance returned to
-                    baseline levels.
+                  <p className="text-xs font-bold uppercase tracking-widest">
+                    No Recent Activity
                   </p>
                 </div>
-              </div>
-
-              {/* Event 3 */}
-              <div className="flex gap-5 relative group">
-                <div className="w-5 h-5 rounded-md bg-surface-1 border-2 border-info z-10 flex items-center justify-center shadow-sm group-hover:scale-125 transition-transform">
-                  <div className="w-1.5 h-1.5 rounded-sm bg-info"></div>
-                </div>
-                <div className="flex-1 -mt-1">
-                  <div className="flex justify-between items-start mb-1.5">
-                    <p className="text-sm font-bold text-heading">
-                      Info: Scheduled Maintenance
-                    </p>
-                    <span className="text-[10px] font-mono font-bold text-muted">
-                      4h ago
-                    </span>
-                  </div>
-                  <p className="text-xs text-body font-medium leading-relaxed mb-3">
-                    Automated patch deployment initiated for
-                    kubernetes-cluster-04.
-                  </p>
-                  <span className="px-2.5 py-1 bg-info-soft border border-info-border text-info text-[10px] font-bold tracking-wider rounded">
-                    AUTOMATED
-                  </span>
-                </div>
-              </div>
-
-              {/* Event 4 */}
-              <div className="flex gap-5 relative group">
-                <div className="w-5 h-5 rounded-md bg-surface-1 border-2 border-muted opacity-60 z-10 flex items-center justify-center group-hover:scale-125 transition-transform group-hover:opacity-100">
-                  <div className="w-1.5 h-1.5 rounded-sm bg-muted"></div>
-                </div>
-                <div className="flex-1 -mt-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                  <div className="flex justify-between items-start mb-1.5">
-                    <p className="text-sm font-bold text-heading">
-                      Audit: Settings Changed
-                    </p>
-                    <span className="text-[10px] font-mono font-bold text-muted">
-                      Yesterday
-                    </span>
-                  </div>
-                  <p className="text-xs text-body font-medium leading-relaxed">
-                    Alert thresholds modified for 'Internal Services' dashboard.
-                  </p>
-                </div>
-              </div>
+              )}
             </div>
-            <button className="w-full mt-10 py-3 text-xs font-bold text-muted border border-border-soft rounded-md hover:bg-surface-2 hover:text-heading transition-colors">
-              Load Older Activity
+            <button
+              onClick={() => setActiveView("logs")}
+              className="w-full mt-10 py-3 text-xs font-bold text-muted border border-border-soft rounded-md hover:bg-surface-2 hover:text-heading transition-colors"
+            >
+              View Activity Log
             </button>
           </div>
         </div>

@@ -1,81 +1,58 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { DashboardLayout } from "../components/DashboardLayout";
 import { AnimatePresence, motion } from "framer-motion";
-import { Plus, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 
 // Types
 import { TeamMember } from "../types";
 
 // View Components
 import { OverviewView } from "../components/views/OverviewView";
-import { IncidentsView } from "../../incidents/IncidentsView"; // FIXED IMPORT
+import { IncidentsView } from "../../incidents/IncidentsView";
 import { LogsView } from "../components/views/LogsView";
 import { TeamView } from "../components/views/TeamView";
 import { SettingsView } from "../components/views/SettingsView";
 import { AddMemberModal } from "../components/views/AddMemberModal";
 
+// Hooks
+import { useTeam } from "../hooks/useTeam";
+import { useIncidents } from "../../incidents/hooks/useIncidents";
+
 export const DashboardPage = () => {
   const [activeView, setActiveView] = useState("dashboard");
   const [showAddModal, setShowAddModal] = useState(false);
-  const [team, setTeam] = useState<TeamMember[]>([
-    {
-      id: "1",
-      name: "Marcus Thorne",
-      role: "SRE Lead",
-      email: "marcus@incidentwatch.io",
-      expertise: ["Kubernetes", "PostgreSQL", "AWS"],
-      status: "on-duty",
-      avatarColor: "bg-emerald-500/10 text-emerald-500",
-    },
-    {
-      id: "2",
-      name: "Elena Vance",
-      role: "Infrastructure Engineer",
-      email: "elena@incidentwatch.io",
-      expertise: ["Terraform", "Go", "Docker"],
-      status: "on-duty",
-      avatarColor: "bg-blue-500/10 text-blue-500",
-    },
-    {
-      id: "3",
-      name: "Arjun Kumar",
-      role: "Backend Architect",
-      email: "arjun@incidentwatch.io",
-      expertise: ["Node.js", "Redis", "Azure"],
-      status: "off-duty",
-      avatarColor: "bg-purple-500/10 text-purple-500",
-    },
-  ]);
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(
+    null,
+  );
 
-  const handleAddMember = (
+  const {
+    team,
+    removeMember,
+    toggleStatus,
+    sendInvite,
+    isLoading: teamLoading,
+  } = useTeam();
+  const { incidents, isLoading: incidentsLoading } = useIncidents();
+
+  const handleNavigate = useCallback((view: string, incidentId?: string) => {
+    if (incidentId) {
+      setSelectedIncidentId(incidentId);
+    }
+    setActiveView(view);
+  }, []);
+
+  const handleClearInitialIncident = useCallback(() => {
+    setSelectedIncidentId(null);
+  }, []);
+
+  const handleAddMember = async (
     data: Omit<TeamMember, "id" | "status" | "avatarColor">,
   ) => {
-    const member: TeamMember = {
-      ...data,
-      id: Date.now().toString(),
-      status: "off-duty",
-      avatarColor: `bg-zinc-500/10 text-zinc-500`,
-    };
-    setTeam([...team, member]);
-  };
-
-  const removeMember = (id: string) => {
-    setTeam(team.filter((m) => m.id !== id));
-  };
-
-  const toggleStatus = (id: string) => {
-    setTeam(
-      team.map((m) => {
-        if (m.id === id) {
-          return {
-            ...m,
-            status: m.status === "on-duty" ? "off-duty" : "on-duty",
-          };
-        }
-        return m;
-      }),
-    );
+    const success = await sendInvite(data.email, data.role);
+    if (success) {
+      setShowAddModal(false);
+    }
   };
 
   const getHeaderTitle = () => {
@@ -95,27 +72,26 @@ export const DashboardPage = () => {
     }
   };
 
-  const getHeaderDesc = () => {
-    switch (activeView) {
-      case "dashboard":
-        return "Real-time infrastructure health and operational metrics.";
-      case "incidents":
-        return "Track and resolve active system alerts.";
-      case "logs":
-        return "Streaming real-time events from production clusters.";
-      case "team":
-        return "Manage your organization's engineering response team.";
-      case "settings":
-        return "Configure organizational protocols and integrations.";
-      default:
-        return "";
-    }
-  };
+  const isLoading = teamLoading || incidentsLoading;
+
+  if (isLoading && activeView === "team") {
+    return (
+      <DashboardLayout
+        activeView={activeView}
+        setActiveView={setActiveView}
+        user={{ name: "Alex Chen", role: "On-Call Lead" }}
+      >
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout
       activeView={activeView}
-      setActiveView={setActiveView}
+      setActiveView={handleNavigate}
       user={{ name: "Alex Chen", role: "On-Call Lead" }}
     >
       <div className="space-y-10">
@@ -133,8 +109,19 @@ export const DashboardPage = () => {
 
         {/* Content Switcher */}
         <AnimatePresence mode="wait">
-          {activeView === "dashboard" && <OverviewView team={team} />}
-          {activeView === "incidents" && <IncidentsView />}
+          {activeView === "dashboard" && (
+            <OverviewView
+              team={team}
+              incidents={incidents}
+              setActiveView={handleNavigate}
+            />
+          )}
+          {activeView === "incidents" && (
+            <IncidentsView
+              initialIncidentId={selectedIncidentId}
+              onClearInitial={handleClearInitialIncident}
+            />
+          )}
           {activeView === "logs" && <LogsView />}
           {activeView === "team" && (
             <TeamView
