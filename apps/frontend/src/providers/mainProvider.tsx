@@ -4,7 +4,6 @@ import * as React from "react";
 import { ThemeProvider } from "@/src/providers/theme-Provider";
 import { ReactQueryProvider } from "@/src/providers/query-provider";
 import { useAuthInit } from "@/src/features/auth/hooks/useAuthInit";
-
 /**
  * Runs useAuthInit inside the provider tree (after ReactQuery is available).
  */

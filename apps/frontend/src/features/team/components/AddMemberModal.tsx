@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, UserPlus, Info } from "lucide-react";
-import { TeamMember } from "../../types";
+import { TeamMember } from "../../dashboard/types";
 
 interface AddMemberModalProps {
   show: boolean;
@@ -73,7 +73,7 @@ export const AddMemberModal: React.FC<AddMemberModalProps> = ({
               </div>
               <button
                 onClick={onClose}
-                className="p-2.5 rounded-md hover:bg-white/[0.05] text-zinc-500 transition-colors"
+                className="p-2.5 rounded-md hover:bg-surface-2 text-muted transition-colors"
               >
                 <X size={20} />
               </button>

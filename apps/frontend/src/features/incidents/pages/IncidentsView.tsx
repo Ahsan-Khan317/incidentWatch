@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Server, Incident } from "./types";
-import { ServerCard } from "./components/ServerCard";
-import { IncidentObject } from "./components/IncidentObject";
-import { IncidentDetail } from "./components/IncidentDetail";
-import { useIncidents } from "./hooks/useIncidents";
+import { Server, Incident } from "../types";
+import { ServerCard } from "../components/ServerCard";
+import { IncidentObject } from "../components/IncidentObject";
+import { IncidentDetail } from "../components/IncidentDetail";
+import { useIncidents } from "../hooks/useIncidents";
+import Container from "@/src/components/dashboard/common/Container";
+import IncidentsSkeleton from "../components/IncidentsSkeleton";
 
 type ViewState = "SERVERS" | "SERVER_FOCUS" | "INCIDENT_DETAIL";
 
@@ -132,15 +134,11 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
   };
 
   if (isLoading && viewState === "SERVERS") {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <IncidentsSkeleton />;
   }
 
   return (
-    <div className="space-y-6 p-8 overflow-y-auto h-[calc(100vh-4rem)] custom-scrollbar">
+    <Container className="space-y-6">
       <AnimatePresence mode="wait">
         {viewState === "SERVERS" && (
           <motion.div
@@ -274,6 +272,6 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
           />
         )}
       </AnimatePresence>
-    </div>
+    </Container>
   );
 };

@@ -55,7 +55,7 @@
 ========================================================= */
 :root {
   /* ── Brand ─────────────────────────────────────────── */
-  --color-primary: #046327;
+  --color-primary: #389f16;
   /* green-600  */
   --color-primary-hover: #15803d;
   /* green-700  */
@@ -85,7 +85,7 @@
   --color-neutral-950: #020617;
 
   /* ── Page / Surfaces ────────────────────────────────  */
-  --color-page: #ffffff;
+  --color-page: #f6f6f6;
   --color-surface-0: #f8fafc;
   /* subtle lift above page   */
   --color-surface-1: #f1f5f9;
@@ -273,21 +273,22 @@
    Only semantic roles need to change; raw palette stays.
 ========================================================= */
 .dark {
-  /* ── Brand ─────────────────────────────────────────── */
-  --color-primary: #4ade80;
-  /* green-400  */
-  --color-primary-hover: #86efac;
-  /* green-300  */
-  --color-primary-active: #bbf7d0;
-  /* green-200  */
-  --color-primary-soft: rgba(74, 222, 128, 0.12);
-  --color-primary-muted: rgba(74, 222, 128, 0.07);
+  /* Brand */
+  --color-primary: #c6f91f;
+  --color-primary-strong: #b3eb11;
+  --color-primary-soft: rgba(198, 249, 31, 0.1);
 
-  --color-accent: #fbbf24;
-  /* amber-400  */
-  --color-accent-hover: #fcd34d;
-  /* amber-300  */
-  --color-accent-soft: rgba(251, 191, 36, 0.12);
+  /* Page + Surfaces */
+  --color-page: #05080a;
+  --color-surface-1: #080b0e;
+  --color-surface-2: #0b0f13;
+  --color-surface-3: #0e1216;
+
+  /* Typography */
+  --color-heading: #ffffff;
+  --color-body: rgba(255, 255, 255, 0.7);
+  --color-body-strong: rgba(255, 255, 255, 0.8);
+  --color-muted: #94a3b8;
 
   /* ── Page / Surfaces ────────────────────────────────  */
   --color-page: #000000;
@@ -1093,7 +1094,8 @@
 /* ── Layout Containers ───────────────────────────────── */
 .container-max {
   width: 100%;
-  max-width: 80rem; /* 1280px / 7xl */
+  max-width: 80rem;
+  /* 1280px / 7xl */
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.5rem;
@@ -1102,7 +1104,8 @@
 
 .container-md {
   width: 100%;
-  max-width: 64rem; /* 1024px / 5xl */
+  max-width: 64rem;
+  /* 1024px / 5xl */
   margin-left: auto;
   margin-right: auto;
   padding-left: 1.5rem;
@@ -1396,10 +1399,12 @@
     display: none !important;
   }
 }
+
 /* Hide scrollbar utility */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
