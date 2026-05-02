@@ -10,6 +10,7 @@ type View =
   | "analytics"
   | "status-page"
   | "team"
+  | "services"
   | "billing"
   | "settings";
 

@@ -2,6 +2,7 @@
 
 import { authAPI } from "@/src/lib/api/api";
 import {
+  Activity,
   Bell,
   ChevronDown,
   LayoutGrid,

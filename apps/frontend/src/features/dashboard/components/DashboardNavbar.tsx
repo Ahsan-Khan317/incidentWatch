@@ -17,7 +17,7 @@ const breadcrumbLabels: Record<string, string> = {
   team: "Team & Access",
   billing: "Billing",
   settings: "Settings",
-  services: "Services",
+  services: "Service",
 };
 
 import { useViewStore } from "../store/view-store";

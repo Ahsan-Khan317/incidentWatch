@@ -10,29 +10,17 @@ export const authAPI = {
 
 export const serviceAPI = {
   getServices: async () => {
-    // Stub for now, return empty or mocked data
-    // In a real app, this would be: return api.get("/services").then(res => res.data);
-    return {
-      service: {
-        services: [],
-      },
-    };
+    const response = await api.get("/services");
+    return response.data.data;
   },
 };
 
 export const overviewAPI = {
   getOverviewMetrics: async ({ serviceId }: { serviceId?: string }) => {
-    // Stub for now
-    return {
-      metrics: {
-        totalApis: { value: 124, newThisWeek: 3 },
-        uptime: { value: 99.98, last24h: 99.99, last30d: 99.95 },
-        avgResponseTime: { valueMs: 142, deltaMsVsLastWeek: -8 },
-        incidents: { open: 0 },
-        errorRate: { value: 0.02 },
-        generatedAt: new Date().toISOString(),
-      },
-    };
+    const params =
+      serviceId && serviceId !== "all" ? `?serviceId=${serviceId}` : "";
+    const response = await api.get(`/overview/metrics${params}`);
+    return response.data.data;
   },
 };
 

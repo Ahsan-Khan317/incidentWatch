@@ -12,6 +12,14 @@ const serviceSchema = new Schema(
       ref: "Organisation",
       required: true,
     },
+    baseUrl: {
+      type: String,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
     environment: {
       type: String,
       default: "development",

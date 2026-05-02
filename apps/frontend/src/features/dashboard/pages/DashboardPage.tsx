@@ -13,6 +13,7 @@ import { LogsView } from "../../logs/pages/LogsView";
 import { SettingsView } from "../../settings/pages/SettingsView";
 import { TeamView } from "../../team/pages/TeamView";
 import { OverviewView } from "../../overview/pages/OverviewView";
+import ServicePage from "../../service/pages/ServicePage";
 
 // Hooks
 import { useIncidents } from "../../incidents/hooks/useIncidents";
@@ -93,6 +94,7 @@ export const DashboardPage = () => {
             setShowAddModal={setShowAddModal}
           />
         )}
+        {activeView === "services" && <ServicePage />}
         {activeView === "settings" && <SettingsView />}
       </AnimatePresence>
 

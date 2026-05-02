@@ -10,6 +10,7 @@ import logsRouter from "../modules/logs/logs.route.js";
 import sdkRouter from "../modules/sdk/sdk.route.js";
 import serviceRouter from "../modules/service/service.route.js";
 import teamRouter from "../modules/team/team.route.js";
+import overviewRouter from "../modules/overview/overview.route.js";
 
 const rootRouter = express.Router();
 
@@ -25,6 +26,7 @@ rootRouter.use("/postmortem", postmortemRouter);
 rootRouter.use("/sdk", sdkRouter);
 rootRouter.use("/services", serviceRouter);
 rootRouter.use("/teams", teamRouter);
+rootRouter.use("/overview", overviewRouter);
 
 // Add more routes here as you expand
 

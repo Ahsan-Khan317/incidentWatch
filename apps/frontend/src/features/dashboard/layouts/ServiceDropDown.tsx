@@ -1,210 +1,137 @@
 "use client";
-
-import { serviceAPI } from "@/src/lib/api/api";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { ChevronDown, Plus } from "lucide-react";
 import { useServiceStore } from "@/src/features/dashboard/store/service-store";
-import { useQuery } from "@tanstack/react-query";
-import { ChevronDown } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useViewStore } from "@/src/features/dashboard/store/view-store";
+import { useServices } from "../../service/hooks/useServices";
 import DashboardButton from "@/src/components/ui/DashboardButton";
 import { useRouter } from "next/navigation";
 
 const ServiceDropDown = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const {
-    selectedServiceId,
-    selectedService,
-    setSelectedServiceId,
-    setSelectedService,
-  } = useServiceStore();
-  const router = useRouter();
+  const { selectedServiceId, setSelectedServiceId, services } =
+    useServiceStore();
+  const { setActiveView } = useViewStore();
 
-  const servicesQuery = useQuery({
-    queryKey: ["services"],
-    queryFn: serviceAPI.getServices,
-  });
-
-  const services: any[] = useMemo(
-    () => servicesQuery.data?.service?.services ?? [],
-    [servicesQuery.data],
-  );
+  // Use our centralized hook which handles fetching and store syncing
+  const servicesQuery = useServices();
 
   const resolvedSelectedService = useMemo(() => {
-    if (selectedServiceId === "all") {
+    if (selectedServiceId === "all" || !Array.isArray(services)) {
       return null;
     }
-
     return (
-      services.find(
-        (service: any) =>
-          (service._id || service.id || service.baseUrl) === selectedServiceId,
-      ) ?? null
+      services.find((s: any) => (s._id || s.id) === selectedServiceId) || null
     );
   }, [services, selectedServiceId]);
 
   useEffect(() => {
-    setSelectedService(resolvedSelectedService);
-  }, [resolvedSelectedService, setSelectedService]);
-
-  useEffect(() => {
-    if (selectedServiceId === "all" || services.length === 0) {
-      return;
-    }
-
-    const serviceStillExists = services.some(
-      (service: any) =>
-        (service._id || service.id || service.baseUrl) === selectedServiceId,
-    );
-
-    if (!serviceStillExists) {
-      setSelectedServiceId("all");
-    }
-  }, [selectedServiceId, services, setSelectedServiceId]);
-
-  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (!menuRef.current || menuRef.current.contains(event.target as Node)) {
-        return;
-      }
-
-      setIsOpen(false);
-    };
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const currentName = resolvedSelectedService?.name || "All Services";
-  const currentMeta =
-    resolvedSelectedService?.environment ||
-    resolvedSelectedService?.baseUrl ||
-    "All environments";
+  const currentName = resolvedSelectedService?.name || "All Infrastructure";
+  const currentMeta = resolvedSelectedService?.environment || "Global Cluster";
 
   return (
-    <div
-      ref={menuRef}
-      className="border-b border-dashed border-border px-4 py-4"
-    >
+    <div ref={menuRef} className="border-b border-border/40 px-4 py-4">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        disabled={servicesQuery.isError}
-        className="flex w-full items-center justify-between rounded bg-surface-1 px-3 py-2 transition-colors hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60"
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
+        className="flex w-full items-center justify-between rounded-none border border-border bg-surface-1 px-3 py-2.5 transition-all hover:border-primary/40 group"
       >
-        <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-primary text-xs font-medium text-black dark:text-black">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-none bg-primary text-[10px] font-bold text-black uppercase tracking-tighter">
             {resolvedSelectedService
-              ? (resolvedSelectedService.name || "S").charAt(0).toUpperCase()
-              : "A"}
+              ? resolvedSelectedService.name.charAt(0)
+              : "ALL"}
           </div>
           <div className="flex min-w-0 flex-col text-left">
-            <span className="truncate text-xs text-heading">{currentName}</span>
-            <span className="truncate text-[0.625rem] text-body">
+            <span className="truncate text-[10px] font-bold uppercase tracking-widest text-heading">
+              {currentName}
+            </span>
+            <span className="truncate text-[9px] text-zinc-500 uppercase font-medium">
               {currentMeta}
             </span>
           </div>
         </div>
-        <ChevronDown size={16} className="shrink-0 text-body" />
+        <ChevronDown
+          size={14}
+          className={`shrink-0 text-muted transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
-      {isOpen ? (
-        <div
-          className="mt-2 max-h-64 overflow-auto rounded border border-border bg-surface-2 p-1 shadow-lg"
-          role="listbox"
-        >
+      {isOpen && (
+        <div className="mt-2 max-h-72 overflow-y-auto rounded-none border border-border bg-surface-2 p-1 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 scrollbar-hide">
           <button
             type="button"
             onClick={() => {
               setSelectedServiceId("all");
               setIsOpen(false);
             }}
-            className={`flex w-full items-center justify-between rounded px-2 py-2 text-left text-xs transition-colors ${
+            className={`flex w-full items-center justify-between rounded-none px-3 py-3 text-left transition-all ${
               selectedServiceId === "all"
-                ? "bg-primary/10 text-primary font-bold"
-                : "text-body hover:bg-surface-3 hover:text-heading"
+                ? "bg-primary text-black font-bold"
+                : "text-zinc-400 hover:bg-surface-3 hover:text-white"
             }`}
           >
-            <span className="truncate">All Services</span>
-            <span className="ml-2 shrink-0 text-[0.625rem] text-muted">
-              all env
+            <span className="text-[10px] uppercase tracking-widest">
+              All Services
+            </span>
+            <span className="text-[8px] uppercase tracking-tighter opacity-60">
+              Global
             </span>
           </button>
 
-          {services.map((service: any) => {
-            const value = service._id || service.id || service.baseUrl;
-            const serviceName = service?.name || "Unnamed service";
-            const serviceMeta =
-              service?.environment || service?.baseUrl || "unknown";
+          {Array.isArray(services) &&
+            services.map((service: any) => {
+              const id = service._id || service.id;
+              const isSelected = selectedServiceId === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedServiceId(id);
+                    setIsOpen(false);
+                  }}
+                  className={`mt-1 flex w-full items-center justify-between rounded-none px-3 py-3 text-left transition-all ${
+                    isSelected
+                      ? "bg-primary text-black font-bold"
+                      : "text-zinc-400 hover:bg-surface-3 hover:text-white"
+                  }`}
+                >
+                  <span className="min-w-0 truncate text-[10px] uppercase tracking-widest">
+                    {service.name}
+                  </span>
+                  <span className="ml-2 truncate text-[8px] uppercase tracking-tighter opacity-60">
+                    {service.environment}
+                  </span>
+                </button>
+              );
+            })}
 
-            return (
-              <button
-                key={value}
-                type="button"
-                onClick={() => {
-                  setSelectedServiceId(value);
-                  setIsOpen(false);
-                }}
-                className={`mt-1 flex w-full items-center justify-between rounded px-2 py-2 text-left text-xs transition-colors ${
-                  selectedServiceId === value
-                    ? "bg-primary/10 text-primary font-bold"
-                    : "text-body hover:bg-surface-3 hover:text-heading"
-                }`}
-              >
-                <span className="min-w-0 truncate">{serviceName}</span>
-                <span className="ml-2 max-w-[45%] truncate text-[0.625rem] text-muted">
-                  {serviceMeta}
-                </span>
-              </button>
-            );
-          })}
-
-          <div className="p-1">
-            <DashboardButton
+          <div className="mt-2 p-1 border-t border-border/40">
+            <button
               onClick={() => {
                 setIsOpen(false);
-                router.push("/dashboard/services");
+                setActiveView("services");
               }}
-              variant="primary"
-              className=" w-full"
+              className="flex w-full items-center justify-center gap-2 px-3 py-2 text-[9px] font-bold uppercase tracking-widest text-primary hover:bg-primary/5 transition-all"
             >
+              <Plus size={12} />
               Manage Services
-            </DashboardButton>
+            </button>
           </div>
-
-          {servicesQuery.isLoading ? (
-            <p className="px-2 py-2 text-[0.625rem] text-body">
-              Loading services...
-            </p>
-          ) : null}
-
-          {services.length === 0 &&
-          !servicesQuery.isLoading &&
-          !servicesQuery.isError ? (
-            <p className="px-2 py-2 text-[0.625rem] text-body">
-              No services available.
-            </p>
-          ) : null}
         </div>
-      ) : null}
-
-      {servicesQuery.isError ? (
-        <p className="mt-2 truncate text-[0.625rem] text-red-300">
-          Could not load services.
-        </p>
-      ) : null}
+      )}
     </div>
   );
 };

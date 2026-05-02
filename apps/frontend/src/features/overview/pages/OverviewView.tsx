@@ -9,6 +9,7 @@ import {
   Activity,
   AlertTriangle,
   Clock3,
+  Plus,
   RefreshCw,
   Server,
 } from "lucide-react";
@@ -19,7 +20,10 @@ import OverviewMetricCard from "../components/OverviewMetricCard";
 import OverviewSectionCard from "../components/OverviewSectionCard";
 import OverviewTopErrors from "../components/OverviewTopErrors";
 import LocalServiceFilterDropdown from "../../dashboard/layouts/LocalServiceFilterDropdown";
+import { useViewStore } from "@/src/features/dashboard/store/view-store";
 import OverviewSkeleton from "../components/OverviewSkeleton";
+import { useServices } from "../../service/hooks/useServices";
+import { useRouter } from "next/navigation";
 
 const formatNumber = (
   value: any,
@@ -62,9 +66,12 @@ const formatDateTime = (value: any) => {
 };
 
 export const OverviewView: React.FC = () => {
+  const router = useRouter();
+  useServices(); // Ensure services are fetched and synced globally
   const { services } = useServiceStore();
   const { localServiceId, activeServiceFilter, setLocalFilter } =
     useServiceFiltering();
+  const { setActiveView } = useViewStore();
 
   const overviewQuery = useQuery({
     queryKey: ["overview-metrics", activeServiceFilter || "all"],
@@ -77,6 +84,7 @@ export const OverviewView: React.FC = () => {
     (overviewQuery.data as any)?.overview;
 
   const selectedService = useMemo(() => {
+    if (!Array.isArray(services)) return null;
     return services.find((s: any) => (s._id || s.id) === activeServiceFilter);
   }, [services, activeServiceFilter]);
 
@@ -124,11 +132,7 @@ export const OverviewView: React.FC = () => {
         title="Overview"
         description="Real-time uptime, response time, incident pressure, and endpoint error concentration."
       >
-        <LocalServiceFilterDropdown
-          value={localServiceId}
-          onChange={setLocalFilter}
-          allOptionLabel="All Services"
-        />
+        <LocalServiceFilterDropdown />
 
         <DashboardButton
           variant="secondary"
@@ -141,16 +145,46 @@ export const OverviewView: React.FC = () => {
           />
           Refresh
         </DashboardButton>
+
+        <DashboardButton
+          variant="primary"
+          onClick={() => setActiveView("services")}
+        >
+          <Plus size={14} />
+          Manage Services
+        </DashboardButton>
       </SectionHeading>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2 text-[0.6875rem] text-body">
-        <span className="rounded border border-border bg-surface-1 px-2 py-1 uppercase tracking-[0.12em] text-body/55">
-          Scope
-        </span>
-        <span className="rounded border border-border bg-surface-1 px-2 py-1 text-heading">
-          {selectedScopeLabel}
-        </span>
-        <span className="text-body/35">Updated {generatedAt}</span>
+      <div className="mb-4 flex flex-wrap items-center gap-3 text-[0.6875rem] text-body">
+        <div className="flex items-center gap-2">
+          <span className="rounded border border-border bg-surface-1 px-2 py-1 uppercase tracking-[0.12em] text-body/55">
+            Scope
+          </span>
+          <span className="rounded border border-border bg-surface-1 px-2 py-1 text-heading">
+            {selectedScopeLabel}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 border-l border-border pl-3">
+          <div className="flex items-center gap-1.5">
+            <div
+              className={`h-1.5 w-1.5 rounded-full ${metrics?.systemStatus?.frontend === "operational" ? "bg-success" : "bg-warning"}`}
+            />
+            <span className="uppercase tracking-widest text-body/60">
+              Frontend
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div
+              className={`h-1.5 w-1.5 rounded-full ${metrics?.systemStatus?.backend === "operational" ? "bg-success" : "bg-warning"}`}
+            />
+            <span className="uppercase tracking-widest text-body/60">
+              Backend
+            </span>
+          </div>
+        </div>
+
+        <span className="ml-auto text-body/35">Updated {generatedAt}</span>
       </div>
 
       {overviewQuery.isLoading && <OverviewSkeleton />}
@@ -163,7 +197,7 @@ export const OverviewView: React.FC = () => {
 
       {metrics && !overviewQuery.isLoading && (
         <>
-          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <OverviewMetricCard
               title="Total APIs"
               value={formatNumber(totalApis, 0, 0)}
@@ -174,24 +208,34 @@ export const OverviewView: React.FC = () => {
             <OverviewMetricCard
               title="Uptime"
               value={`${formatNumber(uptimeValue, 0, 2)}%`}
-              meta={`7d window · 24h ${formatNumber(uptime24h, 0, 2)}% · 30d ${formatNumber(uptime30d, 0, 2)}%`}
+              meta={`24h avg: ${formatNumber(uptime24h, 0, 2)}%`}
               icon={Activity}
             />
 
             <OverviewMetricCard
-              title="Avg Response Time"
-              value={`${formatNumber(avgResponseTime, 0, 2)} ms`}
-              meta={`${deltaResponseTime >= 0 ? "+" : ""}${formatNumber(deltaResponseTime, 0, 2)} ms vs last week`}
+              title="Avg Latency"
+              value={`${formatNumber(avgResponseTime, 0, 0)} ms`}
+              meta={`${deltaResponseTime >= 0 ? "+" : ""}${formatNumber(deltaResponseTime, 0, 0)} ms vs LW`}
               icon={Clock3}
               tone={deltaResponseTime <= 0 ? "success" : "warning"}
             />
 
             <OverviewMetricCard
-              title="Incidents / Error Rate"
-              value={`${formatNumber(openIncidents, 0, 0)} open`}
-              meta={`${formatNumber(errorRate, 0, 2)}% error rate over 24h`}
+              title="Open Incidents"
+              value={formatNumber(openIncidents, 0, 0)}
+              meta="Active in your fleet"
               icon={AlertTriangle}
               tone={openIncidents === 0 ? "success" : "danger"}
+            />
+
+            <OverviewMetricCard
+              title="Error Volume"
+              value={formatNumber(metrics?.errorRate?.count || 0, 0, 0)}
+              meta={`${formatNumber(errorRate, 0, 2)}% fail rate`}
+              icon={Activity}
+              tone={
+                errorRate < 1 ? "success" : errorRate < 5 ? "warning" : "danger"
+              }
             />
           </div>
 
