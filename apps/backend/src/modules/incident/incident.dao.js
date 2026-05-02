@@ -9,6 +9,10 @@ export const incidentDao = {
     return await Incident.findById(id);
   },
 
+  findAllByOrganization: async (organizationId) => {
+    return await Incident.find({ organizationId }).sort({ createdAt: -1 });
+  },
+
   updateIncident: async (id, data) => {
     return await Incident.findByIdAndUpdate(id, data, {
       new: true,

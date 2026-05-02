@@ -32,22 +32,12 @@ export const inviteService = {
     const inviteToken = generateInviteToken();
 
     // 4. Create invite record
-    let formattedExpertise = [];
-    if (Array.isArray(expertise)) {
-      formattedExpertise = expertise;
-    } else if (typeof expertise === "string") {
-      formattedExpertise = expertise
-        .split(",")
-        .map((s) => s.trim())
-        .filter((s) => s !== "");
-    }
-
     const invite = await inviteDao.createInvite({
       email,
       organizationId: organizationId,
       role: role || "viewer",
       inviteToken,
-      expertise: formattedExpertise,
+      expertise: expertise || [],
       tier: tier || 1,
       avatarColor: avatarColor || "bg-blue-500/10 text-blue-500",
     });
