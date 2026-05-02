@@ -30,25 +30,72 @@ const incidentSchema = new mongoose.Schema(
 
     severity: {
       type: String,
-      enum: ["low", "medium", "high"],
+      enum: ["low", "medium", "high", "SEV1", "SEV2", "SEV3"],
       default: "low",
     },
 
     status: {
       type: String,
-      enum: ["open", "in-progress", "resolved"],
+      enum: ["open", "acknowledged", "resolved"],
       default: "open",
     },
 
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    source: {
+      type: String,
+      enum: ["sdk", "manual", "api", "sdk-auto", "sdk-manual"],
+      default: "manual",
     },
 
-    assignedTo: {
+    serviceId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Service",
     },
+
+    tags: [
+      {
+        type: String,
+      },
+    ],
+
+    context: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+
+    breadcrumbs: [
+      {
+        type: mongoose.Schema.Types.Mixed,
+      },
+    ],
+
+    serverId: {
+      type: String,
+      trim: true,
+    },
+
+    environment: {
+      type: String,
+      trim: true,
+      default: "production",
+    },
+
+    stack: {
+      type: String,
+    },
+
+    assignedMembers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
+    assignedTeams: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Team",
+      },
+    ],
 
     organizationId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -7,6 +7,9 @@ import Member_router from "../modules/member/Member.route.js";
 import postmortemRouter from "@/modules/posmortem/postmortem.route.js";
 import incidentRouter from "@/modules/incident/incident.route.js";
 import logsRouter from "../modules/logs/logs.route.js";
+import sdkRouter from "../modules/sdk/sdk.route.js";
+import serviceRouter from "../modules/service/service.route.js";
+import teamRouter from "../modules/team/team.route.js";
 
 const rootRouter = express.Router();
 
@@ -19,6 +22,9 @@ rootRouter.use("/logs", logsRouter);
 rootRouter.use("/", Invite_router);
 rootRouter.use("/incident", incidentRouter);
 rootRouter.use("/postmortem", postmortemRouter);
+rootRouter.use("/sdk", sdkRouter);
+rootRouter.use("/services", serviceRouter);
+rootRouter.use("/teams", teamRouter);
 
 // Add more routes here as you expand
 

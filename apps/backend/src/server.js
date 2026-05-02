@@ -5,6 +5,7 @@ import { initSocket } from "./socket/socket.js";
 import { connectDB } from "./configs/db.config.js";
 import { connectRedis } from "./configs/redis.config.js";
 import { logger } from "./utils/logger.js";
+import healthMonitor from "./services/HealthMonitor.service.js";
 
 const startServer = async () => {
   try {
@@ -19,6 +20,9 @@ const startServer = async () => {
 
     // Initialize Socket.io
     initSocket(server);
+
+    // Start background health monitoring
+    healthMonitor.start();
 
     const PORT = process.env.PORT || 5000;
 

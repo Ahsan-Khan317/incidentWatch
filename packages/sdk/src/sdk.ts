@@ -62,12 +62,15 @@ export class IncidentWatchSDK {
     this.heartbeat = new HeartbeatManager(this);
   }
 
-  _bootstrap(): void {
+  async _bootstrap(): Promise<void> {
     this.logger.info("IncidentWatch SDK initializing...", {
       serverId: this.config.serverId,
       node: process.version,
       environment: this.config.environment,
     });
+
+    // API Key valid hai ya nahi check karo blockingly
+    await this.transport.verify();
 
     this.hooks.attach();
     this.memoryMonitor.start();

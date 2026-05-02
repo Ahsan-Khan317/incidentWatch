@@ -24,6 +24,7 @@ export class HttpTransport {
         "Content-Type": "application/json",
         "X-IW-API-Key": config.apiKey,
         "X-IW-Server-ID": config.serverId,
+        "X-IW-Environment": config.environment,
         "X-IW-SDK-Version": "1.0.0", // Will be injected by build
       },
     });
@@ -55,11 +56,29 @@ export class HttpTransport {
 
     this.queue.add(async () => {
       try {
-        await this.client.post("/api/heartbeat", data);
+        await this.client.post("/heartbeat", data);
       } catch (err) {
         // Heartbeat failure is non-critical, don't trigger circuit breaker for now
       }
     });
+  }
+
+  /**
+   * API Key verify karo initialization ke time.
+   */
+  async verify(): Promise<void> {
+    try {
+      await this.client.get("/verify");
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        throw new Error(
+          `[IW] Invalid API Key: ${this.config.apiKey}. Please check your credentials at ${this.config.platformUrl.replace("/api/v1/sdk", "")}settings/keys`,
+        );
+      }
+      throw new Error(
+        `[IW] Platform unreachable during verification: ${err.message}`,
+      );
+    }
   }
 
   /**
@@ -84,7 +103,7 @@ export class HttpTransport {
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        const res = await this.client.post("/api/incidents", incident);
+        const res = await this.client.post("/incidents", incident);
         this._failures = 0; // success — circuit reset
         this.logger.debug(`[IW] Incident sent: ${incident.id}`);
         return res.data;

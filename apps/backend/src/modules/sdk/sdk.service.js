@@ -1,0 +1,167 @@
+import { incidentService } from "@/modules/incident/incident.service.js";
+import logsService from "@/modules/logs/logs.service.js";
+import { incidentDao } from "@/modules/incident/incident.dao.js";
+import Service from "@/modules/service/service.model.js";
+
+class SdkService {
+  /**
+   * Ensure service is registered and unique within organization
+   */
+  async _ensureServiceRegistered(serverId, orgId, environment, metadata = {}) {
+    if (!serverId) return null;
+
+    try {
+      return await Service.findOneAndUpdate(
+        { name: serverId, organizationId: orgId },
+        {
+          $set: {
+            environment,
+            status: "active",
+            lastHeartbeat: new Date(),
+          },
+          $mergeObjects: ["$metadata", metadata],
+        },
+        { upsert: true, returnDocument: "after", runValidators: true },
+      );
+    } catch (err) {
+      // If it's a duplicate error (though findOneAndUpdate should handle it), log it
+      console.error(`[SDK] Failed to ensure service registration for ${serverId}:`, err.message);
+      return null;
+    }
+  }
+
+  async processIncident(data, orgId) {
+    const {
+      title,
+      description,
+      severity,
+      source = "sdk",
+      tags = [],
+      context = {},
+      breadcrumbs = [],
+      serverId,
+      environment,
+      stack,
+      timestamp,
+    } = data;
+
+    // Ensure service is registered and get it
+    const service = await this._ensureServiceRegistered(serverId, orgId, environment, {
+      lastIncidentAt: new Date(),
+    });
+
+    const timeline = [
+      {
+        action: `Incident captured from SDK (${serverId})`,
+        time: timestamp ? new Date(timestamp) : new Date(),
+      },
+    ];
+
+    // Auto-assignment logic
+    let assignedMembers = [];
+    let assignedTeams = [];
+
+    if (service?.autoAssignEnabled) {
+      // 1. Default assignees from the service
+      assignedMembers = [...(service.members || [])];
+      assignedTeams = [...(service.teams || [])];
+
+      // 2. Rule-based assignment via Regex matching on tags
+      if (service.assignmentRules && service.assignmentRules.length > 0) {
+        const incidentTags = tags.join(" ");
+        for (const rule of service.assignmentRules) {
+          try {
+            const regex = new RegExp(rule.tagsRegex, "i");
+            if (regex.test(incidentTags)) {
+              // Add rule-specific assignees (avoid duplicates)
+              assignedMembers = [...new Set([...assignedMembers, ...(rule.members || [])])];
+              assignedTeams = [...new Set([...assignedTeams, ...(rule.teams || [])])];
+            }
+          } catch (e) {
+            console.error(`[SDK] Invalid regex rule: ${rule.tagsRegex}`);
+          }
+        }
+      }
+
+      if (assignedMembers.length > 0 || assignedTeams.length > 0) {
+        timeline.push({
+          action: `Auto-assigned to ${assignedMembers.length} members and ${assignedTeams.length} teams based on service rules`,
+          time: new Date(),
+        });
+      } else {
+        // 3. Fallback: If no one is assigned, assign to Organization Admins
+        try {
+          const User = (await import("@/modules/user/user.model.js")).default;
+          const admins = await User.find({ organizationId: orgId, role: "admin" }).limit(5);
+
+          if (admins.length > 0) {
+            assignedMembers = admins.map((a) => a._id);
+            timeline.push({
+              action: `Fallback: No engineers assigned to service. Assigned to ${admins.length} organization admins.`,
+              time: new Date(),
+            });
+          }
+        } catch (err) {
+          console.error("[SDK] Failed to fetch fallback admins:", err.message);
+        }
+      }
+    }
+
+    // Create incident using existing service logic but enriched with SDK data
+    const incident = await incidentDao.createIncident({
+      title,
+      description: description || title,
+      severity: severity || "low",
+      organizationId: orgId,
+      serviceId: service?._id,
+      status: "open",
+      source,
+      tags,
+      context,
+      breadcrumbs,
+      serverId,
+      environment,
+      stack,
+      assignedMembers,
+      assignedTeams,
+      timeline,
+    });
+
+    return incident;
+  }
+
+  async processHeartbeat(data, orgId, apiKey) {
+    const { serverId, environment, metrics, logs = [] } = data;
+
+    // Ensure service is registered
+    await this._ensureServiceRegistered(serverId, orgId, environment, metrics);
+
+    // 1. If there are logs, process them via logsService
+    if (logs.length > 0) {
+      for (const logItem of logs) {
+        // logsService.createLog handles normalizing and saving
+        await logsService.createLog(
+          {
+            message: typeof logItem === "string" ? logItem : logItem.message,
+            level: logItem.level || "info",
+            service: serverId,
+            context: { environment, ...metrics },
+            tags: ["heartbeat"],
+          },
+          { apiKeyHeader: apiKey },
+        );
+      }
+    }
+
+    // 2. Update server status
+    return { status: "ok", receivedAt: new Date() };
+  }
+
+  async verifyKey(orgId, serverId, environment) {
+    // Register service on initial connection
+    await this._ensureServiceRegistered(serverId, orgId, environment, { verifiedAt: new Date() });
+    return { valid: true, orgId };
+  }
+}
+
+export default new SdkService();

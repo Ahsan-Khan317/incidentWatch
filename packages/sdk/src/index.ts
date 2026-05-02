@@ -6,7 +6,7 @@ let _instance: IncidentWatchSDK | null = null;
 /**
  * SDK initialize karo — app ke entry point mein ek baar call karo.
  */
-export function init(config: UserConfig): IncidentWatchSDK {
+export async function init(config: UserConfig): Promise<IncidentWatchSDK> {
   if (_instance) {
     _instance.logger.warn(
       "[IW] SDK already initialized — ignoring duplicate init()",
@@ -15,7 +15,7 @@ export function init(config: UserConfig): IncidentWatchSDK {
   }
 
   const sdk = new IncidentWatchSDK(config);
-  sdk._bootstrap();
+  await sdk._bootstrap();
   _instance = sdk;
   return sdk;
 }

@@ -102,7 +102,6 @@ export const inviteService = {
 
     // 5. Mark invite as accepted
     await inviteDao.updateInviteStatus(invite._id, true);
-
     return { user, invite };
   },
 };

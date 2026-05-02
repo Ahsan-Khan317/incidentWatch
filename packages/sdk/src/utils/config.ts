@@ -28,7 +28,7 @@ export class Config implements SDKConfig {
     this.platformUrl = (
       userConfig.platformUrl ||
       process.env.IW_PLATFORM_URL ||
-      "https://app.incidentwatch.io"
+      "http://localhost:8000/api/v1/sdk"
     ).replace(/\/$/, "");
 
     this.environment =
