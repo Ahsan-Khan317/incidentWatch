@@ -1,6 +1,7 @@
 import logsDao from "./logs.dao.js";
 import apiKeyDao from "../apiKey/apiKey.dao.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
+import { getIO } from "../../socket/socket.js";
 
 class LogsService {
   async createLog(body, auth) {
@@ -52,7 +53,7 @@ class LogsService {
     };
 
     // 3. Call DAO
-    return await logsDao.create({
+    const log = await logsDao.create({
       message: normalizedMessage,
       level: normalizedLevel.toLowerCase(),
       orgId,
@@ -60,6 +61,14 @@ class LogsService {
       service: resolvedService,
       metadata,
     });
+
+    // 4. Real-time push via Socket.io
+    const io = getIO();
+    if (io) {
+      io.emit("log", log);
+    }
+
+    return log;
   }
 
   async getAllLogs(filter) {
