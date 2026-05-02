@@ -1,6 +1,7 @@
 import { verifyAccessToken } from "../../utils/generateToken.js";
 import { sessionService } from "../session/session.service.js";
 import { ApiError } from "../../utils/Error/ApiError.js";
+import { memberDao } from "../member/member.dao.js";
 
 /**
  * Shared helper: verify JWT + verify session exists in Redis via sessionService.
@@ -58,12 +59,25 @@ const verifySession = async (req) => {
     );
   }
 
-  return { id, organizationId: finalOrganizationId, role, sessionId };
+  // Fetch Member details
+  let member = null;
+  if (finalOrganizationId) {
+    member = await memberDao.findMemberByUserAndOrg(id, finalOrganizationId);
+  }
+
+  return { id, organizationId: finalOrganizationId, role: member?.role || role, sessionId, member };
 };
 
 export const org_user_Auth = async (req, res, next) => {
   try {
-    req.user = await verifySession(req);
+    const userContext = await verifySession(req);
+    req.user = userContext;
+    if (userContext.member) {
+      req.member = {
+        organizationId: userContext.organizationId,
+        role: userContext.role,
+      };
+    }
     next();
   } catch (error) {
     if (error instanceof ApiError) {
@@ -75,13 +89,19 @@ export const org_user_Auth = async (req, res, next) => {
 
 export const org_admin_Auth = async (req, res, next) => {
   try {
-    const user = await verifySession(req);
+    const userContext = await verifySession(req);
 
-    if (user.role !== "admin") {
+    if (userContext.role !== "admin") {
       return next(new ApiError(403, "Admin access required"));
     }
 
-    req.user = user;
+    req.user = userContext;
+    if (userContext.member) {
+      req.member = {
+        organizationId: userContext.organizationId,
+        role: userContext.role,
+      };
+    }
     next();
   } catch (error) {
     if (error instanceof ApiError) {

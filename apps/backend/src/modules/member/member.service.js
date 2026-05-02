@@ -4,7 +4,19 @@ import { ApiError } from "../../utils/Error/ApiError.js";
 export const memberService = {
   getAllMembers: async (organizationId) => {
     const members = await memberDao.findAllByOrganizationId(organizationId);
-    return members;
+    return members.map((m) => {
+      const memberObj = m.toObject();
+      return {
+        _id: memberObj._id,
+        userId: memberObj.userId?._id,
+        name: memberObj.userId?.name,
+        email: memberObj.userId?.email,
+        role: memberObj.role,
+        oncall: memberObj.oncall,
+        isActive: memberObj.isActive,
+        createdAt: memberObj.createdAt,
+      };
+    });
   },
 
   getMemberById: async (id, organizationId) => {
@@ -12,7 +24,17 @@ export const memberService = {
     if (!member) {
       throw new ApiError(404, "Member not found");
     }
-    return member;
+    const memberObj = member.toObject();
+    return {
+      _id: memberObj._id,
+      userId: memberObj.userId?._id,
+      name: memberObj.userId?.name,
+      email: memberObj.userId?.email,
+      role: memberObj.role,
+      oncall: memberObj.oncall,
+      isActive: memberObj.isActive,
+      createdAt: memberObj.createdAt,
+    };
   },
 
   updateMemberRole: async (id, organizationId, role) => {

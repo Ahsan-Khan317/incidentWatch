@@ -1,21 +1,21 @@
 import { ApiError } from "../../utils/Error/ApiError.js";
 import { inviteDao } from "./invite.dao.js";
 import { authDao } from "../auth/auth.dao.js";
+import { memberDao } from "../member/member.dao.js";
 import { generateInviteToken } from "../../utils/generateToken.js";
 import sendEmail from "../../services/Email/sendEmail.js";
 import { getInviteEmailTemplate } from "../../services/Email/Email_msg.js";
-import crypto from "crypto";
 
 export const inviteService = {
   inviteMember: async ({ email, role, organizationId }) => {
     console.log("INVITE SERVICE ORG ID:", organizationId);
-    // 1. Check if user already exists in this organization
-    const existingUser = await authDao.findUserByEmailAndOrganizationId(email, organizationId);
-    if (existingUser) {
-      const userObj = existingUser.toObject();
-      const userOrgId = userObj.organizationId || userObj.orgid;
-      if (userOrgId && userOrgId.toString() === organizationId.toString()) {
-        throw new ApiError(400, "User already exists in this organization");
+    // 1. Check if user already exists
+    const user = await authDao.findUserByEmail(email);
+    if (user) {
+      // Check if already a member of this organization
+      const existingMember = await memberDao.findMemberByUserAndOrg(user._id, organizationId);
+      if (existingMember) {
+        throw new ApiError(400, "User is already a member of this organization");
       }
     }
 
@@ -58,7 +58,7 @@ export const inviteService = {
     return invite;
   },
 
-  acceptInvite: async ({ token }) => {
+  acceptInvite: async ({ token, name, password }) => {
     // 1. Validate token
     const invite = await inviteDao.findInviteByToken(token);
     if (!invite) {
@@ -73,32 +73,31 @@ export const inviteService = {
       throw new ApiError(400, "Invitation has expired");
     }
 
-    // 2. Check if user already exists
-    let user = await authDao.findUserByEmailAndOrganizationId(invite.email, invite.organizationId);
+    // 2. Check if user already exists (by email)
+    let user = await authDao.findUserByEmail(invite.email);
 
     if (!user) {
-      // 3. Create user if not exists
-      // Note: In a real scenario, we might want the user to provide their name and password
-      // For now, following "Create user or attach to organization"
-      // If we create a user, they might need to set a password later or we generate a random one
+      // 3. If not, create user
       user = await authDao.createUser({
-        name: invite.email.split("@")[0], // Default name from email
+        name: name,
         email: invite.email,
-        password: crypto.randomBytes(16).toString("hex"), // Random password
-        role: invite.role,
-        organizationId: invite.organizationId,
-        orgid: invite.organizationId, // Set both for backward compatibility
-        isVerified: true, // They accepted via email, so verified
-        isActive: true,
+        password: password,
+        isVerified: true,
       });
-    } else {
-      // 4. Attach to organization (already checked in inviteMember, but just in case)
-      user.role = invite.role;
-      user.isActive = true;
-      user.isVerified = true;
-      user.orgid = invite.organizationId; // Ensure legacy field is also updated
-      await user.save();
     }
+
+    // 4. Create Member entry
+    // Check if member already exists (redundant but safe)
+    const existingMember = await memberDao.findMemberByUserAndOrg(user._id, invite.organizationId);
+    if (existingMember) {
+      throw new ApiError(400, "User is already a member of this organization");
+    }
+
+    await memberDao.createMember({
+      userId: user._id,
+      organizationId: invite.organizationId,
+      role: invite.role,
+    });
 
     // 5. Mark invite as accepted
     await inviteDao.updateInviteStatus(invite._id, true);
