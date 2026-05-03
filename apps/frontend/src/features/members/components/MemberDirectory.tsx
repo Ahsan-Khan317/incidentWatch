@@ -14,6 +14,7 @@ interface MemberDirectoryProps {
   onEdit: (member: TeamMember) => void;
   onDelete: (id: string) => void;
   onRowClick: (member: TeamMember) => void;
+  isAdmin?: boolean;
 }
 
 const MemberDirectory: React.FC<MemberDirectoryProps> = ({
@@ -21,6 +22,7 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
   onEdit,
   onDelete,
   onRowClick,
+  isAdmin = false,
 }) => {
   const [search, setSearch] = React.useState("");
 
@@ -73,9 +75,11 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
               <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60 hidden sm:table-cell">
                 Status
               </th>
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60 text-right">
-                Actions
-              </th>
+              {isAdmin && (
+                <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60 text-right">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
@@ -143,31 +147,33 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-5 text-right">
-                  <div className="flex items-center justify-end gap-2 lg:opacity-0 group-hover:opacity-100 transition-all lg:translate-x-2 group-hover:translate-x-0">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(member);
-                      }}
-                      className="p-2 border border-border bg-surface-1 text-muted hover:text-primary hover:border-primary/30 transition-all"
-                    >
-                      <Edit2 size={12} />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(member.id);
-                      }}
-                      className="p-2 border border-border bg-surface-1 text-muted hover:text-danger hover:border-danger/30 transition-all"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                    <div className="p-2 border border-border bg-surface-1 text-muted">
-                      <ChevronRight size={12} />
+                {isAdmin && (
+                  <td className="px-6 py-5 text-right">
+                    <div className="flex items-center justify-end gap-2 lg:opacity-0 group-hover:opacity-100 transition-all lg:translate-x-2 group-hover:translate-x-0">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(member);
+                        }}
+                        className="p-2 border border-border bg-surface-1 text-muted hover:text-primary hover:border-primary/30 transition-all"
+                      >
+                        <Edit2 size={12} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(member.id);
+                        }}
+                        className="p-2 border border-border bg-surface-1 text-muted hover:text-danger hover:border-danger/30 transition-all"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                      <div className="p-2 border border-border bg-surface-1 text-muted">
+                        <ChevronRight size={12} />
+                      </div>
                     </div>
-                  </div>
-                </td>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

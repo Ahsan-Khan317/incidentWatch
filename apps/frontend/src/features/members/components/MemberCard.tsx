@@ -9,6 +9,7 @@ interface MemberCardProps {
   toggleStatus: (id: string) => void;
   onEdit: (member: TeamMember) => void;
   onClick: (member: TeamMember) => void;
+  isAdmin?: boolean;
 }
 
 const MemberCard: React.FC<MemberCardProps> = ({
@@ -17,6 +18,7 @@ const MemberCard: React.FC<MemberCardProps> = ({
   toggleStatus,
   onEdit,
   onClick,
+  isAdmin = false,
 }) => {
   const initials = member.name
     .split(" ")
@@ -44,26 +46,28 @@ const MemberCard: React.FC<MemberCardProps> = ({
             <h3 className="flex items-center justify-between text-sm font-bold text-heading uppercase tracking-tight min-w-0">
               <span className="truncate">{member.name}</span>
 
-              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all ml-2">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(member);
-                  }}
-                  className="rounded-none p-1 text-muted hover:bg-surface-3 hover:text-primary transition-all"
-                >
-                  <Edit2 size={13} />
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeMember(member.id);
-                  }}
-                  className="rounded-none p-1 text-muted hover:bg-danger-soft hover:text-danger transition-all"
-                >
-                  <Trash2 size={13} />
-                </button>
-              </div>
+              {isAdmin && (
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all ml-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(member);
+                    }}
+                    className="rounded-none p-1 text-muted hover:bg-surface-3 hover:text-primary transition-all"
+                  >
+                    <Edit2 size={13} />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeMember(member.id);
+                    }}
+                    className="rounded-none p-1 text-muted hover:bg-danger-soft hover:text-danger transition-all"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              )}
             </h3>
             <p className="text-[0.625rem] font-bold uppercase tracking-widest text-muted/60 mt-0.5">
               {member.role}
@@ -96,19 +100,21 @@ const MemberCard: React.FC<MemberCardProps> = ({
             {member.status === "on-duty" ? "Active Ops" : "Off-Duty"}
           </span>
         </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleStatus(member.id);
-          }}
-          className={`text-[0.625rem] font-bold uppercase tracking-[0.2em] transition-all hover:underline ${
-            member.status === "on-duty"
-              ? "text-primary"
-              : "text-muted/40 hover:text-muted"
-          }`}
-        >
-          {member.status === "on-duty" ? "Relieve Duty" : "Assign Ops"}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleStatus(member.id);
+            }}
+            className={`text-[0.625rem] font-bold uppercase tracking-[0.2em] transition-all hover:underline ${
+              member.status === "on-duty"
+                ? "text-primary"
+                : "text-muted/40 hover:text-muted"
+            }`}
+          >
+            {member.status === "on-duty" ? "Relieve Duty" : "Assign Ops"}
+          </button>
+        )}
       </div>
     </motion.div>
   );

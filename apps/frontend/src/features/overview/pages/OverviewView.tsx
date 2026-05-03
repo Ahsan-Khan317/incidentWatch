@@ -24,6 +24,7 @@ import { useViewStore } from "@/src/features/dashboard/store/view-store";
 import OverviewSkeleton from "../components/OverviewSkeleton";
 import { useServices } from "../../service/hooks/useServices";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/src/features/auth/store/auth-store";
 
 const formatNumber = (
   value: any,
@@ -126,6 +127,9 @@ export const OverviewView: React.FC = () => {
       ? selectedService?.name || "Filtered service"
       : "All services";
 
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin";
+
   return (
     <Container>
       <SectionHeading
@@ -146,13 +150,15 @@ export const OverviewView: React.FC = () => {
           Refresh
         </DashboardButton>
 
-        <DashboardButton
-          variant="primary"
-          onClick={() => setActiveView("services")}
-        >
-          <Plus size={14} />
-          Manage Services
-        </DashboardButton>
+        {isAdmin && (
+          <DashboardButton
+            variant="primary"
+            onClick={() => setActiveView("services")}
+          >
+            <Plus size={14} />
+            Manage Services
+          </DashboardButton>
+        )}
       </SectionHeading>
 
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4 text-[0.6875rem] text-body">

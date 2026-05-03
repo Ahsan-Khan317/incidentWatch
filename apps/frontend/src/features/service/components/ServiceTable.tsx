@@ -16,7 +16,6 @@ export function formatDate(dateValue: string | Date) {
     year: "numeric",
   }).format(date);
 }
-
 interface ServiceTableProps {
   services: Service[];
   isLoading: boolean;
@@ -24,6 +23,7 @@ interface ServiceTableProps {
   error: any;
   onEdit: (service: Service) => void;
   onDelete: (service: Service) => void;
+  isAdmin?: boolean;
 }
 
 export const ServiceTable: React.FC<ServiceTableProps> = ({
@@ -33,6 +33,7 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
   error,
   onEdit,
   onDelete,
+  isAdmin = false,
 }) => {
   const { setActiveView } = useViewStore();
 
@@ -176,21 +177,25 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
                         Details
                       </DashboardButton>
 
-                      <button
-                        onClick={() => onEdit(service)}
-                        className="p-2 text-muted hover:text-heading hover:bg-surface-3 transition-all rounded-none border border-transparent hover:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none"
-                        title="Configuration"
-                      >
-                        <Pencil size={14} />
-                      </button>
+                      {isAdmin && (
+                        <>
+                          <button
+                            onClick={() => onEdit(service)}
+                            className="p-2 text-muted hover:text-heading hover:bg-surface-3 transition-all rounded-none border border-transparent hover:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                            title="Configuration"
+                          >
+                            <Pencil size={14} />
+                          </button>
 
-                      <button
-                        onClick={() => onDelete(service)}
-                        className="p-2 text-muted hover:text-danger hover:bg-danger/10 transition-all rounded-none border border-transparent hover:border-danger/20 focus:ring-2 focus:ring-danger/20 focus:outline-none"
-                        title="Decommission"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                          <button
+                            onClick={() => onDelete(service)}
+                            className="p-2 text-muted hover:text-danger hover:bg-danger/10 transition-all rounded-none border border-transparent hover:border-danger/20 focus:ring-2 focus:ring-danger/20 focus:outline-none"
+                            title="Decommission"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

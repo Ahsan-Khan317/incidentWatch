@@ -39,8 +39,18 @@ const sideNavGroups = [
   {
     title: "System",
     items: [
-      { label: "Team & member", href: "/dashboard/team", icon: Users },
-      { label: "Settings", href: "/dashboard/settings", icon: Settings },
+      {
+        label: "Team & member",
+        href: "/dashboard/team",
+        icon: Users,
+        adminOnly: true,
+      },
+      {
+        label: "Settings",
+        href: "/dashboard/settings",
+        icon: Settings,
+        adminOnly: true,
+      },
     ],
   },
 ];
@@ -64,6 +74,8 @@ export default function DashboardSidebar({
     router.replace("/login");
   };
 
+  const isAdmin = user?.role === "admin";
+
   return (
     <>
       <aside
@@ -80,69 +92,73 @@ export default function DashboardSidebar({
                 {group.title}
               </p>
               <nav className="space-y-1">
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const viewId = item.href
-                    .replace("/dashboard/", "")
-                    .replace("/dashboard", "dashboard") as any;
-                  const isActive = activeView === viewId;
-                  const hasChildren =
-                    Array.isArray(item.children) && item.children.length > 0;
+                {group.items
+                  .filter((item: any) => !item.adminOnly || isAdmin)
+                  .map((item: any) => {
+                    const Icon = item.icon;
+                    const viewId = item.href
+                      .replace("/dashboard/", "")
+                      .replace("/dashboard", "dashboard") as any;
+                    const isActive = activeView === viewId;
+                    const hasChildren =
+                      Array.isArray(item.children) && item.children.length > 0;
 
-                  return (
-                    <div key={item.label}>
-                      <button
-                        onClick={() => {
-                          const finalViewId =
-                            viewId === "services" ? "service-context" : viewId;
-                          setActiveView(finalViewId);
-                          if (window.innerWidth < 768) onClose();
-                        }}
-                        className={`flex w-full items-center gap-2 rounded px-3 py-2 text-[0.75rem] transition-colors ${
-                          activeView ===
-                            (viewId === "services"
-                              ? "service-context"
-                              : viewId) ||
-                          (viewId === "services" &&
-                            activeView === "service-details")
-                            ? "bg-surface-2 text-heading"
-                            : "text-body hover:bg-surface-1 hover:text-heading"
-                        }`}
-                      >
-                        <Icon
-                          size={16}
-                          className={isActive ? "text-primary" : ""}
-                        />
-                        <span>{item.label}</span>
-                        {hasChildren ? (
-                          <ChevronDown
-                            size={12}
-                            className="ml-auto text-body/30"
+                    return (
+                      <div key={item.label}>
+                        <button
+                          onClick={() => {
+                            const finalViewId =
+                              viewId === "services"
+                                ? "service-context"
+                                : viewId;
+                            setActiveView(finalViewId);
+                            if (window.innerWidth < 768) onClose();
+                          }}
+                          className={`flex w-full items-center gap-2 rounded px-3 py-2 text-[0.75rem] transition-colors ${
+                            activeView ===
+                              (viewId === "services"
+                                ? "service-context"
+                                : viewId) ||
+                            (viewId === "services" &&
+                              activeView === "service-details")
+                              ? "bg-surface-2 text-heading"
+                              : "text-body hover:bg-surface-1 hover:text-heading"
+                          }`}
+                        >
+                          <Icon
+                            size={16}
+                            className={isActive ? "text-primary" : ""}
                           />
-                        ) : null}
-                      </button>
+                          <span>{item.label}</span>
+                          {hasChildren ? (
+                            <ChevronDown
+                              size={12}
+                              className="ml-auto text-body/30"
+                            />
+                          ) : null}
+                        </button>
 
-                      {hasChildren && isActive ? (
-                        <div className="ml-6 mt-1 space-y-1 border-l border-dashed border-border pl-3">
-                          {item.children?.map((child) => {
-                            return (
-                              <button
-                                key={child.label}
-                                onClick={() => {
-                                  // Handle sub-views if needed
-                                  if (window.innerWidth < 768) onClose();
-                                }}
-                                className="block w-full rounded px-2 py-1.5 text-left text-[0.6875rem] transition-colors text-body hover:bg-surface-1 hover:text-heading"
-                              >
-                                {child.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
+                        {hasChildren && isActive ? (
+                          <div className="ml-6 mt-1 space-y-1 border-l border-dashed border-border pl-3">
+                            {item.children?.map((child) => {
+                              return (
+                                <button
+                                  key={child.label}
+                                  onClick={() => {
+                                    // Handle sub-views if needed
+                                    if (window.innerWidth < 768) onClose();
+                                  }}
+                                  className="block w-full rounded px-2 py-1.5 text-left text-[0.6875rem] transition-colors text-body hover:bg-surface-1 hover:text-heading"
+                                >
+                                  {child.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
               </nav>
             </div>
           ))}

@@ -15,6 +15,7 @@ import { ServiceTable } from "@/src/features/service/components/ServiceTable";
 import { CreateServiceModal } from "@/src/features/service/components/CreateServiceModal";
 import { useServiceStore } from "../../dashboard/store/service-store";
 import { useViewStore } from "../../dashboard/store/view-store";
+import { useAuthStore } from "@/src/features/auth/store/auth-store";
 import { ConfirmationModal } from "@/src/components/common/ConfirmationModal";
 
 export default function ServicePage() {
@@ -83,6 +84,9 @@ export default function ServicePage() {
     }
   };
 
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin";
+
   return (
     <Container>
       <SectionHeading
@@ -94,17 +98,19 @@ export default function ServicePage() {
           Export list
         </DashboardButton>
 
-        <DashboardButton
-          variant="primary"
-          onClick={() => {
-            setSuccessMessage("");
-            setIsCreatePanelOpen((prev) => !prev);
-            setSelectedService(null);
-          }}
-        >
-          <Plus size={14} />
-          {isCreatePanelOpen ? "Close form" : "New service"}
-        </DashboardButton>
+        {isAdmin && (
+          <DashboardButton
+            variant="primary"
+            onClick={() => {
+              setSuccessMessage("");
+              setIsCreatePanelOpen((prev) => !prev);
+              setSelectedService(null);
+            }}
+          >
+            <Plus size={14} />
+            {isCreatePanelOpen ? "Close form" : "New service"}
+          </DashboardButton>
+        )}
       </SectionHeading>
 
       {/* Create / Edit Service Panel (Inline) */}
@@ -158,6 +164,7 @@ export default function ServicePage() {
           setIsCreatePanelOpen(false);
         }}
         onDelete={handleDelete}
+        isAdmin={isAdmin}
       />
 
       <ConfirmationModal

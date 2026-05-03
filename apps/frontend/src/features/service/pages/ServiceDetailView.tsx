@@ -16,6 +16,7 @@ import { useServiceStore } from "../../dashboard/store/service-store";
 import { useViewStore } from "../../dashboard/store/view-store";
 import { formatDate } from "../components/ServiceTable";
 import DashboardButton from "@/src/components/ui/DashboardButton";
+import { useAuthStore } from "@/src/features/auth/store/auth-store";
 
 interface ServiceDetailViewProps {
   overrideId?: string | null;
@@ -24,6 +25,9 @@ interface ServiceDetailViewProps {
 export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
   overrideId,
 }) => {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin";
+
   const { selectedId: viewSelectedId, setActiveView } = useViewStore();
   const { selectedServiceId } = useServiceStore();
   const effectiveId = overrideId || viewSelectedId || selectedServiceId;
@@ -102,15 +106,17 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 self-end md:self-center">
-            <DashboardButton
-              variant="secondary"
-              onClick={() => setActiveView("services", service._id)}
-              className="border-border/50 hover:border-primary/40 text-[10px] font-bold uppercase tracking-widest px-6"
-            >
-              Configure Service
-            </DashboardButton>
-          </div>
+          {isAdmin && (
+            <div className="flex items-center gap-3 self-end md:self-center">
+              <DashboardButton
+                variant="secondary"
+                onClick={() => setActiveView("services", service._id)}
+                className="border-border/50 hover:border-primary/40 text-[10px] font-bold uppercase tracking-widest px-6"
+              >
+                Configure Service
+              </DashboardButton>
+            </div>
+          )}
         </div>
       </div>
 
@@ -331,12 +337,14 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
                 Adjust infrastructure parameters, reassess response teams, or
                 decommission this node.
               </p>
-              <button
-                onClick={() => setActiveView("services", service._id)}
-                className="w-full py-4 bg-primary text-on-primary text-[10px] font-black uppercase tracking-[0.3em] hover:bg-primary-hover transition-all duration-300 shadow-xl shadow-primary/10"
-              >
-                Enter Control Plane
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => setActiveView("services", service._id)}
+                  className="w-full py-4 bg-primary text-on-primary text-[10px] font-black uppercase tracking-[0.3em] hover:bg-primary-hover transition-all duration-300 shadow-xl shadow-primary/10"
+                >
+                  Enter Control Plane
+                </button>
+              )}
             </div>
           </div>
         </div>
