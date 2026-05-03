@@ -4,6 +4,7 @@ import { Eye, Pencil, Trash2, Shield } from "lucide-react";
 import DashboardButton from "@/src/components/ui/DashboardButton";
 import { Service } from "../types";
 import { ServiceSkeleton } from "./ServiceSkeleton";
+import { useViewStore } from "../../dashboard/store/view-store";
 
 export function formatDate(dateValue: string | Date) {
   if (!dateValue) return "-";
@@ -33,6 +34,8 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { setActiveView } = useViewStore();
+
   return (
     <div className="overflow-hidden border border-dashed border-border bg-surface-1 rounded-none">
       <div className="flex items-center justify-between border-b border-border px-5 py-3">
@@ -124,10 +127,13 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
                     <div className="flex items-center justify-end gap-2">
                       <DashboardButton
                         variant="secondary"
-                        className="h-8 px-3 cursor-not-allowed rounded-none border-border/50 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all"
+                        onClick={() =>
+                          setActiveView("service-details", service._id)
+                        }
+                        className="h-8 px-3 rounded-none border-border/50 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all"
                       >
                         <Eye size={12} className="mr-2" />
-                        Monitor
+                        Details
                       </DashboardButton>
 
                       <button

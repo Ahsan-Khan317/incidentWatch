@@ -24,8 +24,8 @@ const sideNavGroups = [
     title: "Core",
     items: [
       { label: "Overview", href: "/dashboard", icon: LayoutGrid },
-      { label: "API's", href: "/dashboard/apis", icon: Terminal },
       { label: "Incidents", href: "/dashboard/incidents", icon: TriangleAlert },
+
       { label: "Logs", href: "/dashboard/logs", icon: Logs },
       {
         label: "Alerts",

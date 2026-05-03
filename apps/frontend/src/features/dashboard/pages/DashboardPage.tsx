@@ -10,6 +10,7 @@ import { SettingsView } from "../../settings/pages/SettingsView";
 import { TeamView } from "../../team/pages/TeamView";
 import { OverviewView } from "../../overview/pages/OverviewView";
 import ServicePage from "../../service/pages/ServicePage";
+import { ServiceDetailView } from "../../service/pages/ServiceDetailView";
 
 // Hooks
 import { useIncidents } from "../../incidents/hooks/useIncidents";
@@ -55,6 +56,7 @@ export const DashboardPage = () => {
         {activeView === "logs" && <LogsView />}
         {activeView === "team" && <TeamView />}
         {activeView === "services" && <ServicePage />}
+        {activeView === "service-details" && <ServiceDetailView />}
         {activeView === "settings" && <SettingsView />}
       </AnimatePresence>
     </DashboardLayout>

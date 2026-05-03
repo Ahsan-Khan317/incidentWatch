@@ -11,6 +11,7 @@ type View =
   | "status-page"
   | "team"
   | "services"
+  | "service-details"
   | "billing"
   | "settings";
 
