@@ -12,14 +12,24 @@ import {
   Server,
 } from "lucide-react";
 import { useServices } from "../hooks/useServices";
+import { useServiceStore } from "../../dashboard/store/service-store";
 import { useViewStore } from "../../dashboard/store/view-store";
 import { formatDate } from "../components/ServiceTable";
 
-export const ServiceDetailView: React.FC = () => {
-  const { selectedId, setActiveView } = useViewStore();
+interface ServiceDetailViewProps {
+  overrideId?: string | null;
+}
+
+export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
+  overrideId,
+}) => {
+  const { selectedId: viewSelectedId, setActiveView } = useViewStore();
+  const { selectedServiceId } = useServiceStore();
+  const effectiveId = overrideId || viewSelectedId || selectedServiceId;
+
   const { data: services, isLoading } = useServices();
 
-  const service = services?.find((s: any) => s._id === selectedId);
+  const service = services?.find((s: any) => s._id === effectiveId);
 
   if (isLoading) {
     return (

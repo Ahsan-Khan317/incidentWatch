@@ -15,10 +15,12 @@ import { ServiceDetailView } from "../../service/pages/ServiceDetailView";
 // Hooks
 import { useIncidents } from "../../incidents/hooks/useIncidents";
 import { useViewStore } from "../store/view-store";
+import { useServiceStore } from "../store/service-store";
 
 export const DashboardPage = () => {
   const { activeView, setActiveView, selectedId, clearSelectedId } =
     useViewStore();
+  const { selectedServiceId } = useServiceStore();
 
   const { isLoading: incidentsLoading } = useIncidents();
 
@@ -56,7 +58,14 @@ export const DashboardPage = () => {
         {activeView === "logs" && <LogsView />}
         {activeView === "team" && <TeamView />}
         {activeView === "services" && <ServicePage />}
+        {activeView === "service-context" &&
+          (selectedServiceId === "all" ? (
+            <ServicePage />
+          ) : (
+            <ServiceDetailView overrideId={selectedServiceId} />
+          ))}
         {activeView === "service-details" && <ServiceDetailView />}
+
         {activeView === "settings" && <SettingsView />}
       </AnimatePresence>
     </DashboardLayout>

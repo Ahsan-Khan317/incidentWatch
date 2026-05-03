@@ -25,7 +25,7 @@ const sideNavGroups = [
     items: [
       { label: "Overview", href: "/dashboard", icon: LayoutGrid },
       { label: "Incidents", href: "/dashboard/incidents", icon: TriangleAlert },
-
+      { label: "Services", href: "/dashboard/services", icon: Activity },
       { label: "Logs", href: "/dashboard/logs", icon: Logs },
       {
         label: "Alerts",
@@ -93,11 +93,18 @@ export default function DashboardSidebar({
                     <div key={item.label}>
                       <button
                         onClick={() => {
-                          setActiveView(viewId);
+                          const finalViewId =
+                            viewId === "services" ? "service-context" : viewId;
+                          setActiveView(finalViewId);
                           if (window.innerWidth < 768) onClose();
                         }}
                         className={`flex w-full items-center gap-2 rounded px-3 py-2 text-[0.75rem] transition-colors ${
-                          isActive
+                          activeView ===
+                            (viewId === "services"
+                              ? "service-context"
+                              : viewId) ||
+                          (viewId === "services" &&
+                            activeView === "service-details")
                             ? "bg-surface-2 text-heading"
                             : "text-body hover:bg-surface-1 hover:text-heading"
                         }`}
