@@ -19,7 +19,7 @@ const SectionHeading = ({
   return (
     <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
       <div className="flex-1">
-        <h1 className="mb-2 text-3xl font-black tracking-tighter text-heading sm:text-5xl uppercase italic">
+        <h1 className="mb-2 text-3xl font-black tracking-tighter text-heading sm:text-5xl uppercase">
           {href ? (
             <Link
               href={href}

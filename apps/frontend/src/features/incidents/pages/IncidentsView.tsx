@@ -171,9 +171,10 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
           >
             {/* Header */}
             <div className="px-1">
-              <h2 className="text-4xl font-black text-heading tracking-tighter uppercase italic">
+              <h2 className="text-4xl font-black text-heading tracking-tighter uppercase">
                 Active Incidents
               </h2>
+
               <p className="text-[10px] text-muted font-bold mt-2 uppercase tracking-[0.3em] opacity-70">
                 {selectedServiceName
                   ? `Infrastructure context: ${selectedServiceName}`

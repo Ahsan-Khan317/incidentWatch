@@ -19,6 +19,7 @@ import TeamRosterHistory from "../components/TeamRosterHistory";
 import { useTeam } from "../hooks/useTeam";
 import { InviteModal } from "../../invite/components/InviteModal";
 import MemberDirectory from "../../members/components/MemberDirectory";
+import { MemberDetailModal } from "../../members/components/MemberDetailModal";
 
 type TeamViewTab = "roster" | "directory";
 
@@ -50,6 +51,7 @@ export const TeamView: React.FC = () => {
   const [showCreateTeamModal, setShowCreateTeamModal] = React.useState(false);
   const [editingTeam, setEditingTeam] = React.useState<any>(null);
   const [editingMember, setEditingMember] = React.useState<any>(null);
+  const [selectedMember, setSelectedMember] = React.useState<any>(null);
   const [confirmation, setConfirmation] = React.useState<{
     isOpen: boolean;
     title: string;
@@ -275,6 +277,7 @@ export const TeamView: React.FC = () => {
                   removeMember={confirmRemoveMember}
                   toggleStatus={toggleStatus}
                   onEdit={handleEditMember}
+                  onClick={(m) => setSelectedMember(m)}
                 />
               ))}
 
@@ -294,6 +297,7 @@ export const TeamView: React.FC = () => {
           members={members}
           onEdit={handleEditMember}
           onDelete={confirmRemoveMember}
+          onRowClick={(m) => setSelectedMember(m)}
         />
       )}
 
@@ -323,6 +327,12 @@ export const TeamView: React.FC = () => {
         onClose={() => setEditingMember(null)}
         onSave={handleUpdateMember}
         member={editingMember}
+      />
+
+      <MemberDetailModal
+        member={selectedMember}
+        isOpen={!!selectedMember}
+        onClose={() => setSelectedMember(null)}
       />
 
       <ConfirmationModal

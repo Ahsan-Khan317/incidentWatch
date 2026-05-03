@@ -13,12 +13,14 @@ interface MemberDirectoryProps {
   members: TeamMember[];
   onEdit: (member: TeamMember) => void;
   onDelete: (id: string) => void;
+  onRowClick: (member: TeamMember) => void;
 }
 
 const MemberDirectory: React.FC<MemberDirectoryProps> = ({
   members,
   onEdit,
   onDelete,
+  onRowClick,
 }) => {
   const [search, setSearch] = React.useState("");
 
@@ -80,20 +82,21 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
             {filteredMembers.map((member) => (
               <tr
                 key={member.id}
-                className="group hover:bg-surface-2/30 transition-colors"
+                onClick={() => onRowClick(member)}
+                className="group hover:bg-surface-2/30 transition-colors cursor-pointer"
               >
                 <td className="px-6 py-5">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 min-w-0">
                     <div
-                      className={`h-10 w-10 border border-border flex items-center justify-center text-xs font-bold ${member.avatarColor}`}
+                      className={`h-10 w-10 shrink-0 border border-border flex items-center justify-center text-xs font-bold ${member.avatarColor}`}
                     >
                       {member.name[0]}
                     </div>
-                    <div>
-                      <div className="text-[11px] font-bold text-heading uppercase tracking-tight">
+                    <div className="min-w-0">
+                      <div className="text-[11px] font-bold text-heading uppercase tracking-tight truncate max-w-[120px] sm:max-w-[200px]">
                         {member.name}
                       </div>
-                      <div className="text-[10px] text-muted font-mono mt-0.5">
+                      <div className="text-[10px] text-muted font-mono mt-0.5 truncate max-w-[120px] sm:max-w-[200px]">
                         {member.email}
                       </div>
                     </div>
@@ -143,13 +146,19 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
                 <td className="px-6 py-5 text-right">
                   <div className="flex items-center justify-end gap-2 lg:opacity-0 group-hover:opacity-100 transition-all lg:translate-x-2 group-hover:translate-x-0">
                     <button
-                      onClick={() => onEdit(member)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(member);
+                      }}
                       className="p-2 border border-border bg-surface-1 text-muted hover:text-primary hover:border-primary/30 transition-all"
                     >
                       <Edit2 size={12} />
                     </button>
                     <button
-                      onClick={() => onDelete(member.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(member.id);
+                      }}
                       className="p-2 border border-border bg-surface-1 text-muted hover:text-danger hover:border-danger/30 transition-all"
                     >
                       <Trash2 size={12} />

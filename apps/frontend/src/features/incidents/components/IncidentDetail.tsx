@@ -39,7 +39,7 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
                 {incident.displayId}
               </span>
             </div>
-            <h2 className="text-3xl font-display font-black text-heading tracking-tighter uppercase italic break-all leading-none mt-2">
+            <h2 className="text-3xl font-display font-black text-heading tracking-tighter uppercase break-all leading-none mt-2">
               {incident.title}
             </h2>
           </div>
