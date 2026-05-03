@@ -14,27 +14,32 @@ export const incidentApi = {
   },
 
   getIncidentById: async (id: string): Promise<ApiResponse<any>> => {
-    const response = await api.get(`/status/${id}`);
+    const response = await api.get(`/incident/get/${id}`);
+    return response.data;
+  },
+
+  updateStatus: async (
+    id: string,
+    status: string,
+  ): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/incident/status/${id}`, { status });
+    return response.data;
+  },
+
+  resolveIncident: async (id: string): Promise<ApiResponse<any>> => {
+    const response = await api.patch(`/incident/resolve/${id}`);
     return response.data;
   },
 
   createIncident: async (
     data: Partial<Incident>,
   ): Promise<ApiResponse<any>> => {
-    const response = await api.post("/status/create", data);
-    return response.data;
-  },
-
-  updateIncident: async (
-    id: string,
-    data: Partial<Incident>,
-  ): Promise<ApiResponse<any>> => {
-    const response = await api.put(`/status/${id}`, data);
+    const response = await api.post("/incident/create", data);
     return response.data;
   },
 
   deleteIncident: async (id: string): Promise<ApiResponse<null>> => {
-    const response = await api.delete(`/status/${id}`);
+    const response = await api.delete(`/incident/${id}`);
     return response.data;
   },
 };

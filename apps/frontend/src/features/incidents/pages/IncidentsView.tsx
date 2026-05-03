@@ -47,6 +47,8 @@ interface ServiceOption {
   name?: string;
 }
 
+import { useAuthStore } from "@/src/features/auth/store/auth-store";
+
 export const IncidentsView: React.FC<IncidentsViewProps> = ({
   initialIncidentId,
   onClearInitial,
@@ -54,6 +56,8 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
   const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(
     null,
   );
+  const [activeFilter, setActiveFilter] = useState<"all" | "mine">("all");
+  const { user } = useAuthStore();
   const { selectedServiceId, services } = useServiceStore();
   const { incidents: rawIncidents, isLoading } = useIncidents();
   const { members } = useMembers();
@@ -92,8 +96,9 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
           ri.status === "resolved"
             ? "Resolved"
             : ri.status === "acknowledged"
-              ? "Identified"
-              : "Investigating",
+              ? "Investigating"
+              : "Triggered",
+
         assignedTo,
         assignedMemberIds,
         assignedMemberNames,
@@ -112,11 +117,20 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
     });
   }, [rawIncidents, memberNameByUserId]);
 
-  // Filter incidents by the service selected in the sidebar
+  // Filter incidents by the service selected in the sidebar AND active filter (all/mine)
   const filteredIncidents = useMemo(() => {
-    if (selectedServiceId === "all") return allIncidents;
-    return allIncidents.filter((i) => i.serviceId === selectedServiceId);
-  }, [allIncidents, selectedServiceId]);
+    let result = allIncidents;
+
+    if (selectedServiceId !== "all") {
+      result = result.filter((i) => i.serviceId === selectedServiceId);
+    }
+
+    if (activeFilter === "mine" && user?.id) {
+      result = result.filter((i) => i.assignedMemberIds.includes(user.id));
+    }
+
+    return result;
+  }, [allIncidents, selectedServiceId, activeFilter, user]);
 
   // Find selected service name for display
   const selectedServiceName = useMemo(() => {
@@ -170,16 +184,42 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
             className="space-y-8"
           >
             {/* Header */}
-            <div className="px-1">
-              <h2 className="text-4xl font-black text-heading tracking-tighter uppercase">
-                Active Incidents
-              </h2>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1">
+              <div>
+                <h2 className="text-4xl font-black text-heading tracking-tighter uppercase">
+                  Active Incidents
+                </h2>
 
-              <p className="text-[10px] text-muted font-bold mt-2 uppercase tracking-[0.3em] opacity-70">
-                {selectedServiceName
-                  ? `Infrastructure context: ${selectedServiceName}`
-                  : `Tactical overview: ${filteredIncidents.length} active threads`}
-              </p>
+                <p className="text-[10px] text-muted font-bold mt-2 uppercase tracking-[0.3em] opacity-70">
+                  {selectedServiceName
+                    ? `Infrastructure context: ${selectedServiceName}`
+                    : `Tactical overview: ${filteredIncidents.length} active threads`}
+                </p>
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex items-center gap-1 bg-surface-2 p-1 border border-border/50 rounded-md">
+                <button
+                  onClick={() => setActiveFilter("all")}
+                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
+                    activeFilter === "all"
+                      ? "bg-surface-1 text-primary shadow-sm border border-border/40"
+                      : "text-muted hover:text-heading"
+                  }`}
+                >
+                  Global Stream
+                </button>
+                <button
+                  onClick={() => setActiveFilter("mine")}
+                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
+                    activeFilter === "mine"
+                      ? "bg-surface-1 text-primary shadow-sm border border-border/40"
+                      : "text-muted hover:text-heading"
+                  }`}
+                >
+                  Assigned to Me
+                </button>
+              </div>
             </div>
 
             {/* Stats Bar */}
@@ -225,9 +265,11 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
                     check_circle
                   </span>
                   <p className="text-muted font-medium">
-                    {selectedServiceName
-                      ? `No incidents for ${selectedServiceName}.`
-                      : "No incidents detected. All systems operational."}
+                    {activeFilter === "mine"
+                      ? "You have no active assignments. Operational calm achieved."
+                      : selectedServiceName
+                        ? `No incidents for ${selectedServiceName}.`
+                        : "No incidents detected. All systems operational."}
                   </p>
                 </div>
               )}

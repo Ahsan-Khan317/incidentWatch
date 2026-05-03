@@ -79,12 +79,37 @@ export const IncidentObject: React.FC<IncidentObjectProps> = ({
           <span className="text-[0.625rem] font-bold uppercase tracking-widest text-body/20">
             Status
           </span>
-          <div className="flex items-center gap-2 rounded border border-border bg-surface-2 px-2 py-1">
+          <div
+            className={`flex items-center gap-2 rounded border px-2 py-1 transition-all ${
+              incident.status === "Resolved"
+                ? "bg-emerald-500/10 border-emerald-500/20"
+                : incident.status === "Investigating"
+                  ? "bg-amber-500/10 border-amber-500/20"
+                  : "bg-rose-500/10 border-rose-500/20"
+            }`}
+          >
             <div
-              className={`h-1.5 w-1.5 rounded-full ${incident.status === "Resolved" ? "bg-emerald-500" : "bg-primary animate-pulse"}`}
+              className={`h-1.5 w-1.5 rounded-full ${
+                incident.status === "Resolved"
+                  ? "bg-emerald-500"
+                  : incident.status === "Investigating"
+                    ? "bg-amber-500 animate-pulse"
+                    : "bg-rose-500 animate-pulse"
+              }`}
             />
-            <span className="text-[0.625rem] font-bold uppercase text-heading">
-              {incident.status}
+            <span
+              className={`text-[0.625rem] font-black uppercase tracking-wider ${
+                incident.status === "Resolved"
+                  ? "text-emerald-500"
+                  : incident.status === "Investigating"
+                    ? "text-amber-500"
+                    : "text-rose-500"
+              }`}
+            >
+              {incident.status === "Investigating" &&
+              incident.assignedMemberNames?.length > 0
+                ? `Investigating by ${incident.assignedMemberNames[0]}`
+                : incident.status}
             </span>
           </div>
         </div>

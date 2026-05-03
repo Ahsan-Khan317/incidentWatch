@@ -29,6 +29,7 @@ export const updateIncidentStatus = asyncHandler(async (req, res) => {
   const incident = await incidentService.updateStatus({
     incidentId: id,
     status: req.body.status,
+    userId: req.user.id,
   });
 
   return res
@@ -41,6 +42,7 @@ export const resolveIncident = asyncHandler(async (req, res) => {
 
   const incident = await incidentService.resolveIncident({
     incidentId: id,
+    userId: req.user.id,
   });
 
   return res.status(200).json(new ApiResponse(200, incident, "Incident resolved successfully"));
