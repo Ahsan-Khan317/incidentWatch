@@ -105,4 +105,8 @@ export const incidentService = {
 
     return incident;
   },
+
+  getAllIncidents: async ({ organizationId }) => {
+    return await incidentDao.findAllByOrganization(organizationId);
+  },
 };

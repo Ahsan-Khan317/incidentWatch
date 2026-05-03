@@ -24,6 +24,7 @@ const corsOptions = {
     "X-Requested-With",
     "Origin",
     "User-Agent",
+    "x-api-key",
   ],
   credentials: true,
   optionsSuccessStatus: 204,

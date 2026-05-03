@@ -3,6 +3,7 @@ import express from "express";
 const incidentRouter = express.Router();
 
 import validate from "../../middlewares/validate.middleware.js";
+import { org_user_Auth } from "../auth/auth.middleware.js";
 
 import {
   createIncident,
@@ -11,6 +12,7 @@ import {
   resolveIncident,
   addIncidentLog,
   getIncident,
+  getAllIncidents,
 } from "./incident.controller.js";
 
 import {
@@ -21,6 +23,8 @@ import {
 } from "./incident.schema.js";
 
 incidentRouter.post("/create", createIncidentSchema, validate, createIncident);
+
+incidentRouter.get("/all", org_user_Auth, getAllIncidents);
 
 incidentRouter.get("/get/:id", getIncident);
 

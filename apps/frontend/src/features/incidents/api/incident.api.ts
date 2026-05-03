@@ -9,7 +9,7 @@ export interface ApiResponse<T> {
 
 export const incidentApi = {
   getAllIncidents: async (): Promise<ApiResponse<any[]>> => {
-    const response = await api.get("/status/all");
+    const response = await api.get("/incident/all");
     return response.data;
   },
 
