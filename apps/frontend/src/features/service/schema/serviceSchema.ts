@@ -18,6 +18,7 @@ export const serviceSchema = z.object({
     .default("development"),
   autoAssignEnabled: z.boolean().default(true),
   assignmentRules: z.array(assignmentRuleSchema).default([]),
+  members: z.array(z.string()).default([]),
   metadata: z.record(z.string(), z.any()).default({}),
 });
 

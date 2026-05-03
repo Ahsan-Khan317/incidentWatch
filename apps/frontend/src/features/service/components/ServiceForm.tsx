@@ -6,6 +6,7 @@ import { z } from "zod";
 import { serviceSchema } from "../schema/serviceSchema";
 import { MetadataForm } from "./MetadataForm";
 import { AssignmentRulesForm } from "./AssignmentRulesForm";
+import { ServiceMembersForm } from "./ServiceMembersForm";
 import {
   Activity,
   Globe,
@@ -33,6 +34,10 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({
     environment: initialData?.environment || "development",
     autoAssignEnabled: initialData?.autoAssignEnabled ?? true,
     assignmentRules: initialData?.assignmentRules || [],
+    members:
+      initialData?.members?.map((m: any) =>
+        typeof m === "string" ? m : m._id,
+      ) || [],
     metadataList: initialData?.metadata
       ? Object.entries(initialData.metadata).map(([key, value]) => ({
           key,
@@ -221,6 +226,10 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({
               />
             </div>
           </div>
+        </div>
+
+        <div className="border-t border-border pt-8">
+          <ServiceMembersForm />
         </div>
 
         <div className="p-5 border border-primary/20 bg-primary/5 rounded-none flex items-center justify-between">

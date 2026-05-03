@@ -31,15 +31,30 @@ const buildSearchText = ({ title, description, tags, serviceName, context }) => 
     .toLowerCase();
 };
 
-const pickExpertiseMatches = async ({ orgId, title, description, tags, serviceName, context }) => {
+const pickExpertiseMatches = async ({
+  orgId,
+  title,
+  description,
+  tags,
+  serviceName,
+  context,
+  eligibleUserIds = [],
+}) => {
   const searchText = buildSearchText({ title, description, tags, serviceName, context });
   const tagTerms = normalizeTerms(tags);
 
-  const members = await Member.find({
+  const query = {
     organizationId: orgId,
     isActive: true,
     userId: { $exists: true, $ne: null },
-  })
+  };
+
+  // If specific members are assigned to the service, only pick from them
+  if (eligibleUserIds && eligibleUserIds.length > 0) {
+    query.userId = { $in: eligibleUserIds.map(toId) };
+  }
+
+  const members = await Member.find(query)
     .populate("userId", "name email")
     .sort({ oncall: -1, tier: 1, updatedAt: -1 })
     .limit(50);
@@ -65,7 +80,7 @@ const pickExpertiseMatches = async ({ orgId, title, description, tags, serviceNa
   if (scoredMembers.length > 0) {
     return {
       ids: uniqueIds(scoredMembers.slice(0, 3).map(({ member }) => member.userId?._id)),
-      reason: "matched engineer expertise",
+      reason: "matched engineer expertise within eligible pool",
     };
   }
 
@@ -73,7 +88,15 @@ const pickExpertiseMatches = async ({ orgId, title, description, tags, serviceNa
   if (oncallMembers.length > 0) {
     return {
       ids: uniqueIds(oncallMembers.map((member) => member.userId?._id)),
-      reason: "no expertise match; selected on-call engineers",
+      reason: "selected on-call engineers from eligible pool",
+    };
+  }
+
+  // Fallback if members are explicitly assigned to service but none match expertise/on-call
+  if (eligibleUserIds && eligibleUserIds.length > 0 && members.length > 0) {
+    return {
+      ids: uniqueIds(members.slice(0, 2).map((m) => m.userId?._id)),
+      reason: "fallback to assigned service members",
     };
   }
 
@@ -97,7 +120,7 @@ export const resolveIncidentAssignment = async ({
     return { assignedMembers, assignedTeams, timeline };
   }
 
-  assignedMembers.push(...uniqueIds(service?.members || []));
+  // If service has teams, they are still auto-assigned
   assignedTeams.push(...uniqueIds(service?.teams || []));
 
   const incidentTags = Array.isArray(tags) ? tags.join(" ") : "";
@@ -119,6 +142,7 @@ export const resolveIncidentAssignment = async ({
   let finalMembers = uniqueIds(assignedMembers);
   let finalTeams = uniqueIds(assignedTeams);
 
+  // If no manual rules matched, use expertise matching restricted to service members (if any)
   if (finalMembers.length === 0 && finalTeams.length === 0) {
     const expertiseMatch = await pickExpertiseMatches({
       orgId,
@@ -127,6 +151,7 @@ export const resolveIncidentAssignment = async ({
       tags,
       serviceName: service?.name,
       context,
+      eligibleUserIds: service?.members, // Restricted to service members
     });
 
     if (expertiseMatch.ids.length > 0) {
