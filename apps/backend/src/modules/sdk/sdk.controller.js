@@ -14,6 +14,18 @@ export const handleHeartbeat = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, result, "Heartbeat processed"));
 });
 
+export const captureLogs = asyncHandler(async (req, res) => {
+  const result = await sdkService.processLogs(
+    req.body,
+    req.orgId,
+    req.apiKeyDoc.key,
+    req.headers["x-iw-server-id"],
+    req.headers["x-iw-environment"] || "development",
+  );
+
+  return res.status(202).json(new ApiResponse(202, result, "Logs accepted"));
+});
+
 export const verifyKey = asyncHandler(async (req, res) => {
   const serverId = req.headers["x-iw-server-id"];
   const environment = req.headers["x-iw-environment"] || "development";

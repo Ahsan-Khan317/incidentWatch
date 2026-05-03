@@ -2,6 +2,7 @@ import statusService from "./status.service.js";
 import asyncHandler from "@/utils/Error/asyncHandler.js";
 import { ApiResponse } from "@/utils/Error/ApiResponse.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
+import { getLogStreamMetrics } from "@/stream/workers/index.js";
 
 export const createStatus = asyncHandler(async (req, res, next) => {
   const { title, description, severity, status } = req.body;
@@ -77,4 +78,9 @@ export const deleteStatus = asyncHandler(async (req, res, next) => {
   await statusService.deleteStatus(id);
 
   return res.status(200).json(new ApiResponse(200, null, "Status deleted successfully"));
+});
+
+export const getStreamStatus = asyncHandler(async (req, res) => {
+  const metrics = getLogStreamMetrics();
+  return res.status(200).json(new ApiResponse(200, metrics, "Stream metrics fetched successfully"));
 });

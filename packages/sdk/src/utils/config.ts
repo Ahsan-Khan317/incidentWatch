@@ -40,7 +40,7 @@ export class Config implements SDKConfig {
     this.slowThresholdMs = userConfig.slowThresholdMs ?? 5000;
     this.breadcrumbLimit = userConfig.breadcrumbLimit ?? 50;
     this.heartbeatIntervalMs = userConfig.heartbeatIntervalMs ?? 5000;
-    this.flushIntervalMs = userConfig.flushIntervalMs ?? 2000;
+    this.flushIntervalMs = userConfig.flushIntervalMs ?? 400;
 
     this.memoryAlertThresholdMb = userConfig.memoryAlertThresholdMb ?? 512;
     this.heapAlertThresholdPct = userConfig.heapAlertThresholdPct ?? 90;

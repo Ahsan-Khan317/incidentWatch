@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import PQueue from "p-queue";
-import { SDKConfig, Incident } from "../types";
+import { SDKConfig, Incident, LogEvent } from "../types";
 import { Logger } from "winston";
 
 export class HttpTransport {
@@ -59,6 +59,24 @@ export class HttpTransport {
         await this.client.post("/heartbeat", data);
       } catch (err) {
         // Heartbeat failure is non-critical, don't trigger circuit breaker for now
+      }
+    });
+  }
+
+  /**
+   * Live logs ingest endpoint.
+   * Critical logs are sent immediately by caller; normal logs can be batched.
+   */
+  async sendLogs(events: LogEvent[]): Promise<void> {
+    if (this._circuitOpen || events.length === 0) return;
+
+    this.queue.add(async () => {
+      try {
+        await this.client.post("/logs", { events });
+      } catch (err) {
+        this.logger.warn("[IW] Failed to send live log batch", {
+          batchSize: events.length,
+        });
       }
     });
   }

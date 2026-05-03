@@ -1,7 +1,9 @@
 import api from "@/src/lib/api";
 
 export interface Log {
-  _id: string;
+  _id?: string;
+  id?: string;
+  streamId?: string;
   message: string;
   level: string;
   service?: string;

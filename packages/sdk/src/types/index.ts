@@ -118,6 +118,19 @@ export interface IncidentData {
   context?: Record<string, unknown>;
 }
 
+export interface LogEvent {
+  message: string;
+  level?: "info" | "warn" | "error";
+  severity?: Severity;
+  tags?: string[];
+  context?: Record<string, unknown>;
+  breadcrumbs?: Breadcrumb[];
+  meta?: Record<string, unknown>;
+  service?: string;
+  timestamp?: string;
+  deliveryMode?: "critical" | "normal";
+}
+
 export interface CaptureErrorOptions {
   severity?: Severity;
   tags?: string[];

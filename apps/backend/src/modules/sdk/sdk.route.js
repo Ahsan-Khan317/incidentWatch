@@ -1,4 +1,4 @@
-import { captureIncident, handleHeartbeat, verifyKey } from "./sdk.controller.js";
+import { captureIncident, captureLogs, handleHeartbeat, verifyKey } from "./sdk.controller.js";
 import { sdkAuth } from "@/middlewares/sdkAuth.middleware.js";
 import express from "express";
 
@@ -9,6 +9,7 @@ sdkRouter.use(sdkAuth);
 
 sdkRouter.post("/incidents", captureIncident);
 sdkRouter.post("/heartbeat", handleHeartbeat);
+sdkRouter.post("/logs", captureLogs);
 sdkRouter.get("/verify", verifyKey);
 
 export default sdkRouter;

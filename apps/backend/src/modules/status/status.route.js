@@ -5,6 +5,7 @@ import {
   getStatusById,
   updateStatus,
   deleteStatus,
+  getStreamStatus,
 } from "./status.controller.js";
 import {
   createStatusValidation,
@@ -21,6 +22,7 @@ statusRouter.use(org_user_Auth);
 
 statusRouter.post("/create", createStatusValidation, validate, createStatus);
 statusRouter.get("/all", getAllStatus);
+statusRouter.get("/stream", getStreamStatus);
 statusRouter.get("/:id", statusIdValidation, validate, getStatusById);
 statusRouter.put("/:id", updateStatusValidation, validate, updateStatus);
 statusRouter.delete("/:id", statusIdValidation, validate, deleteStatus);

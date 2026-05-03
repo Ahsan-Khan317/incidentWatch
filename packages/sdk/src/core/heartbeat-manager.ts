@@ -1,11 +1,13 @@
 import { IncidentWatchSDK } from "../sdk";
 import { v4 as uuidv4 } from "uuid";
+import { LogEvent } from "../types";
 
 export class HeartbeatManager {
   private sdk: IncidentWatchSDK;
   private intervalId?: NodeJS.Timeout;
-  private logBuffer: string[] = [];
-  private maxBufferSize = 500; // Limit to 500 lines to prevent memory bloat
+  private flushIntervalId?: NodeJS.Timeout;
+  private logBuffer: LogEvent[] = [];
+  private maxBufferSize = 1000;
 
   constructor(sdk: IncidentWatchSDK) {
     this.sdk = sdk;
@@ -17,15 +19,25 @@ export class HeartbeatManager {
     // Terminal logs capture karne ke liye stdout/stderr ko patch karo
     this._patchTerminal();
 
-    // 5 seconds interval (as requested by user)
     this.intervalId = setInterval(() => {
       this._sendHeartbeat();
     }, this.sdk.config.heartbeatIntervalMs);
 
+    this.flushIntervalId = setInterval(() => {
+      this._flushLogBuffer();
+    }, this.sdk.config.flushIntervalMs);
+
     // Ensure the heartbeat doesn't prevent process from exiting
     this.intervalId.unref();
 
-    this.sdk.logger.debug("[IW] Heartbeat manager started (5s interval)");
+    if (this.flushIntervalId) {
+      this.flushIntervalId.unref();
+    }
+
+    this.sdk.logger.debug("[IW] Heartbeat manager started", {
+      heartbeatMs: this.sdk.config.heartbeatIntervalMs,
+      flushMs: this.sdk.config.flushIntervalMs,
+    });
   }
 
   /**
@@ -65,30 +77,69 @@ export class HeartbeatManager {
 
   private _addToBuffer(text: string, source: string): void {
     const lines = text.split("\n").filter((l) => l.trim().length > 0);
+
     for (const line of lines) {
-      if (this.logBuffer.length >= this.maxBufferSize) {
-        this.logBuffer.shift(); // Remove oldest line if buffer is full
+      if (line.includes("[IW]")) continue;
+
+      const event = this._toLogEvent(line, source);
+
+      if (event.deliveryMode === "critical") {
+        this._sendCriticalLog(event);
+        continue;
       }
-      this.logBuffer.push(`[${source}] ${line}`);
+
+      if (this.logBuffer.length >= this.maxBufferSize) {
+        this.logBuffer.shift();
+      }
+
+      this.logBuffer.push(event);
     }
   }
 
+  private _toLogEvent(line: string, source: string): LogEvent {
+    const lowered = line.toLowerCase();
+    const isCritical =
+      source === "STDERR" ||
+      lowered.includes("error") ||
+      lowered.includes("exception") ||
+      lowered.includes("fatal");
+
+    return {
+      message: `[${source}] ${line}`,
+      level: isCritical ? "error" : "info",
+      severity: isCritical ? "SEV2" : "SEV3",
+      service: this.sdk.config.serverId,
+      context: {
+        environment: this.sdk.config.environment,
+        source,
+      },
+      timestamp: new Date().toISOString(),
+      deliveryMode: isCritical ? "critical" : "normal",
+    };
+  }
+
+  private _sendCriticalLog(event: LogEvent): void {
+    this.sdk.transport.sendLogs([event]).catch(() => {
+      // Never throw from terminal patch path.
+    });
+  }
+
+  private _flushLogBuffer(): void {
+    if (this.logBuffer.length === 0) return;
+
+    const batch = this.logBuffer.splice(0, this.logBuffer.length);
+    this.sdk.transport.sendLogs(batch).catch(() => {
+      // Non-blocking telemetry path.
+    });
+  }
+
   private async _sendHeartbeat(): Promise<void> {
-    if (this.logBuffer.length === 0) {
-      // Agar koi naye logs nahi hain, toh basic heartbeat bhej do
-      // (Optional: can be skipped if user ONLY wants logs)
-    }
-
-    const logsToSend = [...this.logBuffer];
-    this.logBuffer = []; // Clear buffer after snapshot
-
     const payload = {
       id: uuidv4(),
       type: "heartbeat",
       timestamp: new Date().toISOString(),
       serverId: this.sdk.config.serverId,
       environment: this.sdk.config.environment,
-      logs: logsToSend,
       metrics: {
         uptime: process.uptime(),
         memory: process.memoryUsage(),
@@ -110,5 +161,12 @@ export class HeartbeatManager {
       clearInterval(this.intervalId);
       this.intervalId = undefined;
     }
+
+    if (this.flushIntervalId) {
+      clearInterval(this.flushIntervalId);
+      this.flushIntervalId = undefined;
+    }
+
+    this._flushLogBuffer();
   }
 }

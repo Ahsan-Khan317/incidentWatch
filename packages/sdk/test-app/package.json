@@ -2,14 +2,15 @@
   "name": "@incidentwatch/test-app",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Test all SDK error handling, integrations, and features",
   "scripts": {
-    "mock": "node mock-platform.js",
-    "test-app": "node test-app.js",
-    "tests": "node run-tests.js"
+    "mock": "node mock-platform.cjs",
+    "test-app": "node test-app.cjs",
+    "tests": "node run-tests.cjs"
   },
   "dependencies": {
-    "@incidentwatch/sdk": "file:..",
+    "@incidentwatch/sdk": "file:../aditya_kbr01-incidentwatch-sdk-1.0.0.tgz",
     "axios": "^1.7.9",
     "express": "^4.21.2"
   }

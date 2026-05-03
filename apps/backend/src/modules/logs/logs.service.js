@@ -1,7 +1,7 @@
-import logsDao from "./logs.dao.js";
 import apiKeyDao from "../apiKey/apiKey.dao.js";
 import { ApiError } from "@/utils/Error/ApiError.js";
-import { getIO } from "../../socket/socket.js";
+import { publishLogEvent, getRecentLogs } from "@/stream/bus.js";
+import { randomUUID } from "crypto";
 
 class LogsService {
   async createLog(body, auth) {
@@ -52,37 +52,62 @@ class LogsService {
       ...meta, // Backward compatibility: merge existing meta if present
     };
 
-    // 3. Call DAO
-    const log = await logsDao.create({
+    const normalizedLogEvent = {
+      id: randomUUID(),
       message: normalizedMessage,
       level: normalizedLevel.toLowerCase(),
-      orgId,
+      severity: severity || null,
+      orgId: String(orgId),
       apiKey,
       service: resolvedService,
       metadata,
-    });
+      timestamp: new Date().toISOString(),
+      source: "logs-api",
+      deliveryMode:
+        body.deliveryMode || (normalizedLevel.toLowerCase() === "error" ? "critical" : "normal"),
+    };
 
-    // 4. Real-time push via Socket.io
-    const io = getIO();
-    if (io) {
-      io.emit("log", log);
-    }
+    // No long-term write on the hot path: push into stream bus.
+    await publishLogEvent(normalizedLogEvent);
 
-    return log;
+    return normalizedLogEvent;
   }
 
   async getAllLogs(filter) {
-    return await logsDao.findAll(filter);
+    const { orgId, level, service } = filter;
+
+    // Fetch from the sharded org-specific stream for performance and isolation
+    const recentLogs = await getRecentLogs(1000, orgId);
+
+    // Apply in-memory filtering
+    return recentLogs.filter((log) => {
+      // 1. Organization Filter
+      if (orgId && String(log.orgId) !== String(orgId)) return false;
+
+      // 2. Level Filter
+      if (level && String(log.level).toLowerCase() !== String(level).toLowerCase()) return false;
+
+      // 3. Service Filter
+      if (service) {
+        const logService = String(log.service || "unknown").toLowerCase();
+        const filterService = String(service).toLowerCase();
+        if (logService !== filterService) return false;
+      }
+
+      return true;
+    });
   }
 
   async getLogById(id, orgId) {
-    const log = await logsDao.findById(id);
+    const recentLogs = await getRecentLogs(1000, orgId);
+    const log = recentLogs.find(
+      (l) => (l.id === id || l.streamId === id) && String(l.orgId) === String(orgId),
+    );
+
     if (!log) {
-      throw new ApiError(404, "Log not found");
+      throw new ApiError(404, "Log not found in recent stream buffer");
     }
-    if (log.orgId.toString() !== orgId.toString()) {
-      throw new ApiError(403, "Unauthorized access to this log");
-    }
+
     return log;
   }
 }

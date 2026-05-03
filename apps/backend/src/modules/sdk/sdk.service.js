@@ -2,6 +2,8 @@ import { incidentService } from "@/modules/incident/incident.service.js";
 import logsService from "@/modules/logs/logs.service.js";
 import { incidentDao } from "@/modules/incident/incident.dao.js";
 import Service from "@/modules/service/service.model.js";
+import { ENV } from "@/configs/env.config.js";
+import { logger } from "@/utils/logger.js";
 
 class SdkService {
   /**
@@ -136,6 +138,18 @@ class SdkService {
     // Ensure service is registered
     await this._ensureServiceRegistered(serverId, orgId, environment, metrics);
 
+    // NEW: Always emit a log event for heartbeats to show live telemetry activity
+    await logsService.createLog(
+      {
+        message: `Heartbeat: ${serverId} is active`,
+        level: "info",
+        service: serverId,
+        context: { environment, metrics },
+        tags: ["heartbeat", "sdk-internal"],
+      },
+      { user: { organizationId: orgId } }, // Pass orgId via mock user object
+    );
+
     // 1. If there are logs, process them via logsService
     if (logs.length > 0) {
       for (const logItem of logs) {
@@ -155,6 +169,56 @@ class SdkService {
 
     // 2. Update server status
     return { status: "ok", receivedAt: new Date() };
+  }
+
+  async processLogs(payload, orgId, apiKey, serverId, environment) {
+    const events = Array.isArray(payload?.events)
+      ? payload.events
+      : payload?.message
+        ? [payload]
+        : [];
+
+    if (events.length === 0) {
+      if (ENV.LOG_STREAM_DEBUG) {
+        logger.debug("[SDK] Live logs payload empty", { serverId, orgId: String(orgId) });
+      }
+      return { accepted: 0 };
+    }
+
+    if (ENV.LOG_STREAM_DEBUG) {
+      logger.debug("[SDK] Live logs batch received", {
+        count: events.length,
+        serverId,
+        orgId: String(orgId),
+      });
+    }
+
+    await Promise.all(
+      events.map((event) =>
+        logsService.createLog(
+          {
+            message: event.message,
+            title: event.title,
+            level: event.level,
+            severity: event.severity,
+            service: event.service || serverId || "unknown",
+            tags: event.tags || [],
+            breadcrumbs: event.breadcrumbs || [],
+            context: {
+              ...(event.context || {}),
+              environment,
+              sdkTimestamp: event.timestamp,
+              deliveryMode: event.deliveryMode,
+            },
+            meta: event.meta,
+            deliveryMode: event.deliveryMode,
+          },
+          { apiKeyHeader: apiKey },
+        ),
+      ),
+    );
+
+    return { accepted: events.length };
   }
 
   async verifyKey(orgId, serverId, environment) {

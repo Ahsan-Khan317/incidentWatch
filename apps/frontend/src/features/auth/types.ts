@@ -4,6 +4,7 @@ export interface AuthUser {
   email: string;
   role?: string;
   organizationName?: string;
+  organizationId?: string;
   oncall?: boolean;
 }
 

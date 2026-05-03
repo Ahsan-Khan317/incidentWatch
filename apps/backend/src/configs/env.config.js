@@ -23,6 +23,11 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
 
   REDIS_URL: z.string().default("redis://localhost:6379"),
+  LOG_STREAM_KEY: z.string().default("iw:logs:stream"),
+  LOG_STREAM_MAXLEN: z.coerce.number().default(10000),
+  LOG_STREAM_READ_COUNT: z.coerce.number().default(50),
+  LOG_STREAM_BLOCK_MS: z.coerce.number().default(1000),
+  LOG_STREAM_DEBUG: z.coerce.boolean().default(false),
   SESSION_TTL: z.coerce.number().default(604800), // 7 days in seconds
 
   // ADMIN
