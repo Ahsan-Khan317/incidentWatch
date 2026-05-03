@@ -2,6 +2,7 @@ import asyncHandler from "../../utils/Error/asyncHandler.js";
 import { ApiResponse } from "../../utils/Error/ApiResponse.js";
 import { ApiError } from "../../utils/Error/ApiError.js";
 import { inviteService } from "./invite.service.js";
+import { ENV } from "@/configs/env.config.js";
 
 // @desc    Invite Member
 // @route   POST /api/invite
@@ -44,21 +45,12 @@ export const inviteMember = asyncHandler(async (req, res) => {
 // @route   POST /api/accept-invite
 // @access  Public
 export const acceptInvite = asyncHandler(async (req, res) => {
-  const { token, name, password } = req.body;
+  const { token } = req.query;
 
-  const result = await inviteService.acceptInvite({ token, name, password });
+  const result = await inviteService.acceptInvite({ token });
 
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        userId: result.user._id,
-        email: result.user.email,
-        organizationId: result.user.organizationId,
-      },
-      "Invitation accepted successfully",
-    ),
-  );
+  res.redirect(`${ENV.FRONTEND_URL}/login`);
+  return;
 });
 
 // @desc    Get All Invites

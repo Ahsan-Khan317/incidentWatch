@@ -26,6 +26,16 @@ export const verifyRefreshToken = (token) => {
   return jwt.verify(token, ENV.REFRESH_TOKEN_SECRET);
 };
 
+export const generateVerificationToken = (userId) => {
+  return jwt.sign({ id: userId }, ENV.VERIFICATION_TOKEN_SECRET, {
+    expiresIn: ENV.VERIFICATION_TOKEN_EXPIRY,
+  });
+};
+
+export const verifyVerificationToken = (token) => {
+  return jwt.verify(token, ENV.VERIFICATION_TOKEN_SECRET);
+};
+
 // Verify access token
 export const verifyAccessToken = (token) => {
   return jwt.verify(token, ENV.ACCESS_TOKEN_SECRET);

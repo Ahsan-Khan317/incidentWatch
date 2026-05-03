@@ -11,8 +11,17 @@ const envSchema = z.object({
   ACCESS_TOKEN_SECRET: z.string().min(8),
   ACCESS_TOKEN_EXPIRY: z.string().default("1d"),
 
+  FRONTEND_URL: z.string().default("http://localhost:3000").optional(),
+  BACKEND_URL: z.string().default("http://localhost:8000").optional(),
+
   REFRESH_TOKEN_SECRET: z.string().min(8),
   REFRESH_TOKEN_EXPIRY: z.string().default("10d"),
+
+  INVITE_TOKEN_SECRET: z.string().min(8).optional(),
+  INVITE_TOKEN_EXPIRY: z.string().default("7d").optional(),
+
+  VERIFICATION_TOKEN_SECRET: z.string().min(8).optional(),
+  VERIFICATION_TOKEN_EXPIRY: z.string().default("120d").optional(),
 
   CORS_ORIGIN: z
     .string()
@@ -36,6 +45,7 @@ const envSchema = z.object({
 
   // EMAIL
   RESEND_API_KEY: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().optional(),
 
   // GOOGLE
   GOOGLE_CLIENT_ID: z.string().optional(),

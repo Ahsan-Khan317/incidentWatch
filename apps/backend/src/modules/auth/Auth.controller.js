@@ -8,45 +8,16 @@ import { authDao } from "./auth.dao.js";
 // @route   POST /api/auth/orgregister
 // @access  Public
 export const registerOrganization = asyncHandler(async (req, res, next) => {
-  const result = await authService.registerOrganization(req.body);
-
-  res.cookie("accessToken", result.accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
-  });
-
-  res.cookie("refreshToken", result.refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
-  return res.status(201).json(
-    new ApiResponse(
-      201,
-      {
-        organization: {
-          id: result.organization._id,
-          name: result.organization.organizationName,
-          email: result.organization.email,
-          apiKeys: result.organization.apiKeys,
-        },
-        user: {
-          id: result.adminUser._id,
-          name: result.adminUser.name,
-          email: result.adminUser.email,
-          role: result.adminUser.role,
-          oncall: true,
-          sessionId: result.sessionId, // NEW: attach session ID
-        },
-        accessToken: result.accessToken,
-      },
-      "Organization registered successfully",
-    ),
-  );
+  await authService.registerOrganization(req.body);
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        null,
+        "Organization registration request sent successfully. Please check your email to verify.",
+      ),
+    );
 });
 
 // @desc    Verify Email

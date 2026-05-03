@@ -22,8 +22,7 @@ const getCommonStyles = (frontendUrl) => `
 `;
 
 export const getInviteEmailTemplate = (inviteToken, orgName, userEmail) => {
-  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-  const inviteLink = `${frontendUrl}/register?token=${inviteToken}&email=${userEmail}`;
+  const frontendUrl = `${ENV.BACKEND_URL}${API_PREFIX}/invite/accept-invite?token=${inviteToken}&email=${userEmail}`;
 
   return `
     <!DOCTYPE html>
@@ -82,7 +81,7 @@ export const getInviteEmailTemplate = (inviteToken, orgName, userEmail) => {
                   <table border="0" cellspacing="0" cellpadding="0" width="100%">
                     <tr>
                       <td align="center">
-                        <a href="${inviteLink}" style="display: inline-block; padding: 14px 32px; background-color: #389f16; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 20px rgba(56, 159, 22, 0.3);">
+                        <a href="${frontendUrl}" style="display: inline-block; padding: 14px 32px; background-color: #389f16; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 20px rgba(56, 159, 22, 0.3);">
                           Accept Invitation
                         </a>
                       </td>
@@ -95,7 +94,7 @@ export const getInviteEmailTemplate = (inviteToken, orgName, userEmail) => {
                       If the button doesn't work, copy and paste this link into your browser:
                     </p>
                     <div style="padding: 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: ui-monospace, 'Cascadia Code', monospace; font-size: 12px; color: #64748b; word-break: break-all;">
-                      ${inviteLink}
+                      ${frontendUrl}
                     </div>
                   </div>
                 </td>
@@ -328,11 +327,11 @@ export const getOrgWelcomeTemplate = (orgName) => {
 
 export const verifyEmail_msg = (token) => {
   const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
-  const verificationUrl = `${ENV.BACKEND_URL}${API_PREFIX}/auth/verify/email/${token}`;
+  const verificationUrl = `${ENV.BACKEND_URL}${API_PREFIX}/auth/verify-email/${token}`;
 
   return `
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="en"> 
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">

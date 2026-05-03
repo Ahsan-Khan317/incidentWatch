@@ -14,17 +14,16 @@ const organizationSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-      minlength: 6,
-    },
     apiKeys: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ApiKey",
       },
     ],
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     isVerified: {
       type: Boolean,
       required: true,

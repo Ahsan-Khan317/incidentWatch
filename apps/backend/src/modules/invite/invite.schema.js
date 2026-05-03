@@ -15,13 +15,3 @@ export const inviteMemberSchema = [
   body("tier").optional().isNumeric().withMessage("Tier must be a number"),
   body("avatarColor").optional().isString().withMessage("Avatar color must be a string"),
 ];
-
-export const acceptInviteSchema = [
-  body("token").notEmpty().withMessage("Invitation token is required"),
-  body("name").notEmpty().withMessage("Name is required").trim(),
-  body("password")
-    .notEmpty()
-    .withMessage("Password is required")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long"),
-];

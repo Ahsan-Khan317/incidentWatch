@@ -8,9 +8,13 @@ import { getInviteEmailTemplate } from "../../services/Email/Email_msg.js";
 
 export const inviteService = {
   inviteMember: async ({ email, role, organizationId, expertise, tier, avatarColor }) => {
-    console.log("INVITE SERVICE ORG ID:", organizationId);
     // 1. Check if user already exists
     const user = await authDao.findUserByEmail(email);
+
+    if (!user) {
+      throw new ApiError(404, "User not found, Please create user first");
+    }
+
     if (user) {
       // Check if already a member of this organization
       const existingMember = await memberDao.findMemberByUserAndOrg(user._id, organizationId);
@@ -61,10 +65,18 @@ export const inviteService = {
     return invite;
   },
 
-  acceptInvite: async ({ token, name, password }) => {
+  acceptInvite: async ({ token }) => {
     // 1. Validate token
-    const invite = await inviteDao.findInviteByToken(token);
+    const invite = await inviteDao.findInviteByToken(token?.trim());
     if (!invite) {
+      // DEBUG: Let's see what's actually in the database
+      const InviteModel = (await import("./invite.model.js")).default;
+      const all = await InviteModel.find({});
+      console.log(
+        "Current invites in DB:",
+        all.map((i) => ({ email: i.email, token: i.inviteToken, accepted: i.isAccepted })),
+      );
+      console.log("Searching for token:", token);
       throw new ApiError(404, "Invalid or expired invitation token");
     }
 
@@ -78,16 +90,6 @@ export const inviteService = {
 
     // 2. Check if user already exists (by email)
     let user = await authDao.findUserByEmail(invite.email);
-
-    if (!user) {
-      // 3. If not, create user
-      user = await authDao.createUser({
-        name: name,
-        email: invite.email,
-        password: password,
-        isVerified: true,
-      });
-    }
 
     // 4. Create Member entry
     const existingMember = await memberDao.findMemberByUserAndOrg(user._id, invite.organizationId);

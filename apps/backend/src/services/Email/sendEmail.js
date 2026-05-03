@@ -1,9 +1,10 @@
+import { ENV } from "@/configs/env.config.js";
 import { resend } from "../../configs/resend.config.js";
 
 const sendEmail = async function ({ to, subject, html, text }) {
   try {
     const data = await resend.emails.send({
-      from: "onboarding@resend.dev", // Update this to your verified domain if necessary
+      from: ENV.RESEND_FROM_EMAIL, // Update this to your verified domain if necessary
       to,
       subject,
       html,

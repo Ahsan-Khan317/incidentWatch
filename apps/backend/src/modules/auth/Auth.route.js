@@ -16,7 +16,7 @@ import { org_admin_Auth, org_user_Auth } from "./auth.middleware.js";
 const Auth_router = express.Router();
 
 Auth_router.post("/orgregister", orgRegisterValidation, validate, registerOrganization);
-Auth_router.get("/verify/email/:id", verifyEmail);
+Auth_router.get("/verify-email/:id", verifyEmail);
 Auth_router.post("/orglogin", userLoginValidation, validate, loginOrganization);
 Auth_router.get("/getme", org_user_Auth, get_me);
 

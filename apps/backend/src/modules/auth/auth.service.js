@@ -10,6 +10,8 @@ import {
   generateRefreshToken,
   verifyRefreshToken,
   generateInviteToken,
+  generateVerificationToken,
+  verifyVerificationToken,
 } from "../../utils/generateToken.js";
 import {
   verifyEmail_msg,
@@ -19,25 +21,37 @@ import {
 
 export const authService = {
   registerOrganization: async ({ name, organizationName, email, password }) => {
+    const userExists = await authDao.findUserByEmail(email);
+    if (userExists) {
+      throw new ApiError(404, "User already exists with this email");
+    }
+
     const orgExists = await authDao.findOrganizationByEmail(email);
     if (orgExists) {
       throw new ApiError(404, "Organization already exists with this email");
     }
 
+    const adminUser = await authDao.createUser({
+      name: `${name} Admin`,
+      email: email,
+      password: password,
+      role: "admin",
+      isVerified: false,
+      isActive: true,
+    });
+
     const organization = await authDao.createOrganization({
       organizationName,
       email,
       password,
+      ownerId: adminUser._id,
     });
-    if (!organization) throw new ApiError(403, "Organization not created");
 
-    const adminUser = await authDao.createUser({
-      name: `${name} Admin`,
-      email: organization.email,
-      password: password,
-      isVerified: false,
-      isActive: true,
-    });
+    // Update user's organizationId
+    adminUser.organizationId = organization._id;
+    await adminUser.save();
+
+    if (!organization) throw new ApiError(403, "Organization not created");
 
     // Create Member entry for admin
     await Member.create({
@@ -47,57 +61,39 @@ export const authService = {
       isActive: true,
     });
 
-    // Create session via sessionService
-    const sessionId = await sessionService.createSession(adminUser._id, {
-      organizationId: organization._id,
-      role: "admin",
-      ip: "registration",
-      agent: "registration",
-    });
-
-    const accessToken = generateAccessToken({
-      id: adminUser._id,
-      organizationId: organization._id.toString(),
-      role: "admin",
-      sessionId,
-    });
-    const refreshToken = generateRefreshToken(adminUser._id, sessionId);
+    const verificationToken = generateVerificationToken(adminUser._id);
 
     await sendEmail({
       to: adminUser.email,
       subject: `Verify your email – ${organization.organizationName}`,
-      html: verifyEmail_msg(refreshToken),
+      html: verifyEmail_msg(verificationToken),
     });
 
-    return { organization, adminUser, accessToken, refreshToken };
+    return { organization, adminUser };
   },
-
   verifyEmail: async (token) => {
     if (!token) throw new ApiError(400, "Token not received");
 
-    const decode = verifyRefreshToken(token);
+    const decode = verifyVerificationToken(token);
     if (!decode) throw new ApiError(400, "Invalid token");
 
     const userid = decode.id;
-    const isuser = await authDao.findUserById(userid);
-    if (!isuser) throw new ApiError(404, "User not found");
+    console.log(userid);
+    const user = await authDao.findUserById(userid);
+    if (!user) throw new ApiError(404, "User not found");
 
-    const membership = await Member.findOne({ userId: userid });
-    if (!membership) throw new ApiError(404, "Organization membership not found");
-
-    const isOrganization = await authDao.findOrganizationById(membership.organizationId);
-    if (!isOrganization) throw new ApiError(404, "Organization not found");
+    const organization = await authDao.findOrganizationById(user.organizationId);
+    if (!organization) throw new ApiError(404, "Organization not found");
 
     const updateuser = await authDao.updateUser(userid, { isVerified: true });
-    const updateorg = await authDao.updateOrganization(membership.organizationId, {
+    const updateorg = await authDao.updateOrganization(user.organizationId, {
       isVerified: true,
     });
 
     if (!updateuser && !updateorg) throw new ApiError(400, "Account not verified.");
 
-    return { html: getOrgWelcomeTemplate(isOrganization.organizationName) };
+    return { html: getOrgWelcomeTemplate(organization.organizationName) };
   },
-
   loginOrganization: async ({ email, password, ip, userAgent }) => {
     const isuser = await authDao.findUserByEmail(email);
     if (!isuser) throw new ApiError(401, "Invalid credentials");
@@ -139,13 +135,11 @@ export const authService = {
 
     return { user: userObj, memberships, accessToken, refreshToken, sessionId };
   },
-
   getMe: async (userId) => {
     const isuser = await authDao.findUserById(userId);
     if (!isuser) throw new ApiError(403, "User data not fetched");
     return isuser;
   },
-
   inviteUser: async ({ name, email, role, organizationId }) => {
     const organization = await authDao.findOrganizationById(organizationId);
     if (!organization) throw new ApiError(404, "Organization not found");
