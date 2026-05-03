@@ -149,23 +149,28 @@ export default function DashboardSidebar({
         </div>
 
         {/* Bottom section */}
-        <div className="mt-auto space-y-2 border-t border-dashed border-border px-3 py-3 text-[0.625rem] text-body bg-page">
-          <div className="mb-2 border-b border-border px-2 pb-2">
-            <p className="text-xs text-heading">
-              {user?.name || "Workspace User"}
-            </p>
-            <p className="text-[0.6875rem] text-body">
-              {user?.email || "Signed in"}
-            </p>
+        <div className="mt-auto space-y-2 border-t border-dashed border-border px-4 py-4 text-[0.625rem] text-body bg-page/50 backdrop-blur-sm">
+          <div className="mb-4 flex items-center gap-3 border-b border-border/40 pb-4">
+            <div className="h-8 w-8 flex items-center justify-center bg-surface-2 rounded-none border border-border text-[10px] font-black text-heading">
+              {user?.name?.[0] || "U"}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-black text-heading uppercase truncate">
+                {user?.name || "Workspace User"}
+              </p>
+              <p className="text-[9px] text-muted truncate uppercase tracking-tighter">
+                {user?.email || "Signed in"}
+              </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center justify-center gap-2 rounded border border-border px-2 py-2 text-xs text-body transition-colors hover:bg-surface-1"
+            className="flex w-full items-center justify-center gap-3 rounded-none border border-border px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-body transition-all hover:bg-danger/10 hover:text-danger hover:border-danger/30 active:scale-95"
           >
             <LogOut size={14} />
-            <span>Logout</span>
+            <span>Terminate Session</span>
           </button>
         </div>
       </aside>

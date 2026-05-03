@@ -55,9 +55,15 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
           <thead>
             <tr className="border-b border-border bg-surface-2/30 text-[0.625rem] uppercase tracking-[0.2em] text-muted">
               <th className="px-6 py-4 font-bold">Service Identity</th>
-              <th className="px-6 py-4 font-bold">Node Environment</th>
-              <th className="px-6 py-4 font-bold">Operational Status</th>
-              <th className="px-6 py-4 font-bold">Deployment Date</th>
+              <th className="px-6 py-4 font-bold hidden sm:table-cell">
+                Node Environment
+              </th>
+              <th className="px-6 py-4 font-bold hidden md:table-cell">
+                Operational Status
+              </th>
+              <th className="px-6 py-4 font-bold hidden lg:table-cell">
+                Deployment Date
+              </th>
               <th className="px-6 py-4 font-bold text-right">Control Plane</th>
             </tr>
           </thead>
@@ -120,7 +126,7 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
                     </div>
                   </td>
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-5 hidden sm:table-cell">
                     <div className="flex items-center gap-2">
                       <div
                         className={`h-1.5 w-1.5 rounded-full ${
@@ -137,7 +143,7 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
                     </div>
                   </td>
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-5 hidden md:table-cell">
                     <span
                       className={`inline-flex px-3 py-1 text-[9px] font-bold uppercase tracking-[0.2em] rounded-none border ${
                         service.status === "active"
@@ -151,14 +157,14 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
                     </span>
                   </td>
 
-                  <td className="px-6 py-5">
+                  <td className="px-6 py-5 hidden lg:table-cell">
                     <p className="text-[10px] font-medium text-body tabular-nums tracking-wider uppercase">
                       {formatDate(service.createdAt)}
                     </p>
                   </td>
 
                   <td className="px-6 py-5">
-                    <div className="flex items-center justify-end gap-3 opacity-0 group-hover/row:opacity-100 transition-all duration-300 translate-x-2 group-hover/row:translate-x-0">
+                    <div className="flex items-center justify-end gap-3 lg:opacity-0 group-hover/row:opacity-100 transition-all duration-300 lg:translate-x-2 group-hover/row:translate-x-0">
                       <DashboardButton
                         variant="secondary"
                         onClick={() =>

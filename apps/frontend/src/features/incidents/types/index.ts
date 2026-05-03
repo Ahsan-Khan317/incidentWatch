@@ -19,6 +19,8 @@ export interface TimelineEvent {
 
 export interface Incident {
   id: string;
+  displayId: string;
+
   serverId: string;
   serviceId?: string | null;
   title: string;

@@ -35,11 +35,11 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
               <span className="px-2 py-0.5 bg-danger-soft text-danger border border-danger-border text-[10px] font-black uppercase tracking-tighter rounded">
                 CRITICAL ALERT
               </span>
-              <span className="font-mono text-xs font-bold text-muted">
-                {incident.id}
+              <span className="font-mono text-xs font-black text-muted tracking-widest uppercase opacity-40">
+                {incident.displayId}
               </span>
             </div>
-            <h2 className="text-3xl font-display font-bold text-heading tracking-tight">
+            <h2 className="text-3xl font-display font-black text-heading tracking-tighter uppercase italic break-all leading-none mt-2">
               {incident.title}
             </h2>
           </div>

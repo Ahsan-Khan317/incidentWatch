@@ -62,13 +62,13 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
               <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60">
                 member Profile
               </th>
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60">
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60 hidden md:table-cell">
                 Access Permissions
               </th>
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60">
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60 hidden lg:table-cell">
                 Specialization
               </th>
-              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60">
+              <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60 hidden sm:table-cell">
                 Status
               </th>
               <th className="px-6 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-muted/60 text-right">
@@ -99,7 +99,7 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-5">
+                <td className="px-6 py-5 hidden md:table-cell">
                   <div className="flex flex-col gap-1">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-primary/80 flex items-center gap-1.5">
                       <Shield size={10} /> {member.role}
@@ -109,7 +109,7 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-5">
+                <td className="px-6 py-5 hidden lg:table-cell">
                   <div className="flex flex-wrap gap-1.5 max-w-[200px]">
                     {member.expertise.map((exp, i) => (
                       <span
@@ -126,7 +126,7 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-5">
+                <td className="px-6 py-5 hidden sm:table-cell">
                   <div className="flex items-center gap-2">
                     <div
                       className={`h-1.5 w-1.5 rounded-full ${member.status === "on-duty" ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-muted/30"}`}
@@ -141,7 +141,7 @@ const MemberDirectory: React.FC<MemberDirectoryProps> = ({
                   </div>
                 </td>
                 <td className="px-6 py-5 text-right">
-                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                  <div className="flex items-center justify-end gap-2 lg:opacity-0 group-hover:opacity-100 transition-all lg:translate-x-2 group-hover:translate-x-0">
                     <button
                       onClick={() => onEdit(member)}
                       className="p-2 border border-border bg-surface-1 text-muted hover:text-primary hover:border-primary/30 transition-all"

@@ -82,6 +82,7 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
 
       return {
         id: ri._id,
+        displayId: `INC-${ri._id.substring(ri._id.length - 6).toUpperCase()}`,
         serverId: ri.serverId || "Unknown",
         serviceId: normalizeId(ri.serviceId),
         title: ri.title,
@@ -170,39 +171,39 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
           >
             {/* Header */}
             <div className="px-1">
-              <h2 className="text-2xl font-display font-bold text-heading tracking-tight">
-                Incidents
+              <h2 className="text-4xl font-black text-heading tracking-tighter uppercase italic">
+                Active Incidents
               </h2>
-              <p className="text-sm text-muted font-medium mt-1 uppercase tracking-widest">
+              <p className="text-[10px] text-muted font-bold mt-2 uppercase tracking-[0.3em] opacity-70">
                 {selectedServiceName
-                  ? `Showing incidents for ${selectedServiceName}`
-                  : `Showing all ${filteredIncidents.length} incident${filteredIncidents.length !== 1 ? "s" : ""} across all services`}
+                  ? `Infrastructure context: ${selectedServiceName}`
+                  : `Tactical overview: ${filteredIncidents.length} active threads`}
               </p>
             </div>
 
             {/* Stats Bar */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-surface-1 border border-border-soft p-4 rounded-md">
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+              <div className="bg-surface-1 border border-border/50 p-4 rounded-none flex items-center justify-between sm:block">
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:mb-2">
                   Open
                 </p>
-                <p className="text-2xl font-display font-bold text-heading">
+                <p className="text-2xl font-black text-heading tracking-tighter">
                   {openCount}
                 </p>
               </div>
-              <div className="bg-surface-1 border border-border-soft p-4 rounded-md">
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+              <div className="bg-surface-1 border border-border/50 p-4 rounded-none flex items-center justify-between sm:block">
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:mb-2">
                   Critical / High
                 </p>
-                <p className="text-2xl font-display font-bold text-danger">
+                <p className="text-2xl font-black text-danger tracking-tighter">
                   {criticalCount}
                 </p>
               </div>
-              <div className="bg-surface-1 border border-border-soft p-4 rounded-md">
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+              <div className="bg-surface-1 border border-border/50 p-4 rounded-none flex items-center justify-between sm:block">
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:mb-2">
                   Resolved
                 </p>
-                <p className="text-2xl font-display font-bold text-success">
+                <p className="text-2xl font-black text-success tracking-tighter">
                   {resolvedCount}
                 </p>
               </div>

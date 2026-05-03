@@ -47,10 +47,11 @@ export const IncidentObject: React.FC<IncidentObjectProps> = ({
 
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[0.625rem] font-bold text-body/30 tracking-tight">
-              {incident.id.toUpperCase()}
+            <span className="font-mono text-[0.625rem] font-black text-body/30 tracking-[0.2em]">
+              {incident.displayId}
             </span>
-            <h4 className="text-sm font-bold text-heading group-hover:text-primary transition-colors">
+
+            <h4 className="text-sm font-bold text-heading group-hover:text-primary transition-colors line-clamp-1 break-all">
               {incident.title}
             </h4>
           </div>
