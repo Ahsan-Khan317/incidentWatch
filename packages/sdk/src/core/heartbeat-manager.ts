@@ -55,8 +55,11 @@ export class HeartbeatManager {
       encoding?: any,
       callback?: any,
     ) {
-      if (typeof chunk === "string") {
-        self._addToBuffer(chunk, "STDOUT");
+      const data =
+        typeof chunk === "string" ? chunk : chunk?.toString(encoding || "utf8");
+
+      if (data) {
+        self._addToBuffer(data, "STDOUT");
       }
       return originalStdoutWrite(chunk, encoding, callback);
     };
@@ -68,8 +71,11 @@ export class HeartbeatManager {
       encoding?: any,
       callback?: any,
     ) {
-      if (typeof chunk === "string") {
-        self._addToBuffer(chunk, "STDERR");
+      const data =
+        typeof chunk === "string" ? chunk : chunk?.toString(encoding || "utf8");
+
+      if (data) {
+        self._addToBuffer(data, "STDERR");
       }
       return originalStderrWrite(chunk, encoding, callback);
     };
@@ -79,7 +85,18 @@ export class HeartbeatManager {
     const lines = text.split("\n").filter((l) => l.trim().length > 0);
 
     for (const line of lines) {
+      // 1. String-based filter (development/pretty print)
       if (line.includes("[IW]")) continue;
+
+      // 2. JSON-based filter (production)
+      if (line.startsWith("{") && line.endsWith("}")) {
+        try {
+          const parsed = JSON.parse(line);
+          if (parsed._iw === true) continue;
+        } catch (e) {
+          // Not a valid SDK log, continue capturing
+        }
+      }
 
       const event = this._toLogEvent(line, source);
 

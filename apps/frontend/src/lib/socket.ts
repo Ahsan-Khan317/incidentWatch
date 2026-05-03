@@ -50,6 +50,7 @@ class SocketService {
   subscribeLogs(payload: { orgId?: string; service?: string } = {}) {
     const key = this.getSubscriptionKey(payload);
     this.logSubscriptions.set(key, payload);
+    console.log("📡 [SocketLib] Emitting subscribe:logs", payload);
     this.getSocket().emit("subscribe:logs", payload);
   }
 

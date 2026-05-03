@@ -8,7 +8,7 @@ import { corsMiddleware } from "./middlewares/cors.middleware.js";
 import rootRouter from "./router/root.router.js";
 
 const app = express();
-app.use(loggerMiddleware);
+// app.use(loggerMiddleware);
 app.use(corsMiddleware);
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 

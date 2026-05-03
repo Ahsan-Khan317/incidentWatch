@@ -47,6 +47,10 @@ export const publishLogEvent = async (event) => {
     streamBusMetrics.published += 1;
     streamBusMetrics.lastPublishedAt = new Date().toISOString();
 
+    if (ENV.LOG_STREAM_DEBUG) {
+      logger.debug(`[StreamBus] Published to ${streamKey}`, { id, orgId });
+    }
+
     return id;
   } catch (error) {
     streamBusMetrics.publishFailures += 1;
@@ -89,6 +93,9 @@ export const createStreamConsumer = async ({ groupName, consumerName, onEvent })
     }
   };
 
+  // NEW: Discovery loop to pick up new organization streams dynamically
+  const discoveryInterval = setInterval(updateStreams, 10000); // Check every 10s
+
   await ensureConsumerGroup(STREAM_CONFIG.KEY, groupName);
   await updateStreams();
 
@@ -109,7 +116,12 @@ export const createStreamConsumer = async ({ groupName, consumerName, onEvent })
           ...streamList.map(() => ">"),
         );
 
-        if (!response) continue;
+        if (!response) {
+          // If we timeout and there are no logs, use this chance to check for new streams
+          // even though the interval also handles it.
+          await updateStreams();
+          continue;
+        }
 
         for (const [streamKey, entries] of response) {
           if (!entries?.length) continue;
@@ -124,6 +136,13 @@ export const createStreamConsumer = async ({ groupName, consumerName, onEvent })
                 await onEvent(event);
                 streamBusMetrics.consumed += 1;
                 streamBusMetrics.lastConsumedAt = new Date().toISOString();
+
+                if (ENV.LOG_STREAM_DEBUG) {
+                  logger.debug(`[Stream:${groupName}] Processed event`, {
+                    id: entryId,
+                    orgId: event.orgId,
+                  });
+                }
               } catch (e) {
                 streamBusMetrics.consumeFailures += 1;
               } finally {
@@ -143,6 +162,7 @@ export const createStreamConsumer = async ({ groupName, consumerName, onEvent })
 
   return async () => {
     running = false;
+    clearInterval(discoveryInterval);
     await redis.quit();
   };
 };

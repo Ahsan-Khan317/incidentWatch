@@ -25,11 +25,15 @@ export class Config implements SDKConfig {
     this.apiKey = userConfig.apiKey.trim();
     this.serverId = userConfig.serverId.trim();
 
-    this.platformUrl = (
+    const rawUrl = (
       userConfig.platformUrl ||
       process.env.IW_PLATFORM_URL ||
       "http://localhost:8000/api/v1/sdk"
     ).replace(/\/$/, "");
+
+    this.platformUrl = rawUrl.endsWith("/api/v1/sdk")
+      ? rawUrl
+      : `${rawUrl}/api/v1/sdk`;
 
     this.environment =
       userConfig.environment || process.env.NODE_ENV || "production";

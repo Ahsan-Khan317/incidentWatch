@@ -45,6 +45,7 @@ export function createLogger(config: SDKConfig): winston.Logger {
       serverId: config.serverId,
       environment: config.environment,
       release: config.release,
+      _iw: true, // Internal marker to prevent infinite recursion in terminal capture
     },
     transports,
     // Unhandled exceptions ko logger catch kare (hooks.js bhi karta hai but backup)

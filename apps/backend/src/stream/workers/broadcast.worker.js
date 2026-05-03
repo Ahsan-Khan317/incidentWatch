@@ -15,10 +15,13 @@ export const broadcastWorker = async (event) => {
 
   // 3. Service-specific
   if (event?.service) {
-    if (event?.orgId) {
-      broadcaster.enqueue(logRooms.service(event.service, event.orgId), event);
-    } else {
-      broadcaster.enqueue(logRooms.service(event.service), event);
-    }
+    const room = event?.orgId
+      ? logRooms.service(event.service, event.orgId)
+      : logRooms.service(event.service);
+    broadcaster.enqueue(room, event);
+  }
+
+  if (process.env.LOG_STREAM_DEBUG === "true") {
+    console.log(`[BroadcastWorker] Enqueued to rooms for org: ${event?.orgId}`);
   }
 };

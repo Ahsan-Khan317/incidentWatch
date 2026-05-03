@@ -39,7 +39,7 @@ All options (required + optional):
 | --------------------- | ----------------------- | ------------------------------------------------------------- | ---------------------------------------- |
 | `apiKey`              | `string`                | **Required**                                                  | Your API key                             |
 | `serverId`            | `string`                | **Required**                                                  | Server name (e.g. `prod-api-1`)          |
-| `platformUrl`         | `string`                | `https://app.incidentwatch.io`                                | Custom platform URL                      |
+| `platformUrl`         | `string`                | `http://localhost:8000/api/v1/sdk`                            | Custom platform URL                      |
 | `environment`         | `string`                | `NODE_ENV`                                                    | `production`, `staging`, etc.            |
 | `debug`               | `boolean`               | `false`                                                       | Enable verbose SDK logs                  |
 | `slowThresholdMs`     | `number`                | `5000`                                                        | Alert threshold for slow operations (ms) |

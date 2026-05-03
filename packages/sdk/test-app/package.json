@@ -10,7 +10,7 @@
     "tests": "node run-tests.cjs"
   },
   "dependencies": {
-    "@incidentwatch/sdk": "file:../aditya_kbr01-incidentwatch-sdk-1.0.0.tgz",
+    "@aditya_kbr01/incidentwatch-sdk": "^1.0.0",
     "axios": "^1.7.9",
     "express": "^4.21.2"
   }

@@ -54,17 +54,25 @@ export const initSocket = (server) => {
      */
     socket.on(SOCKET_EVENTS.LOGS.SUBSCRIBE, (payload = {}) => {
       const { orgId, service } = payload;
+      console.log(`📡 [Socket] Subscription request:`, { id: socket.id, orgId, service });
 
       if (!orgId && !service) {
         socket.join(logRooms.all);
+        console.log(`✅ [Socket] ${socket.id} joined room: ${logRooms.all}`);
       } else if (orgId) {
         if (service) {
-          socket.join(logRooms.service(service, orgId));
+          const room = logRooms.service(service, orgId);
+          socket.join(room);
+          console.log(`✅ [Socket] ${socket.id} joined room: ${room}`);
         } else {
-          socket.join(logRooms.org(orgId));
+          const room = logRooms.org(orgId);
+          socket.join(room);
+          console.log(`✅ [Socket] ${socket.id} joined room: ${room}`);
         }
       } else if (service) {
-        socket.join(logRooms.service(service));
+        const room = logRooms.service(service);
+        socket.join(room);
+        console.log(`✅ [Socket] ${socket.id} joined room: ${room}`);
       }
     });
 

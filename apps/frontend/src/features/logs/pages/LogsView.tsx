@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import Container from "@/src/components/dashboard/common/Container";
 import SectionHeading from "@/src/components/dashboard/common/SectionHeading";
 import { Download, Pause, Play } from "lucide-react";
@@ -63,41 +69,71 @@ export const LogsView: React.FC = () => {
       .trim()
       .toLowerCase();
 
-  const selectedServiceAliases = new Set(
-    [
-      selectedServiceId,
-      selectedService?._id,
-      selectedService?.id,
-      selectedService?.name,
-      selectedService?.serverId,
-      selectedService?.serviceId,
-    ]
-      .filter(Boolean)
-      .map((v) => normalize(v)),
+  const selectedServiceAliases = useMemo(
+    () =>
+      new Set(
+        [
+          selectedServiceId,
+          selectedServiceFilter,
+          selectedService?._id,
+          selectedService?.id,
+          selectedService?.name,
+          selectedService?.serverId,
+          selectedService?.serviceId,
+        ]
+          .filter(Boolean)
+          .map((v) => normalize(v)),
+      ),
+    [selectedServiceId, selectedServiceFilter, selectedService],
   );
 
-  const shouldIncludeLiveEvent = (data: any) => {
-    if (
-      data?.orgId &&
-      user?.organizationId &&
-      String(data.orgId) !== String(user.organizationId)
-    ) {
+  const shouldIncludeLiveEvent = useCallback(
+    (data: any) => {
+      // DEBUG LOG
+      if (process.env.NODE_ENV === "development") {
+        console.log("🔍 Filtering Live Log:", {
+          incomingOrg: data?.orgId,
+          userOrg: user?.organizationId,
+          incomingService: data?.service,
+          selectedService: selectedServiceId,
+          aliases: Array.from(selectedServiceAliases),
+        });
+      }
+
+      const incomingOrgId = String(data?.orgId || "");
+      const userOrgId = String(user?.organizationId || "");
+
+      if (incomingOrgId && userOrgId && incomingOrgId !== userOrgId) {
+        return false;
+      }
+
+      if (selectedServiceId === "all") return true;
+
+      if (!selectedService) return true;
+
+      const incoming = [
+        data?.service,
+        data?.serviceId,
+        data?.metadata?.context?.service,
+        data?.metadata?.context?.serverId,
+      ]
+        .filter(Boolean)
+        .map((v) => normalize(v));
+
+      // 1. Direct Alias Match (ID, Name, or serverId)
+      const hasAliasMatch = incoming.some((v) => selectedServiceAliases.has(v));
+      if (hasAliasMatch) return true;
+
+      // 2. Extra Name Match (Case-insensitive check against the selected service object)
+      if (selectedService?.name) {
+        const normalizedName = normalize(selectedService.name);
+        if (incoming.includes(normalizedName)) return true;
+      }
+
       return false;
-    }
-
-    if (selectedServiceId === "all") return true;
-
-    const incoming = [
-      data?.service,
-      data?.serviceId,
-      data?.metadata?.context?.service,
-      data?.metadata?.context?.serverId,
-    ]
-      .filter(Boolean)
-      .map((v) => normalize(v));
-
-    return incoming.some((v) => selectedServiceAliases.has(v));
-  };
+    },
+    [user?.organizationId, selectedServiceId, selectedServiceAliases],
+  );
   const flushPendingLogs = () => {
     flushRafRef.current = null;
 
@@ -113,6 +149,7 @@ export const LogsView: React.FC = () => {
         return mapToLogEntry(entry, lineCounterRef.current);
       });
 
+      console.log(`🎨 [LogsView] Flushing ${mappedBatch.length} logs to UI`);
       const updated = [...prev, ...mappedBatch];
       return updated.length > MAX_VISIBLE_LOGS
         ? updated.slice(updated.length - MAX_VISIBLE_LOGS)
@@ -278,8 +315,17 @@ export const LogsView: React.FC = () => {
       }
     };
 
-    socket.on("logs:stream", handleNewLog);
-    socket.on("logs:batch", handleBatch);
+    socket.on("logs:stream", (data) => {
+      console.log("📩 [Socket] Received logs:stream event", data);
+      handleNewLog(data);
+    });
+
+    socket.on("logs:batch", (batch) => {
+      console.log(
+        `📩 [Socket] Received logs:batch event (${batch?.length ?? 0} items)`,
+      );
+      handleBatch(batch);
+    });
 
     return () => {
       console.log("🔌 Cleaning up socket listener");
@@ -302,6 +348,7 @@ export const LogsView: React.FC = () => {
     selectedServiceName,
     selectedServiceFilter,
     user?.organizationId,
+    shouldIncludeLiveEvent,
   ]);
 
   return (

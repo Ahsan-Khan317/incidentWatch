@@ -1,7 +1,7 @@
 const express = require("express");
 
 (async () => {
-  const { init, isInitialized } = require("@incidentwatch/sdk");
+  const { init, isInitialized } = require("@aditya_kbr01/incidentwatch-sdk");
 
   const iw = await init({
     apiKey: "5498877e64349a39154a3e5a370ffd0c887a5300d05af348532e594ac4c32ee5",
