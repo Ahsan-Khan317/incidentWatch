@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Incident } from "../types";
+import { Incident, TimelineEvent } from "../types";
 import { IncidentObject } from "../components/IncidentObject";
 import { IncidentDetail } from "../components/IncidentDetail";
 import { useIncidents } from "../hooks/useIncidents";
 import { useServiceStore } from "@/src/features/dashboard/store/service-store";
+import { useMembers } from "../../members/hooks/useMembers";
 import Container from "@/src/components/dashboard/common/Container";
 import IncidentsSkeleton from "../components/IncidentsSkeleton";
 
@@ -13,81 +14,132 @@ interface IncidentsViewProps {
   onClearInitial?: () => void;
 }
 
+type BackendIdValue = string | { _id?: string } | null | undefined;
+
+interface BackendTimelineEvent {
+  type?: TimelineEvent["type"];
+  message?: string;
+  action?: string;
+  time?: string;
+  createdAt?: string;
+}
+
+interface BackendIncident {
+  _id: string;
+  serverId?: string;
+  serviceId?: BackendIdValue;
+  title: string;
+  severity?: string;
+  source?: string;
+  status?: string;
+  assignedMembers?: BackendIdValue[];
+  assignedTeams?: BackendIdValue[];
+  tags?: string[];
+  createdAt?: string;
+  description?: string;
+  stack?: string;
+  timeline?: BackendTimelineEvent[];
+}
+
+interface ServiceOption {
+  _id?: string;
+  id?: string;
+  name?: string;
+}
+
 export const IncidentsView: React.FC<IncidentsViewProps> = ({
   initialIncidentId,
   onClearInitial,
 }) => {
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(
     null,
   );
   const { selectedServiceId, services } = useServiceStore();
   const { incidents: rawIncidents, isLoading } = useIncidents();
+  const { members } = useMembers();
+
+  const memberNameByUserId = useMemo(() => {
+    return new Map(
+      members
+        .filter((member) => member.userId)
+        .map((member) => [member.userId as string, member.name]),
+    );
+  }, [members]);
 
   // Map backend data to frontend Incident type
   const allIncidents: Incident[] = useMemo(() => {
-    return rawIncidents.map((ri: any) => ({
-      id: ri._id,
-      serverId: ri.serverId || "Unknown",
-      serviceId: ri.serviceId || null,
-      title: ri.title,
-      severity: ri.severity as any,
-      type: ri.source || "Infrastructure",
-      status:
-        ri.status === "resolved"
-          ? "Resolved"
-          : ri.status === "acknowledged"
-            ? "Identified"
-            : "Investigating",
-      assignedTo:
-        ri.assignedMembers?.length > 0
-          ? `${ri.assignedMembers.length} assigned`
-          : "Unassigned",
-      createdAt: new Date(ri.createdAt).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      description: ri.description,
-      timeline: (ri.timeline || []).map((t: any, idx: number) => ({
-        id: String(idx),
-        type: t.type || "detection",
-        message: t.message || t.action || `Event: ${ri.title}`,
-        timestamp: new Date(t.createdAt || ri.createdAt).toLocaleTimeString(),
-      })),
-    }));
-  }, [rawIncidents]);
+    return (rawIncidents as BackendIncident[]).map((ri) => {
+      const assignedMemberIds = normalizeIds(ri.assignedMembers);
+      const assignedTeamIds = normalizeIds(ri.assignedTeams);
+      const assignedMemberNames = assignedMemberIds
+        .map((id) => memberNameByUserId.get(id))
+        .filter(Boolean) as string[];
+      const assignedTo = formatAssigneeLabel(
+        assignedMemberIds,
+        assignedMemberNames,
+        assignedTeamIds,
+      );
+
+      return {
+        id: ri._id,
+        serverId: ri.serverId || "Unknown",
+        serviceId: normalizeId(ri.serviceId),
+        title: ri.title,
+        severity: normalizeSeverity(ri.severity),
+        type: ri.source || "Infrastructure",
+        status:
+          ri.status === "resolved"
+            ? "Resolved"
+            : ri.status === "acknowledged"
+              ? "Identified"
+              : "Investigating",
+        assignedTo,
+        assignedMemberIds,
+        assignedMemberNames,
+        assignedTeamIds,
+        tags: ri.tags || [],
+        createdAt: formatTime(ri.createdAt),
+        description: ri.description || ri.title,
+        stack: ri.stack,
+        timeline: (ri.timeline || []).map((t, idx: number) => ({
+          id: String(idx),
+          type: inferTimelineType(t.type, t.action || t.message),
+          message: t.message || t.action || `Event: ${ri.title}`,
+          timestamp: formatTime(t.time || t.createdAt || ri.createdAt),
+        })),
+      };
+    });
+  }, [rawIncidents, memberNameByUserId]);
 
   // Filter incidents by the service selected in the sidebar
   const filteredIncidents = useMemo(() => {
     if (selectedServiceId === "all") return allIncidents;
-    return allIncidents.filter((i: any) => i.serviceId === selectedServiceId);
+    return allIncidents.filter((i) => i.serviceId === selectedServiceId);
   }, [allIncidents, selectedServiceId]);
 
   // Find selected service name for display
   const selectedServiceName = useMemo(() => {
     if (selectedServiceId === "all") return null;
-    const svc = services.find(
-      (s: any) => (s._id || s.id) === selectedServiceId,
+    const svc = (services as ServiceOption[]).find(
+      (s) => (s._id || s.id) === selectedServiceId,
     );
     return svc?.name || null;
   }, [services, selectedServiceId]);
 
-  // Handle Initial Incident Selection (from overview click)
-  useEffect(() => {
-    if (initialIncidentId && allIncidents.length > 0) {
-      const incident = allIncidents.find((i) => i.id === initialIncidentId);
-      if (incident) {
-        setSelectedIncident(incident);
-        onClearInitial?.();
-      }
-    }
-  }, [initialIncidentId, allIncidents, onClearInitial]);
+  const selectedIncident = useMemo(() => {
+    const id = selectedIncidentId || initialIncidentId;
+    if (!id) return null;
+    return allIncidents.find((incident) => incident.id === id) || null;
+  }, [allIncidents, initialIncidentId, selectedIncidentId]);
 
   const handleIncidentClick = (incident: Incident) => {
-    setSelectedIncident(incident);
+    setSelectedIncidentId(incident.id);
+    onClearInitial?.();
   };
 
   const handleBack = () => {
-    setSelectedIncident(null);
+    setSelectedIncidentId(null);
+    onClearInitial?.();
   };
 
   if (isLoading) {
@@ -185,4 +237,64 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
       </AnimatePresence>
     </Container>
   );
+};
+
+const normalizeId = (value: BackendIdValue): string | null => {
+  if (!value) return null;
+  if (typeof value === "object") return value._id ? String(value._id) : null;
+  return String(value);
+};
+
+const normalizeIds = (values: BackendIdValue[] = []): string[] => {
+  return values.map(normalizeId).filter(Boolean) as string[];
+};
+
+const normalizeSeverity = (severity?: string): Incident["severity"] => {
+  if (severity === "SEV1") return "critical";
+  if (severity === "SEV2") return "high";
+  if (severity === "SEV3") return "medium";
+  return (severity || "low") as Incident["severity"];
+};
+
+const formatTime = (value?: string) => {
+  const date = value ? new Date(value) : new Date();
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatAssigneeLabel = (
+  memberIds: string[],
+  memberNames: string[],
+  teamIds: string[],
+) => {
+  if (memberNames.length === 1 && teamIds.length === 0) return memberNames[0];
+  if (memberNames.length > 1 && teamIds.length === 0) {
+    return `${memberNames[0]} +${memberNames.length - 1}`;
+  }
+  if (memberIds.length > 0 || teamIds.length > 0) {
+    const memberCount = memberIds.length;
+    const teamCount = teamIds.length;
+    return `${memberCount} member${memberCount === 1 ? "" : "s"}${
+      teamCount > 0 ? `, ${teamCount} team${teamCount === 1 ? "" : "s"}` : ""
+    }`;
+  }
+  return "Unassigned";
+};
+
+const inferTimelineType = (
+  type: TimelineEvent["type"] | undefined,
+  message: string = "",
+): TimelineEvent["type"] => {
+  if (type) return type;
+  const normalizedMessage = message.toLowerCase();
+  if (normalizedMessage.includes("assign")) return "assignment";
+  if (
+    normalizedMessage.includes("status") ||
+    normalizedMessage.includes("resolved")
+  ) {
+    return "status_change";
+  }
+  return "detection";
 };

@@ -87,7 +87,9 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
                   <code className="block border-b border-border-soft/30 pb-2 mb-2 text-[10px] text-zinc-600 uppercase font-black">
                     Raw Stack Trace
                   </code>
-                  {`[2024-05-01 18:10:00.442] ERROR [Thread-42] o.a.c.c.C.[Tomcat].[localhost] : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception\njava.lang.OutOfMemoryError: GC overhead limit exceeded\n   at java.util.Arrays.copyOf(Arrays.java:3332)\n   at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)\n   at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:448)\n   at java.lang.StringBuilder.append(StringBuilder.java:136)\n   ... 14 more`}
+                  {incident.stack ||
+                    incident.description ||
+                    "No stack trace captured for this incident."}
                 </pre>
               </div>
             </div>
@@ -194,6 +196,59 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <section className="bg-surface-1 border border-border-soft rounded-md overflow-hidden shadow-md">
+            <div className="bg-surface-2 px-6 py-4 border-b border-border-soft flex items-center justify-between">
+              <h4 className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
+                Responders
+              </h4>
+              <span className="material-symbols-outlined text-sm text-primary">
+                person_search
+              </span>
+            </div>
+            <div className="p-6 space-y-4">
+              {incident.assignedMemberNames.length > 0 ? (
+                incident.assignedMemberNames.map((name) => (
+                  <div
+                    key={name}
+                    className="flex items-center justify-between border border-border-soft bg-surface-2 px-3 py-2"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-border bg-surface-1 text-[10px] font-black text-primary">
+                        {name.charAt(0)}
+                      </span>
+                      <span className="truncate text-xs font-bold text-heading">
+                        {name}
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-primary">
+                      Assigned
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[11px] font-medium text-muted">
+                  {incident.assignedMemberIds.length > 0 ||
+                  incident.assignedTeamIds.length > 0
+                    ? incident.assignedTo
+                    : "No responder assigned yet."}
+                </p>
+              )}
+
+              {incident.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {incident.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="border border-border-soft bg-surface-2 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-muted"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 

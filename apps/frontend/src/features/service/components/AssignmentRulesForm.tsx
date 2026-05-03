@@ -3,6 +3,7 @@ import React from "react";
 import { Plus, Trash2, Shield, Users, User } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { useMembers } from "../../members/hooks/useMembers";
+import { TeamMember } from "../../dashboard/types";
 
 export const AssignmentRulesForm: React.FC = () => {
   const { register, control } = useFormContext();
@@ -85,8 +86,8 @@ export const AssignmentRulesForm: React.FC = () => {
                     {...register(`assignmentRules.${index}.members` as const)}
                     className="w-full bg-surface-2 border border-border-soft rounded-none px-4 py-2.5 text-xs text-heading focus:outline-none focus:border-primary/50 transition-all appearance-none h-24"
                   >
-                    {members?.map((m: any) => (
-                      <option key={m.id} value={m.id}>
+                    {members?.map((m: TeamMember) => (
+                      <option key={m.userId || m.id} value={m.userId || m.id}>
                         {m.name} ({m.email})
                       </option>
                     ))}
@@ -104,7 +105,7 @@ export const AssignmentRulesForm: React.FC = () => {
         </div>
         <p className="text-[10px] text-zinc-400 leading-relaxed">
           Rules are evaluated in order. The first rule that matches an
-          incident's tags will determine the assigned responders. Use{" "}
+          incident&apos;s tags will determine the assigned responders. Use{" "}
           <code className="text-primary">.*</code> to match all tags.
         </p>
       </div>

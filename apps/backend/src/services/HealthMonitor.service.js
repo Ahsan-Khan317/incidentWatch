@@ -1,5 +1,6 @@
 import Service from "@/modules/service/service.model.js";
 import { incidentDao } from "@/modules/incident/incident.dao.js";
+import { resolveIncidentAssignment } from "@/modules/incident/incident-assignment.service.js";
 import { logger } from "@/utils/logger.js";
 
 class HealthMonitor {
@@ -39,29 +40,38 @@ class HealthMonitor {
     service.status = "error";
     await service.save();
 
+    const title = `Service Offline: ${service.name}`;
+    const description = `Service ${service.name} (${service.environment}) missed its heartbeat threshold.`;
+    const tags = ["health-monitor", "service-down"];
+    const assignment = await resolveIncidentAssignment({
+      orgId: service.organizationId,
+      service,
+      title,
+      description,
+      tags,
+      context: { environment: service.environment },
+    });
+
     // 2. Create a critical incident for the service
     await incidentDao.createIncident({
-      title: `Service Offline: ${service.name}`,
-      description: `Service ${service.name} (${service.environment}) missed its heartbeat threshold.`,
+      title,
+      description,
       severity: "SEV1",
       organizationId: service.organizationId,
       serviceId: service._id,
       status: "open",
       source: "api",
-      tags: ["health-monitor", "service-down"],
+      tags,
       serverId: service.name,
       environment: service.environment,
-      assignedMembers: service.members || [],
-      assignedTeams: service.teams || [],
+      assignedMembers: assignment.assignedMembers,
+      assignedTeams: assignment.assignedTeams,
       timeline: [
         {
           action: "Incident automatically created by Health Monitor",
           time: new Date(),
         },
-        {
-          action: `Auto-assigned to ${service.members?.length || 0} members and ${service.teams?.length || 0} teams`,
-          time: new Date(),
-        },
+        ...assignment.timeline,
       ],
     });
   }
