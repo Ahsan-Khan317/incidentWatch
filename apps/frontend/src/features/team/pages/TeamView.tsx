@@ -20,7 +20,7 @@ import { useTeam } from "../hooks/useTeam";
 import { InviteModal } from "../../invite/components/InviteModal";
 import MemberDirectory from "../../members/components/MemberDirectory";
 import { MemberDetailModal } from "../../members/components/MemberDetailModal";
-
+import { useAuthStore } from "../../auth/store/auth-store";
 type TeamViewTab = "roster" | "directory";
 
 export const TeamView: React.FC = () => {
