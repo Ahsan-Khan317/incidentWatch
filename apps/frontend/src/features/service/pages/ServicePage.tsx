@@ -14,6 +14,7 @@ import { Service } from "../types";
 import { ServiceTable } from "@/src/features/service/components/ServiceTable";
 import { CreateServiceModal } from "@/src/features/service/components/CreateServiceModal";
 import { useServiceStore } from "../../dashboard/store/service-store";
+import { useViewStore } from "../../dashboard/store/view-store";
 import { ConfirmationModal } from "@/src/components/common/ConfirmationModal";
 
 export default function ServicePage() {
@@ -25,11 +26,25 @@ export default function ServicePage() {
 
   const servicesQuery = useServices();
   const { services: storeServices } = useServiceStore();
+  const { selectedId, clearSelectedId } = useViewStore();
   const createMutation = useCreateService();
   const updateMutation = useUpdateService();
   const deleteMutation = useDeleteService();
 
   const services = useMemo(() => storeServices || [], [storeServices]);
+
+  // Handle direct edit from other views (like ServiceDetailView)
+  React.useEffect(() => {
+    if (selectedId && services.length > 0) {
+      const serviceToEdit = services.find((s) => s._id === selectedId);
+      if (serviceToEdit) {
+        setSelectedService(serviceToEdit);
+        setIsCreatePanelOpen(false);
+        // We don't clear the selectedId yet so that if the user reloads, it stays.
+        // But we should probably clear it when the modal closes.
+      }
+    }
+  }, [selectedId, services]);
 
   const handleCreated = (message: string) => {
     setSuccessMessage(message);
@@ -44,6 +59,7 @@ export default function ServicePage() {
           onSuccess: () => {
             setSuccessMessage("Service updated successfully");
             setSelectedService(null);
+            clearSelectedId();
           },
         },
       );
@@ -110,10 +126,14 @@ export default function ServicePage() {
         <div className="mb-6 animate-in fade-in slide-in-from-top-4 duration-300">
           <CreateServiceModal
             show={!!selectedService}
-            onClose={() => setSelectedService(null)}
+            onClose={() => {
+              setSelectedService(null);
+              clearSelectedId();
+            }}
             onCreated={() => {
               setSuccessMessage("Service updated successfully");
               setSelectedService(null);
+              clearSelectedId();
             }}
             initialData={selectedService}
             isLoading={updateMutation.isPending}

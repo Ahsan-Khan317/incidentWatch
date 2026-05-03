@@ -174,13 +174,13 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({
                       }}
                       className={`flex w-full items-center justify-between rounded-none px-4 py-2.5 text-left text-xs transition-all ${
                         watch("environment") === env
-                          ? "bg-primary text-black font-bold"
-                          : "text-zinc-400 hover:bg-surface-3 hover:text-white"
+                          ? "bg-primary text-on-primary font-bold"
+                          : "text-muted hover:bg-surface-3 hover:text-heading"
                       }`}
                     >
                       <span className="uppercase tracking-widest">{env}</span>
                       {watch("environment") === env && (
-                        <div className="h-1.5 w-1.5 rounded-full bg-black" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-on-primary" />
                       )}
                     </button>
                   ))}
@@ -238,7 +238,7 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({
               <Zap size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-white uppercase tracking-tight">
+              <h4 className="text-xs font-bold text-heading uppercase tracking-tight">
                 Auto-Assignment
               </h4>
               <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">

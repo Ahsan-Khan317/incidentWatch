@@ -72,7 +72,7 @@ export const ServiceMembersForm: React.FC = () => {
             <Users size={18} />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-tight">
+            <h4 className="text-xs font-bold text-heading uppercase tracking-tight">
               Service Team
             </h4>
             <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">
@@ -128,7 +128,7 @@ export const ServiceMembersForm: React.FC = () => {
                           {(member.name || "U")[0]}
                         </div>
                         <div className="text-left">
-                          <p className="text-[11px] font-bold text-white truncate w-40">
+                          <p className="text-[11px] font-bold text-heading truncate w-40">
                             {member.name}
                           </p>
                           <p className="text-[9px] text-muted truncate w-40 uppercase tracking-tighter">
@@ -169,7 +169,7 @@ export const ServiceMembersForm: React.FC = () => {
                   {(member.name || "U")[0]}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h5 className="text-[11px] font-bold text-white truncate">
+                  <h5 className="text-[11px] font-bold text-heading truncate">
                     {member.name}
                   </h5>
                   <div className="flex items-center gap-2 mt-1">

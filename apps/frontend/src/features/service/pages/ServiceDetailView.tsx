@@ -15,6 +15,7 @@ import { useServices } from "../hooks/useServices";
 import { useServiceStore } from "../../dashboard/store/service-store";
 import { useViewStore } from "../../dashboard/store/view-store";
 import { formatDate } from "../components/ServiceTable";
+import DashboardButton from "@/src/components/ui/DashboardButton";
 
 interface ServiceDetailViewProps {
   overrideId?: string | null;
@@ -54,200 +55,289 @@ export const ServiceDetailView: React.FC<ServiceDetailViewProps> = ({
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => setActiveView("services")}
-            className="p-2 hover:bg-surface-2 rounded-none border border-border text-muted transition-all"
-          >
-            <ArrowLeft size={16} />
-          </button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-white uppercase tracking-tight">
-                {service.name}
-              </h1>
-              <span
-                className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest border ${
-                  service.status === "active"
-                    ? "border-success/30 bg-success/10 text-success"
-                    : "border-danger/30 bg-danger/10 text-danger"
-                }`}
-              >
-                {service.status}
-              </span>
+    <div className="space-y-10 animate-in fade-in duration-700 max-w-7xl mx-auto pb-10">
+      {/* Header Section */}
+      <div className="relative group">
+        <div className="absolute -inset-1 bg-linear-to-r from-primary/20 to-purple-500/20 blur-xl opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200" />
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-6 bg-surface-1 border border-border p-6 md:p-8 rounded-none">
+          <div className="flex items-center gap-6">
+            <button
+              onClick={() => setActiveView("services")}
+              className="group/back flex h-12 w-12 items-center justify-center bg-surface-2 border border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-300"
+              title="Back to Services"
+            >
+              <ArrowLeft
+                size={20}
+                className="text-muted group-hover/back:text-primary transition-colors"
+              />
+            </button>
+            <div>
+              <div className="flex flex-wrap items-center gap-4">
+                <h1 className="text-3xl md:text-4xl font-black text-heading uppercase tracking-tighter">
+                  {service.name}
+                </h1>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] border shadow-lg ${
+                      service.status === "active"
+                        ? "border-success/30 bg-success/10 text-success"
+                        : "border-danger/30 bg-danger/10 text-danger"
+                    }`}
+                  >
+                    {service.status}
+                  </span>
+                  {service.environment === "production" && (
+                    <span className="px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] border border-warning/30 bg-warning/10 text-warning">
+                      PROD
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-3 mt-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                <p className="text-[10px] text-muted uppercase tracking-[0.3em] font-bold">
+                  Active Monitoring System
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-muted mt-1 uppercase tracking-widest font-medium">
-              Service Infrastructure Details
-            </p>
+          </div>
+
+          <div className="flex items-center gap-3 self-end md:self-center">
+            <DashboardButton
+              variant="secondary"
+              onClick={() => setActiveView("services", service._id)}
+              className="border-border/50 hover:border-primary/40 text-[10px] font-bold uppercase tracking-widest px-6"
+            >
+              Configure Service
+            </DashboardButton>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Main Info */}
-        <div className="md:col-span-2 space-y-6">
-          <div className="bg-surface-1 border border-border p-6 rounded-none">
-            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <Activity size={14} /> Service Overview
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="space-y-1">
-                <p className="text-[10px] text-muted uppercase tracking-widest font-bold">
-                  Environment
-                </p>
-                <div className="flex items-center gap-2">
-                  <Globe size={14} className="text-primary" />
-                  <p className="text-sm text-heading font-medium capitalize">
-                    {service.environment}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <p className="text-[10px] text-muted uppercase tracking-widest font-bold">
-                  Base URL
-                </p>
-                <div className="flex items-center gap-2">
-                  <Terminal size={14} className="text-zinc-500" />
-                  <p className="text-sm text-heading font-mono">
-                    {service.baseUrl || "No URL provided"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <p className="text-[10px] text-muted uppercase tracking-widest font-bold">
-                  Auto-Assignment
-                </p>
-                <div className="flex items-center gap-2">
-                  <Zap
-                    size={14}
-                    className={
-                      service.autoAssignEnabled
-                        ? "text-warning"
-                        : "text-zinc-500"
-                    }
-                  />
-                  <p className="text-sm text-heading font-medium">
-                    {service.autoAssignEnabled ? "Enabled" : "Disabled"}
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <p className="text-[10px] text-muted uppercase tracking-widest font-bold">
-                  Created On
-                </p>
-                <div className="flex items-center gap-2">
-                  <Clock size={14} className="text-zinc-500" />
-                  <p className="text-sm text-heading font-medium">
-                    {formatDate(service.createdAt)}
-                  </p>
-                </div>
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Main Content Pane */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Detailed Info Card */}
+          <div className="bg-surface-1 border border-border overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none text-heading">
+              <Server size={120} />
             </div>
 
-            <div className="mt-8 pt-8 border-t border-border">
-              <p className="text-[10px] text-muted uppercase tracking-widest font-bold mb-2">
-                Description
-              </p>
-              <p className="text-sm text-body leading-relaxed">
-                {service.description ||
-                  "No description provided for this service."}
-              </p>
+            <div className="px-6 py-4 border-b border-border bg-surface-2/30 flex items-center gap-3">
+              <Activity size={14} className="text-primary" />
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+                System Parameters
+              </h3>
+            </div>
+
+            <div className="p-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-12">
+                <div className="space-y-2 group/item">
+                  <label className="text-[9px] text-muted uppercase tracking-[0.2em] font-black group-hover/item:text-primary transition-colors">
+                    Deployment Environment
+                  </label>
+                  <div className="flex items-center gap-3 p-4 bg-surface-2/50 border border-border group-hover/item:border-primary/30 transition-all">
+                    <Globe size={18} className="text-primary" />
+                    <p className="text-sm text-heading font-bold uppercase tracking-widest">
+                      {service.environment}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 group/item">
+                  <label className="text-[9px] text-muted uppercase tracking-[0.2em] font-black group-hover/item:text-primary transition-colors">
+                    Service Endpoint
+                  </label>
+                  <div className="flex items-center gap-3 p-4 bg-surface-2/50 border border-border group-hover/item:border-primary/30 transition-all">
+                    <Terminal size={18} className="text-zinc-500" />
+                    <p className="text-sm text-heading font-mono truncate max-w-[200px]">
+                      {service.baseUrl || "NULL_POINTER"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 group/item">
+                  <label className="text-[9px] text-muted uppercase tracking-[0.2em] font-black group-hover/item:text-primary transition-colors">
+                    Incident Routing
+                  </label>
+                  <div className="flex items-center gap-3 p-4 bg-surface-2/50 border border-border group-hover/item:border-primary/30 transition-all">
+                    <Zap
+                      size={18}
+                      className={
+                        service.autoAssignEnabled
+                          ? "text-warning"
+                          : "text-zinc-600"
+                      }
+                    />
+                    <p className="text-sm text-heading font-bold uppercase tracking-widest">
+                      {service.autoAssignEnabled ? "AUTOMATED" : "MANUAL"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2 group/item">
+                  <label className="text-[9px] text-muted uppercase tracking-[0.2em] font-black group-hover/item:text-primary transition-colors">
+                    Registry Date
+                  </label>
+                  <div className="flex items-center gap-3 p-4 bg-surface-2/50 border border-border group-hover/item:border-primary/30 transition-all">
+                    <Clock size={18} className="text-zinc-500" />
+                    <p className="text-sm text-heading font-bold uppercase tracking-widest tabular-nums">
+                      {formatDate(service.createdAt)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-12 pt-10 border-t border-border">
+                <label className="text-[9px] text-muted uppercase tracking-[0.2em] font-black mb-4 block">
+                  Service Intelligence & Description
+                </label>
+                <div className="bg-surface-2/50 border border-border p-6 relative">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-primary/20" />
+                  <p className="text-sm text-body leading-relaxed font-medium italic">
+                    {service.description ||
+                      "No extended intelligence provided for this node."}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Assigned Team */}
-          <div className="bg-surface-1 border border-border p-6 rounded-none">
-            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-              <Users size={14} /> Assigned Service Team
-            </h3>
+          {/* Assigned Team Section */}
+          <div className="bg-surface-1 border border-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-border bg-surface-2/30 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Users size={14} className="text-primary" />
+                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+                  Assigned Response Team
+                </h3>
+              </div>
+              <span className="text-[9px] font-bold text-muted uppercase tracking-widest">
+                {service.members?.length || 0} Operators
+              </span>
+            </div>
 
-            {service.members?.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {service.members.map((member: any) => (
-                  <div
-                    key={member._id}
-                    className="flex items-center gap-3 p-3 bg-surface-2 border border-border/50"
-                  >
-                    <div className="h-8 w-8 flex items-center justify-center bg-primary/10 text-primary text-xs font-bold border border-primary/20">
-                      {member.name?.[0]}
+            <div className="p-8">
+              {service.members?.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {service.members.map((member: any) => (
+                    <div
+                      key={member._id}
+                      className="group/member flex items-center gap-4 p-4 bg-surface-2 border border-border/50 hover:border-primary/30 transition-all duration-300"
+                    >
+                      <div className="relative">
+                        <div className="h-12 w-12 flex items-center justify-center bg-primary text-on-primary text-xs font-black border border-primary/20 group-hover/member:scale-105 transition-transform duration-300">
+                          {member.name?.[0]}
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-success rounded-full border-2 border-surface-2" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-black text-heading uppercase tracking-wider truncate">
+                          {member.name}
+                        </p>
+                        <p className="text-[9px] text-muted truncate uppercase tracking-tighter mt-0.5">
+                          {member.email}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-xs font-bold text-white">
-                        {member.name}
-                      </p>
-                      <p className="text-[10px] text-muted truncate">
-                        {member.email}
-                      </p>
-                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-16 text-center border border-dashed border-border/60 bg-surface-2/20">
+                  <div className="flex justify-center mb-4">
+                    <Shield size={32} className="text-muted/30" />
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="py-8 text-center border border-dashed border-border">
-                <p className="text-[10px] text-muted uppercase tracking-widest">
-                  No specific members assigned
-                </p>
-                <p className="text-[9px] text-zinc-600 mt-1 uppercase tracking-tighter italic">
-                  Org-wide fallback will be used
-                </p>
-              </div>
-            )}
+                  <p className="text-[10px] text-muted uppercase tracking-[0.2em] font-black">
+                    No dedicated operators assigned
+                  </p>
+                  <p className="text-[9px] text-zinc-600 mt-2 uppercase tracking-widest font-medium italic">
+                    Utilizing Organizational Expertise Fallback
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Sidebar / Stats */}
-        <div className="space-y-6">
-          <div className="bg-surface-1 border border-border p-6 rounded-none">
-            <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">
-              Service Status
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-surface-2 border border-border/40">
-                <div className="flex items-center gap-2">
-                  <Server size={14} className="text-primary" />
-                  <span className="text-[10px] font-bold text-white uppercase tracking-wider">
+        {/* Sidebar Diagnostics */}
+        <div className="lg:col-span-4 space-y-8">
+          <div className="bg-surface-1 border border-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-border bg-surface-2/30">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+                Node Diagnostics
+              </h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between p-4 bg-surface-2 border border-border/40 group hover:border-success/30 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-success/10 text-success border border-success/20">
+                    <Zap size={14} />
+                  </div>
+                  <span className="text-[10px] font-black text-heading uppercase tracking-widest">
                     Heartbeat
                   </span>
                 </div>
-                <span className="text-[10px] text-success font-bold">
-                  ALIVE
-                </span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-surface-2 border border-border/40">
                 <div className="flex items-center gap-2">
-                  <Shield size={14} className="text-primary" />
-                  <span className="text-[10px] font-bold text-white uppercase tracking-wider">
-                    Health
+                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+                  <span className="text-[10px] text-success font-black tracking-widest">
+                    STABLE
                   </span>
                 </div>
-                <span className="text-[10px] text-success font-bold">100%</span>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-surface-2 border border-border/40 group hover:border-primary/30 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 text-primary border border-primary/20">
+                    <Shield size={14} />
+                  </div>
+                  <span className="text-[10px] font-black text-heading uppercase tracking-widest">
+                    Health Score
+                  </span>
+                </div>
+                <span className="text-[10px] text-primary font-black tracking-widest">
+                  100%
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-4 bg-surface-2 border border-border/40 group hover:border-warning/30 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-warning/10 text-warning border border-warning/20">
+                    <Activity size={14} />
+                  </div>
+                  <span className="text-[10px] font-black text-heading uppercase tracking-widest">
+                    Error Rate
+                  </span>
+                </div>
+                <span className="text-[10px] text-warning font-black tracking-widest">
+                  0.00%
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="bg-primary/5 border border-primary/20 p-6 rounded-none">
-            <div className="flex items-center gap-3 mb-4 text-primary">
-              <Zap size={16} />
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em]">
-                Quick Action
+          {/* Quick Action Pane */}
+          <div className="relative group overflow-hidden">
+            <div className="absolute inset-0 bg-linear-to-br from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative bg-surface-1 border border-primary/30 p-8 text-center">
+              <div className="flex justify-center mb-6">
+                <div className="h-16 w-16 bg-primary/10 border border-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
+                  <Zap size={32} />
+                </div>
+              </div>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-heading mb-3">
+                System Management
               </h4>
+              <p className="text-[10px] text-muted leading-relaxed mb-8 uppercase tracking-widest font-medium">
+                Adjust infrastructure parameters, reassess response teams, or
+                decommission this node.
+              </p>
+              <button
+                onClick={() => setActiveView("services", service._id)}
+                className="w-full py-4 bg-primary text-on-primary text-[10px] font-black uppercase tracking-[0.3em] hover:bg-primary-hover transition-all duration-300 shadow-xl shadow-primary/10"
+              >
+                Enter Control Plane
+              </button>
             </div>
-            <p className="text-[10px] text-zinc-400 leading-relaxed mb-4 uppercase tracking-wider">
-              Need to modify this service configuration or team assignments?
-            </p>
-            <button
-              onClick={() => setActiveView("services")}
-              className="w-full py-2 bg-primary text-black text-[10px] font-bold uppercase tracking-widest hover:bg-primary/90 transition-all"
-            >
-              Update Service
-            </button>
           </div>
         </div>
       </div>
