@@ -15,6 +15,10 @@ import overviewRouter from "../modules/overview/overview.route.js";
 const rootRouter = express.Router();
 
 // Auth routes
+rootRouter.get("/health", (req, res) => {
+  res.json({ message: "Welcome to the IncidentWatch API!" });
+});
+
 rootRouter.use("/auth", Auth_router);
 rootRouter.use("/api-keys", ApiKey_router);
 rootRouter.use("/status", statusRouter);

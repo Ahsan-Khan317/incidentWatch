@@ -20,6 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Setup global API prefix with root router
+app.use("/health", (req, res, next) => {
+  res.json({ message: "Welcome to the IncidentWatch API!" });
+});
 app.use(API_PREFIX, rootRouter);
 
 // 404 Route Handler - catches requests to non-existent API routes
