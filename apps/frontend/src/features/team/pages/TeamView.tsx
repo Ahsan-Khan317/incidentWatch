@@ -19,7 +19,8 @@ import TeamRosterHistory from "../components/TeamRosterHistory";
 import { useTeam } from "../hooks/useTeam";
 import { InviteModal } from "../../invite/components/InviteModal";
 import MemberDirectory from "../../members/components/MemberDirectory";
-
+import { MemberDetailModal } from "../../members/components/MemberDetailModal";
+import { useAuthStore } from "../../auth/store/auth-store";
 type TeamViewTab = "roster" | "directory";
 
 export const TeamView: React.FC = () => {
@@ -50,6 +51,7 @@ export const TeamView: React.FC = () => {
   const [showCreateTeamModal, setShowCreateTeamModal] = React.useState(false);
   const [editingTeam, setEditingTeam] = React.useState<any>(null);
   const [editingMember, setEditingMember] = React.useState<any>(null);
+  const [selectedMember, setSelectedMember] = React.useState<any>(null);
   const [confirmation, setConfirmation] = React.useState<{
     isOpen: boolean;
     title: string;
@@ -141,6 +143,9 @@ export const TeamView: React.FC = () => {
     });
   };
 
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin";
+
   if (isLoading && members.length === 0) {
     return (
       <Container>
@@ -183,13 +188,15 @@ export const TeamView: React.FC = () => {
         title="Engineering Command"
         description="Manage your on-call roster, engineer availability, and tactical Team formation."
       >
-        <DashboardButton
-          variant="primary"
-          icon={UserPlus}
-          onClick={() => setShowAddModal(true)}
-        >
-          Invite member
-        </DashboardButton>
+        {isAdmin && (
+          <DashboardButton
+            variant="primary"
+            icon={UserPlus}
+            onClick={() => setShowAddModal(true)}
+          >
+            Invite member
+          </DashboardButton>
+        )}
       </SectionHeading>
 
       {/* Strategic Metrics */}
@@ -275,17 +282,21 @@ export const TeamView: React.FC = () => {
                   removeMember={confirmRemoveMember}
                   toggleStatus={toggleStatus}
                   onEdit={handleEditMember}
+                  onClick={(m) => setSelectedMember(m)}
+                  isAdmin={isAdmin}
                 />
               ))}
 
-              <DashboardButton
-                variant="ghost"
-                icon={UserPlus}
-                className="h-full min-h-[160px] border-dashed border-2 hover:border-primary/50 hover:bg-primary/5"
-                onClick={() => setShowAddModal(true)}
-              >
-                Deploy New member
-              </DashboardButton>
+              {isAdmin && (
+                <DashboardButton
+                  variant="ghost"
+                  icon={UserPlus}
+                  className="h-full min-h-[160px] border-dashed border-2 hover:border-primary/50 hover:bg-primary/5"
+                  onClick={() => setShowAddModal(true)}
+                >
+                  Deploy New member
+                </DashboardButton>
+              )}
             </div>
           </div>
         </>
@@ -294,6 +305,8 @@ export const TeamView: React.FC = () => {
           members={members}
           onEdit={handleEditMember}
           onDelete={confirmRemoveMember}
+          onRowClick={(m) => setSelectedMember(m)}
+          isAdmin={isAdmin}
         />
       )}
 
@@ -323,6 +336,12 @@ export const TeamView: React.FC = () => {
         onClose={() => setEditingMember(null)}
         onSave={handleUpdateMember}
         member={editingMember}
+      />
+
+      <MemberDetailModal
+        member={selectedMember}
+        isOpen={!!selectedMember}
+        onClose={() => setSelectedMember(null)}
       />
 
       <ConfirmationModal

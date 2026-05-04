@@ -130,11 +130,11 @@ export default function DashboardNavbar({
         {/* Logo */}
         <div className="flex min-w-0 flex-1 items-center border-r border-dashed border-border px-4 md:w-64 md:flex-none sm:px-6">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-sm bg-primary text-xs font-semibold text-black dark:text-black">
+            <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-primary text-[10px] font-black text-on-primary shadow-lg shadow-primary/20 transition-transform hover:rotate-3">
               IW
             </div>
-            <span className="text-sm font-medium tracking-tight text-heading">
-              InsidentWatch
+            <span className="hidden sm:block text-sm font-black tracking-tight text-heading uppercase">
+              IncidentWatch
             </span>
           </Link>
         </div>

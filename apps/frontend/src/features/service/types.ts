@@ -32,9 +32,12 @@ export interface Service {
 
 export interface CreateServiceInput {
   name: string;
+  description?: string;
+  baseUrl?: string;
   environment?: Environment;
   autoAssignEnabled?: boolean;
   assignmentRules?: AssignmentRule[];
+  members?: string[]; // Array of User IDs
   metadata?: Record<string, any>;
 }
 

@@ -26,14 +26,20 @@ incidentRouter.post("/create", createIncidentSchema, validate, createIncident);
 
 incidentRouter.get("/all", org_user_Auth, getAllIncidents);
 
-incidentRouter.get("/get/:id", getIncident);
+incidentRouter.get("/get/:id", org_user_Auth, getIncident);
 
-incidentRouter.patch("/assign/:id", assignIncidentSchema, validate, assignIncident);
+incidentRouter.patch("/assign/:id", org_user_Auth, assignIncidentSchema, validate, assignIncident);
 
-incidentRouter.patch("/status/:id", updateStatusSchema, validate, updateIncidentStatus);
+incidentRouter.patch(
+  "/status/:id",
+  org_user_Auth,
+  updateStatusSchema,
+  validate,
+  updateIncidentStatus,
+);
 
-incidentRouter.patch("/resolve/:id", resolveIncident);
+incidentRouter.patch("/resolve/:id", org_user_Auth, resolveIncident);
 
-incidentRouter.post("/log/:id", addLogSchema, validate, addIncidentLog);
+incidentRouter.post("/log/:id", org_user_Auth, addLogSchema, validate, addIncidentLog);
 
 export default incidentRouter;

@@ -17,13 +17,13 @@ const SectionHeading = ({
   const hasActions = Boolean(children);
 
   return (
-    <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-      <div>
-        <h1 className="mb-1 text-3xl font-light tracking-tight text-heading sm:text-4xl">
+    <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div className="flex-1">
+        <h1 className="mb-2 text-3xl font-black tracking-tighter text-heading sm:text-5xl uppercase">
           {href ? (
             <Link
               href={href}
-              className="hover:text-primary transition-colors cursor-pointer"
+              className="hover:text-primary transition-all cursor-pointer decoration-primary decoration-4 underline-offset-8 hover:underline"
             >
               {title}
             </Link>
@@ -31,11 +31,17 @@ const SectionHeading = ({
             title
           )}
         </h1>
-        {description && <p className="text-xs text-body">{description}</p>}
+        {description && (
+          <p className="text-[10px] text-body uppercase tracking-[0.2em] font-medium opacity-60 max-w-2xl">
+            {description}
+          </p>
+        )}
       </div>
 
       {hasActions ? (
-        <div className="flex items-center gap-3">{children}</div>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          {children}
+        </div>
       ) : null}
     </div>
   );

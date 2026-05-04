@@ -1,4 +1,7 @@
 import { ApiError } from "../../utils/Error/ApiError.js";
+import { getIO } from "../../socket/socket.js";
+import { SOCKET_EVENTS } from "../../socket/socket.js";
+import { authDao } from "../auth/auth.dao.js";
 
 import { incidentDao } from "./incident.dao.js";
 
@@ -40,40 +43,59 @@ export const incidentService = {
     return incident;
   },
 
-  updateStatus: async ({ incidentId, status }) => {
+  updateStatus: async ({ incidentId, status, userId }) => {
     const incident = await incidentDao.findIncidentById(incidentId);
 
     if (!incident) {
       throw new ApiError(404, "Incident not found");
     }
 
+    const user = userId ? await authDao.findUserById(userId) : null;
+    const userName = user?.name || "System";
+
     incident.status = status;
 
+    // If acknowledging, add user to assigned members if not already there
+    if (status === "acknowledged" && userId) {
+      const assignedIds = (incident.assignedMembers || []).map((id) => id.toString());
+      if (!assignedIds.includes(userId.toString())) {
+        incident.assignedMembers.push(userId);
+      }
+    }
+
     incident.timeline.push({
-      action: `Status changed to ${status}`,
+      action: `Status changed to ${status} by ${userName}`,
     });
 
     await incident.save();
+
+    const io = getIO();
+    if (io) io.emit(SOCKET_EVENTS.INCIDENT.UPDATED, incident);
 
     return incident;
   },
 
-  resolveIncident: async ({ incidentId }) => {
+  resolveIncident: async ({ incidentId, userId }) => {
     const incident = await incidentDao.findIncidentById(incidentId);
 
     if (!incident) {
       throw new ApiError(404, "Incident not found");
     }
 
-    incident.status = "resolved";
+    const user = userId ? await authDao.findUserById(userId) : null;
+    const userName = user?.name || "System";
 
+    incident.status = "resolved";
     incident.resolvedAt = new Date();
 
     incident.timeline.push({
-      action: "Incident resolved",
+      action: `Incident resolved by ${userName}`,
     });
 
     await incident.save();
+
+    const io = getIO();
+    if (io) io.emit(SOCKET_EVENTS.INCIDENT.UPDATED, incident);
 
     return incident;
   },

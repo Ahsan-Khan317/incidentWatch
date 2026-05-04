@@ -24,8 +24,8 @@ const sideNavGroups = [
     title: "Core",
     items: [
       { label: "Overview", href: "/dashboard", icon: LayoutGrid },
-      { label: "API's", href: "/dashboard/apis", icon: Terminal },
       { label: "Incidents", href: "/dashboard/incidents", icon: TriangleAlert },
+      { label: "Services", href: "/dashboard/services", icon: Activity },
       { label: "Logs", href: "/dashboard/logs", icon: Logs },
       {
         label: "Alerts",
@@ -39,8 +39,18 @@ const sideNavGroups = [
   {
     title: "System",
     items: [
-      { label: "Team & member", href: "/dashboard/team", icon: Users },
-      { label: "Settings", href: "/dashboard/settings", icon: Settings },
+      {
+        label: "Team & member",
+        href: "/dashboard/team",
+        icon: Users,
+        adminOnly: true,
+      },
+      {
+        label: "Settings",
+        href: "/dashboard/settings",
+        icon: Settings,
+        adminOnly: true,
+      },
     ],
   },
 ];
@@ -64,6 +74,8 @@ export default function DashboardSidebar({
     router.replace("/login");
   };
 
+  const isAdmin = user?.role === "admin";
+
   return (
     <>
       <aside
@@ -80,85 +92,101 @@ export default function DashboardSidebar({
                 {group.title}
               </p>
               <nav className="space-y-1">
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const viewId = item.href
-                    .replace("/dashboard/", "")
-                    .replace("/dashboard", "dashboard") as any;
-                  const isActive = activeView === viewId;
-                  const hasChildren =
-                    Array.isArray(item.children) && item.children.length > 0;
+                {group.items
+                  .filter((item: any) => !item.adminOnly || isAdmin)
+                  .map((item: any) => {
+                    const Icon = item.icon;
+                    const viewId = item.href
+                      .replace("/dashboard/", "")
+                      .replace("/dashboard", "dashboard") as any;
+                    const isActive = activeView === viewId;
+                    const hasChildren =
+                      Array.isArray(item.children) && item.children.length > 0;
 
-                  return (
-                    <div key={item.label}>
-                      <button
-                        onClick={() => {
-                          setActiveView(viewId);
-                          if (window.innerWidth < 768) onClose();
-                        }}
-                        className={`flex w-full items-center gap-2 rounded px-3 py-2 text-[0.75rem] transition-colors ${
-                          isActive
-                            ? "bg-surface-2 text-heading"
-                            : "text-body hover:bg-surface-1 hover:text-heading"
-                        }`}
-                      >
-                        <Icon
-                          size={16}
-                          className={isActive ? "text-primary" : ""}
-                        />
-                        <span>{item.label}</span>
-                        {hasChildren ? (
-                          <ChevronDown
-                            size={12}
-                            className="ml-auto text-body/30"
+                    return (
+                      <div key={item.label}>
+                        <button
+                          onClick={() => {
+                            const finalViewId =
+                              viewId === "services"
+                                ? "service-context"
+                                : viewId;
+                            setActiveView(finalViewId);
+                            if (window.innerWidth < 768) onClose();
+                          }}
+                          className={`flex w-full items-center gap-2 rounded px-3 py-2 text-[0.75rem] transition-colors ${
+                            activeView ===
+                              (viewId === "services"
+                                ? "service-context"
+                                : viewId) ||
+                            (viewId === "services" &&
+                              activeView === "service-details")
+                              ? "bg-surface-2 text-heading"
+                              : "text-body hover:bg-surface-1 hover:text-heading"
+                          }`}
+                        >
+                          <Icon
+                            size={16}
+                            className={isActive ? "text-primary" : ""}
                           />
-                        ) : null}
-                      </button>
+                          <span>{item.label}</span>
+                          {hasChildren ? (
+                            <ChevronDown
+                              size={12}
+                              className="ml-auto text-body/30"
+                            />
+                          ) : null}
+                        </button>
 
-                      {hasChildren && isActive ? (
-                        <div className="ml-6 mt-1 space-y-1 border-l border-dashed border-border pl-3">
-                          {item.children?.map((child) => {
-                            return (
-                              <button
-                                key={child.label}
-                                onClick={() => {
-                                  // Handle sub-views if needed
-                                  if (window.innerWidth < 768) onClose();
-                                }}
-                                className="block w-full rounded px-2 py-1.5 text-left text-[0.6875rem] transition-colors text-body hover:bg-surface-1 hover:text-heading"
-                              >
-                                {child.label}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
+                        {hasChildren && isActive ? (
+                          <div className="ml-6 mt-1 space-y-1 border-l border-dashed border-border pl-3">
+                            {item.children?.map((child) => {
+                              return (
+                                <button
+                                  key={child.label}
+                                  onClick={() => {
+                                    // Handle sub-views if needed
+                                    if (window.innerWidth < 768) onClose();
+                                  }}
+                                  className="block w-full rounded px-2 py-1.5 text-left text-[0.6875rem] transition-colors text-body hover:bg-surface-1 hover:text-heading"
+                                >
+                                  {child.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
               </nav>
             </div>
           ))}
         </div>
 
         {/* Bottom section */}
-        <div className="mt-auto space-y-2 border-t border-dashed border-border px-3 py-3 text-[0.625rem] text-body bg-page">
-          <div className="mb-2 border-b border-border px-2 pb-2">
-            <p className="text-xs text-heading">
-              {user?.name || "Workspace User"}
-            </p>
-            <p className="text-[0.6875rem] text-body">
-              {user?.email || "Signed in"}
-            </p>
+        <div className="mt-auto space-y-2 border-t border-dashed border-border px-4 py-4 text-[0.625rem] text-body bg-page/50 backdrop-blur-sm">
+          <div className="mb-4 flex items-center gap-3 border-b border-border/40 pb-4">
+            <div className="h-8 w-8 flex items-center justify-center bg-surface-2 rounded-none border border-border text-[10px] font-black text-heading">
+              {user?.name?.[0] || "U"}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-black text-heading uppercase truncate">
+                {user?.name || "Workspace User"}
+              </p>
+              <p className="text-[9px] text-muted truncate uppercase tracking-tighter">
+                {user?.email || "Signed in"}
+              </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center justify-center gap-2 rounded border border-border px-2 py-2 text-xs text-body transition-colors hover:bg-surface-1"
+            className="flex w-full items-center justify-center gap-3 rounded-none border border-border px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.2em] text-body transition-all hover:bg-danger/10 hover:text-danger hover:border-danger/30 active:scale-95"
           >
             <LogOut size={14} />
-            <span>Logout</span>
+            <span>Terminate Session</span>
           </button>
         </div>
       </aside>

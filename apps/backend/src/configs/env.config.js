@@ -45,7 +45,7 @@ const envSchema = z.object({
 
   // EMAIL
   RESEND_API_KEY: z.string().optional(),
-  RESEND_FROM_EMAIL: z.string().optional(),
+  RESEND_FROM_EMAIL: z.string().default("no-reply@edulaunch.shop"),
 
   // GOOGLE
   GOOGLE_CLIENT_ID: z.string().optional(),

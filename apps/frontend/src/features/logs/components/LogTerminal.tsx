@@ -88,7 +88,7 @@ const LogRow: React.FC<{ log: LogEntry; filter: string }> = React.memo(
                 : "border-l-4 border-transparent"
           }`}
         >
-          <div className="flex items-center gap-2 w-10 shrink-0 text-muted/30 dark:text-zinc-700 text-[0.7rem] font-bold tabular-nums pt-1">
+          <div className="hidden sm:flex items-center gap-2 w-10 shrink-0 text-muted/30 dark:text-zinc-700 text-[0.7rem] font-bold tabular-nums pt-1">
             {isExpanded ? (
               <ChevronDown size={12} />
             ) : (
@@ -97,11 +97,11 @@ const LogRow: React.FC<{ log: LogEntry; filter: string }> = React.memo(
             {log.lineNumber}
           </div>
 
-          <div className="w-24 shrink-0 text-muted/40 dark:text-zinc-500 font-bold tabular-nums text-[0.75rem] pt-1">
+          <div className="hidden md:block w-24 shrink-0 text-muted/40 dark:text-zinc-500 font-bold tabular-nums text-[0.75rem] pt-1">
             {log.timestamp}
           </div>
 
-          <div className="w-24 shrink-0 flex items-start gap-1 pt-0.5">
+          <div className="hidden sm:flex w-24 shrink-0 flex items-start gap-1 pt-0.5">
             <span
               className={`px-2 py-0.5 rounded-full text-[0.6rem] font-black tracking-wider uppercase border ${
                 log.level === "INFO"
@@ -439,9 +439,9 @@ const LogTerminal: React.FC<LogTerminalProps> = ({
       >
         {/* Sticky Headers */}
         <div className="sticky top-0 z-20 flex gap-4 px-8 py-3 bg-neutral-50/80 dark:bg-[#080808]/80 backdrop-blur-md border-b border-neutral-200 dark:border-white/5 font-mono text-[0.6rem] font-black uppercase tracking-[0.25em] text-muted/50 dark:text-zinc-600">
-          <div className="w-10 text-left">LN</div>
-          <div className="w-24 text-center">TIMESTAMP</div>
-          <div className="w-24 text-center">LEVEL</div>
+          <div className="hidden sm:block w-10 text-left">LN</div>
+          <div className="hidden md:block w-24 text-center">TIMESTAMP</div>
+          <div className="hidden sm:block w-24 text-center">LEVEL</div>
           <div className="flex-1">MESSAGE & CONTEXT</div>
         </div>
 

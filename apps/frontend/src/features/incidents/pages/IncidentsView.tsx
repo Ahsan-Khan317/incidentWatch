@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Incident } from "../types";
+import { Incident, TimelineEvent } from "../types";
 import { IncidentObject } from "../components/IncidentObject";
 import { IncidentDetail } from "../components/IncidentDetail";
 import { useIncidents } from "../hooks/useIncidents";
 import { useServiceStore } from "@/src/features/dashboard/store/service-store";
+import { useMembers } from "../../members/hooks/useMembers";
 import Container from "@/src/components/dashboard/common/Container";
 import IncidentsSkeleton from "../components/IncidentsSkeleton";
 
@@ -13,81 +14,158 @@ interface IncidentsViewProps {
   onClearInitial?: () => void;
 }
 
+type BackendIdValue = string | { _id?: string } | null | undefined;
+
+interface BackendTimelineEvent {
+  type?: TimelineEvent["type"];
+  message?: string;
+  action?: string;
+  time?: string;
+  createdAt?: string;
+}
+
+interface BackendIncident {
+  _id: string;
+  serverId?: string;
+  serviceId?: BackendIdValue;
+  title: string;
+  severity?: string;
+  source?: string;
+  status?: string;
+  assignedMembers?: BackendIdValue[];
+  assignedTeams?: BackendIdValue[];
+  tags?: string[];
+  createdAt?: string;
+  description?: string;
+  stack?: string;
+  timeline?: BackendTimelineEvent[];
+}
+
+interface ServiceOption {
+  _id?: string;
+  id?: string;
+  name?: string;
+}
+
+import { useAuthStore } from "@/src/features/auth/store/auth-store";
+
 export const IncidentsView: React.FC<IncidentsViewProps> = ({
   initialIncidentId,
   onClearInitial,
 }) => {
-  const [selectedIncident, setSelectedIncident] = useState<Incident | null>(
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(
     null,
   );
+  const [activeFilter, setActiveFilter] = useState<"all" | "mine">("all");
+  const { user } = useAuthStore();
   const { selectedServiceId, services } = useServiceStore();
-  const { incidents: rawIncidents, isLoading } = useIncidents();
+  const { incidents: rawIncidents, isLoading, refresh } = useIncidents();
+  const { members } = useMembers();
+
+  const memberNameByUserId = useMemo(() => {
+    return new Map(
+      members
+        .filter((member) => member.userId)
+        .map((member) => [member.userId as string, member.name]),
+    );
+  }, [members]);
 
   // Map backend data to frontend Incident type
   const allIncidents: Incident[] = useMemo(() => {
-    return rawIncidents.map((ri: any) => ({
-      id: ri._id,
-      serverId: ri.serverId || "Unknown",
-      serviceId: ri.serviceId || null,
-      title: ri.title,
-      severity: ri.severity as any,
-      type: ri.source || "Infrastructure",
-      status:
-        ri.status === "resolved"
-          ? "Resolved"
-          : ri.status === "acknowledged"
-            ? "Identified"
-            : "Investigating",
-      assignedTo:
-        ri.assignedMembers?.length > 0
-          ? `${ri.assignedMembers.length} assigned`
-          : "Unassigned",
-      createdAt: new Date(ri.createdAt).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      description: ri.description,
-      timeline: (ri.timeline || []).map((t: any, idx: number) => ({
-        id: String(idx),
-        type: t.type || "detection",
-        message: t.message || t.action || `Event: ${ri.title}`,
-        timestamp: new Date(t.createdAt || ri.createdAt).toLocaleTimeString(),
-      })),
-    }));
-  }, [rawIncidents]);
+    // Strictly deduplicate by _id to prevent any React key warnings
+    const uniqueRawIncidents = Array.from(
+      new Map(
+        (rawIncidents as BackendIncident[]).map((ri) => [
+          String(ri._id || (ri as any).id),
+          ri,
+        ]),
+      ).values(),
+    );
 
-  // Filter incidents by the service selected in the sidebar
+    return uniqueRawIncidents.map((ri) => {
+      const assignedMemberIds = normalizeIds(ri.assignedMembers);
+      const assignedTeamIds = normalizeIds(ri.assignedTeams);
+      const assignedMemberNames = assignedMemberIds
+        .map((id) => memberNameByUserId.get(id))
+        .filter(Boolean) as string[];
+      const assignedTo = formatAssigneeLabel(
+        assignedMemberIds,
+        assignedMemberNames,
+        assignedTeamIds,
+      );
+
+      return {
+        id: ri._id,
+        displayId: `INC-${ri._id.substring(ri._id.length - 6).toUpperCase()}`,
+        serverId: ri.serverId || "Unknown",
+        serviceId: normalizeId(ri.serviceId),
+        title: ri.title,
+        severity: normalizeSeverity(ri.severity),
+        type: ri.source || "Infrastructure",
+        status:
+          ri.status === "resolved"
+            ? "Resolved"
+            : ri.status === "acknowledged"
+              ? "Investigating"
+              : "Triggered",
+
+        assignedTo,
+        assignedMemberIds,
+        assignedMemberNames,
+        assignedTeamIds,
+        tags: ri.tags || [],
+        createdAt: formatTime(ri.createdAt),
+        description: ri.description || ri.title,
+        stack: ri.stack,
+        timeline: (ri.timeline || []).map((t, idx: number) => ({
+          id: String(idx),
+          type: inferTimelineType(t.type, t.action || t.message),
+          message: t.message || t.action || `Event: ${ri.title}`,
+          timestamp: formatTime(t.time || t.createdAt || ri.createdAt),
+        })),
+      };
+    });
+  }, [rawIncidents, memberNameByUserId]);
+
+  // Filter incidents by the service selected in the sidebar AND active filter (all/mine)
   const filteredIncidents = useMemo(() => {
-    if (selectedServiceId === "all") return allIncidents;
-    return allIncidents.filter((i: any) => i.serviceId === selectedServiceId);
-  }, [allIncidents, selectedServiceId]);
+    let result = allIncidents;
+
+    if (selectedServiceId !== "all") {
+      result = result.filter((i) => i.serviceId === selectedServiceId);
+    }
+
+    if (activeFilter === "mine" && user?.id) {
+      result = result.filter((i) => i.assignedMemberIds.includes(user.id));
+    }
+
+    return result;
+  }, [allIncidents, selectedServiceId, activeFilter, user]);
 
   // Find selected service name for display
   const selectedServiceName = useMemo(() => {
     if (selectedServiceId === "all") return null;
-    const svc = services.find(
-      (s: any) => (s._id || s.id) === selectedServiceId,
+    const svc = (services as ServiceOption[]).find(
+      (s) => (s._id || s.id) === selectedServiceId,
     );
     return svc?.name || null;
   }, [services, selectedServiceId]);
 
-  // Handle Initial Incident Selection (from overview click)
-  useEffect(() => {
-    if (initialIncidentId && allIncidents.length > 0) {
-      const incident = allIncidents.find((i) => i.id === initialIncidentId);
-      if (incident) {
-        setSelectedIncident(incident);
-        onClearInitial?.();
-      }
-    }
-  }, [initialIncidentId, allIncidents, onClearInitial]);
+  const selectedIncident = useMemo(() => {
+    const id = selectedIncidentId || initialIncidentId;
+    if (!id) return null;
+    return allIncidents.find((incident) => incident.id === id) || null;
+  }, [allIncidents, initialIncidentId, selectedIncidentId]);
 
   const handleIncidentClick = (incident: Incident) => {
-    setSelectedIncident(incident);
+    setSelectedIncidentId(incident.id);
+    onClearInitial?.();
   };
 
   const handleBack = () => {
-    setSelectedIncident(null);
+    setSelectedIncidentId(null);
+    refresh(); // Force refresh to prevent any state corruption bugs
+    onClearInitial?.();
   };
 
   if (isLoading) {
@@ -117,40 +195,67 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
             className="space-y-8"
           >
             {/* Header */}
-            <div className="px-1">
-              <h2 className="text-2xl font-display font-bold text-heading tracking-tight">
-                Incidents
-              </h2>
-              <p className="text-sm text-muted font-medium mt-1 uppercase tracking-widest">
-                {selectedServiceName
-                  ? `Showing incidents for ${selectedServiceName}`
-                  : `Showing all ${filteredIncidents.length} incident${filteredIncidents.length !== 1 ? "s" : ""} across all services`}
-              </p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-1">
+              <div>
+                <h2 className="text-4xl font-black text-heading tracking-tighter uppercase">
+                  Active Incidents
+                </h2>
+
+                <p className="text-[10px] text-muted font-bold mt-2 uppercase tracking-[0.3em] opacity-70">
+                  {selectedServiceName
+                    ? `Infrastructure context: ${selectedServiceName}`
+                    : `Tactical overview: ${filteredIncidents.length} active threads`}
+                </p>
+              </div>
+
+              {/* Filter Tabs */}
+              <div className="flex items-center gap-1 bg-surface-2 p-1 border border-border/50 rounded-md">
+                <button
+                  onClick={() => setActiveFilter("all")}
+                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
+                    activeFilter === "all"
+                      ? "bg-surface-1 text-primary shadow-sm border border-border/40"
+                      : "text-muted hover:text-heading"
+                  }`}
+                >
+                  Global Stream
+                </button>
+                <button
+                  onClick={() => setActiveFilter("mine")}
+                  className={`px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm ${
+                    activeFilter === "mine"
+                      ? "bg-surface-1 text-primary shadow-sm border border-border/40"
+                      : "text-muted hover:text-heading"
+                  }`}
+                >
+                  Assigned to Me
+                </button>
+              </div>
             </div>
 
             {/* Stats Bar */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-surface-1 border border-border-soft p-4 rounded-md">
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+              <div className="bg-surface-1 border border-border/50 p-4 rounded-none flex items-center justify-between sm:block">
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:mb-2">
                   Open
                 </p>
-                <p className="text-2xl font-display font-bold text-heading">
+                <p className="text-2xl font-black text-heading tracking-tighter">
                   {openCount}
                 </p>
               </div>
-              <div className="bg-surface-1 border border-border-soft p-4 rounded-md">
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+              <div className="bg-surface-1 border border-border/50 p-4 rounded-none flex items-center justify-between sm:block">
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:mb-2">
                   Critical / High
                 </p>
-                <p className="text-2xl font-display font-bold text-danger">
+                <p className="text-2xl font-black text-danger tracking-tighter">
                   {criticalCount}
                 </p>
               </div>
-              <div className="bg-surface-1 border border-border-soft p-4 rounded-md">
-                <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-1">
+              <div className="bg-surface-1 border border-border/50 p-4 rounded-none flex items-center justify-between sm:block">
+                <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em] sm:mb-2">
                   Resolved
                 </p>
-                <p className="text-2xl font-display font-bold text-success">
+                <p className="text-2xl font-black text-success tracking-tighter">
                   {resolvedCount}
                 </p>
               </div>
@@ -171,18 +276,84 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
                     check_circle
                   </span>
                   <p className="text-muted font-medium">
-                    {selectedServiceName
-                      ? `No incidents for ${selectedServiceName}.`
-                      : "No incidents detected. All systems operational."}
+                    {activeFilter === "mine"
+                      ? "You have no active assignments. Operational calm achieved."
+                      : selectedServiceName
+                        ? `No incidents for ${selectedServiceName}.`
+                        : "No incidents detected. All systems operational."}
                   </p>
                 </div>
               )}
             </div>
           </motion.div>
         ) : (
-          <IncidentDetail incident={selectedIncident} onClose={handleBack} />
+          <IncidentDetail
+            key="incident-detail"
+            incident={selectedIncident}
+            onClose={handleBack}
+          />
         )}
       </AnimatePresence>
     </Container>
   );
+};
+
+const normalizeId = (value: BackendIdValue): string | null => {
+  if (!value) return null;
+  if (typeof value === "object") return value._id ? String(value._id) : null;
+  return String(value);
+};
+
+const normalizeIds = (values: BackendIdValue[] = []): string[] => {
+  return values.map(normalizeId).filter(Boolean) as string[];
+};
+
+const normalizeSeverity = (severity?: string): Incident["severity"] => {
+  if (severity === "SEV1") return "critical";
+  if (severity === "SEV2") return "high";
+  if (severity === "SEV3") return "medium";
+  return (severity || "low") as Incident["severity"];
+};
+
+const formatTime = (value?: string) => {
+  const date = value ? new Date(value) : new Date();
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
+const formatAssigneeLabel = (
+  memberIds: string[],
+  memberNames: string[],
+  teamIds: string[],
+) => {
+  if (memberNames.length === 1 && teamIds.length === 0) return memberNames[0];
+  if (memberNames.length > 1 && teamIds.length === 0) {
+    return `${memberNames[0]} +${memberNames.length - 1}`;
+  }
+  if (memberIds.length > 0 || teamIds.length > 0) {
+    const memberCount = memberIds.length;
+    const teamCount = teamIds.length;
+    return `${memberCount} member${memberCount === 1 ? "" : "s"}${
+      teamCount > 0 ? `, ${teamCount} team${teamCount === 1 ? "" : "s"}` : ""
+    }`;
+  }
+  return "Unassigned";
+};
+
+const inferTimelineType = (
+  type: TimelineEvent["type"] | undefined,
+  message: string = "",
+): TimelineEvent["type"] => {
+  if (type) return type;
+  const normalizedMessage = message.toLowerCase();
+  if (normalizedMessage.includes("assign")) return "assignment";
+  if (
+    normalizedMessage.includes("status") ||
+    normalizedMessage.includes("resolved")
+  ) {
+    return "status_change";
+  }
+  return "detection";
 };

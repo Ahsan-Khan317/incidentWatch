@@ -4,6 +4,7 @@ import { Eye, Pencil, Trash2, Shield } from "lucide-react";
 import DashboardButton from "@/src/components/ui/DashboardButton";
 import { Service } from "../types";
 import { ServiceSkeleton } from "./ServiceSkeleton";
+import { useViewStore } from "../../dashboard/store/view-store";
 
 export function formatDate(dateValue: string | Date) {
   if (!dateValue) return "-";
@@ -15,7 +16,6 @@ export function formatDate(dateValue: string | Date) {
     year: "numeric",
   }).format(date);
 }
-
 interface ServiceTableProps {
   services: Service[];
   isLoading: boolean;
@@ -23,6 +23,7 @@ interface ServiceTableProps {
   error: any;
   onEdit: (service: Service) => void;
   onDelete: (service: Service) => void;
+  isAdmin?: boolean;
 }
 
 export const ServiceTable: React.FC<ServiceTableProps> = ({
@@ -32,44 +33,63 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
   error,
   onEdit,
   onDelete,
+  isAdmin = false,
 }) => {
+  const { setActiveView } = useViewStore();
+
   return (
-    <div className="overflow-hidden border border-dashed border-border bg-surface-1 rounded-none">
-      <div className="flex items-center justify-between border-b border-border px-5 py-3">
-        <h2 className="text-sm uppercase tracking-[0.12em] text-heading">
-          All Services
-        </h2>
-        <span className="text-[0.6875rem] text-body">
-          {Array.isArray(services) ? services.length : 0} total
+    <div className="group/table overflow-hidden border border-dashed border-border bg-surface-1 rounded-none shadow-2xl shadow-black/20">
+      <div className="flex items-center justify-between border-b border-border px-5 py-4 bg-surface-0/50">
+        <div className="flex items-center gap-3">
+          <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+          <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-heading">
+            Infastructure Registry
+          </h2>
+        </div>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted tabular-nums">
+          {Array.isArray(services) ? services.length : 0} Services Active
         </span>
       </div>
 
-      <div className="max-h-[60vh] overflow-auto scrollbar-hide">
-        <table className="min-w-full text-left text-sm">
+      <div className="overflow-x-auto custom-scrollbar">
+        <table className="min-w-full text-left text-sm border-collapse">
           <thead>
-            <tr className="border-b border-border bg-surface-2 text-[0.6875rem] uppercase tracking-[0.12em] text-muted">
-              <th className="px-4 py-3 font-normal">Name</th>
-              <th className="px-4 py-3 font-normal">Environment</th>
-              <th className="px-4 py-3 font-normal">Status</th>
-              <th className="px-4 py-3 font-normal">Created</th>
-              <th className="px-4 py-3 font-normal text-right">Actions</th>
+            <tr className="border-b border-border bg-surface-2/30 text-[0.625rem] uppercase tracking-[0.2em] text-muted">
+              <th className="px-6 py-4 font-bold">Service Identity</th>
+              <th className="px-6 py-4 font-bold hidden sm:table-cell">
+                Node Environment
+              </th>
+              <th className="px-6 py-4 font-bold hidden md:table-cell">
+                Operational Status
+              </th>
+              <th className="px-6 py-4 font-bold hidden lg:table-cell">
+                Deployment Date
+              </th>
+              <th className="px-6 py-4 font-bold text-right">Control Plane</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border/40">
             {isLoading ? <ServiceSkeleton /> : null}
 
             {isError ? (
               <tr>
-                <td className="px-4 py-6 text-danger" colSpan={5}>
-                  {error?.message || "Could not load services."}
+                <td className="px-6 py-12 text-danger text-center" colSpan={5}>
+                  <p className="text-xs uppercase tracking-widest font-bold">
+                    {error?.message || "Failed to synchronize services."}
+                  </p>
                 </td>
               </tr>
             ) : null}
 
             {!isLoading && !isError && services.length === 0 ? (
               <tr>
-                <td className="px-4 py-6 text-body italic" colSpan={5}>
-                  No services yet. Create your first service above.
+                <td
+                  className="px-6 py-12 text-muted text-center italic"
+                  colSpan={5}
+                >
+                  <p className="text-xs uppercase tracking-[0.2em]">
+                    No active infrastructure detected.
+                  </p>
                 </td>
               </tr>
             ) : null}
@@ -78,73 +98,104 @@ export const ServiceTable: React.FC<ServiceTableProps> = ({
               services.map((service) => (
                 <tr
                   key={service._id}
-                  className="border-b border-border/60 last:border-b-0 hover:bg-surface-2/50 transition-colors"
+                  className="group/row hover:bg-primary/5 transition-all duration-300"
                 >
-                  <td className="px-4 py-4 text-heading">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/5 rounded-none border border-primary/10 text-primary">
-                        <Shield size={14} />
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        <div className="p-2.5 bg-surface-2 rounded-none border border-border group-hover/row:border-primary/50 group-hover/row:text-primary transition-all duration-300">
+                          <Shield size={16} />
+                        </div>
+                        {service.autoAssignEnabled && (
+                          <div
+                            className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-warning border-2 border-surface-1"
+                            title="Auto-assignment active"
+                          />
+                        )}
                       </div>
                       <div>
-                        <p className="font-medium">{service.name || "-"}</p>
-                        <p className="mt-0.5 text-[10px] text-body uppercase tracking-wider">
+                        <p className="text-sm font-bold text-heading transition-colors">
+                          {service.name || "-"}
+                        </p>
+
+                        <p className="mt-1 text-[9px] text-muted uppercase tracking-[0.15em] font-medium">
                           {service.autoAssignEnabled
-                            ? "Auto-Routing"
-                            : "Manual"}
+                            ? "Dynamic Incident Routing"
+                            : "Manual Triage Only"}
                         </p>
                       </div>
                     </div>
                   </td>
 
-                  <td className="px-4 py-4">
-                    <span className="capitalize text-body text-xs font-medium">
-                      {service.environment || "-"}
-                    </span>
+                  <td className="px-6 py-5 hidden sm:table-cell">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          service.environment === "production"
+                            ? "bg-warning"
+                            : service.environment === "staging"
+                              ? "bg-primary"
+                              : "bg-zinc-500"
+                        }`}
+                      />
+                      <span className="uppercase text-[10px] font-bold tracking-widest text-body">
+                        {service.environment || "-"}
+                      </span>
+                    </div>
                   </td>
 
-                  <td className="px-4 py-4">
+                  <td className="px-6 py-5 hidden md:table-cell">
                     <span
-                      className={`inline-flex border px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-widest rounded-none ${
+                      className={`inline-flex px-3 py-1 text-[9px] font-bold uppercase tracking-[0.2em] rounded-none border ${
                         service.status === "active"
-                          ? "border-success/30 bg-success/10 text-success"
+                          ? "border-success/20 bg-success/5 text-success"
                           : service.status === "error"
-                            ? "border-danger/30 bg-danger/10 text-danger"
-                            : "border-zinc-500/30 bg-zinc-500/10 text-zinc-400"
+                            ? "border-danger/20 bg-danger/5 text-danger"
+                            : "border-zinc-500/20 bg-zinc-500/5 text-zinc-500"
                       }`}
                     >
                       {service.status || "Inactive"}
                     </span>
                   </td>
 
-                  <td className="px-4 py-4 text-body text-xs">
-                    {formatDate(service.createdAt)}
+                  <td className="px-6 py-5 hidden lg:table-cell">
+                    <p className="text-[10px] font-medium text-body tabular-nums tracking-wider uppercase">
+                      {formatDate(service.createdAt)}
+                    </p>
                   </td>
 
-                  <td className="px-4 py-4">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-6 py-5">
+                    <div className="flex items-center justify-end gap-3 lg:opacity-0 group-hover/row:opacity-100 transition-all duration-300 lg:translate-x-2 group-hover/row:translate-x-0">
                       <DashboardButton
                         variant="secondary"
-                        className="h-8 px-3 cursor-not-allowed rounded-none border-border/50 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all"
+                        onClick={() =>
+                          setActiveView("service-details", service._id)
+                        }
+                        className="h-8 px-4 rounded-none border-border/50 hover:border-primary hover:bg-primary/10 hover:text-primary text-[9px] font-bold uppercase tracking-widest transition-all focus:ring-2 focus:ring-primary/20 focus:outline-none"
                       >
                         <Eye size={12} className="mr-2" />
-                        Monitor
+                        Details
                       </DashboardButton>
 
-                      <button
-                        onClick={() => onEdit(service)}
-                        className="p-2 text-muted hover:text-primary hover:bg-surface-2 transition-all"
-                        title="Edit Service"
-                      >
-                        <Pencil size={14} />
-                      </button>
+                      {isAdmin && (
+                        <>
+                          <button
+                            onClick={() => onEdit(service)}
+                            className="p-2 text-muted hover:text-heading hover:bg-surface-3 transition-all rounded-none border border-transparent hover:border-border focus:ring-2 focus:ring-primary/20 focus:outline-none"
+                            title="Configuration"
+                          >
+                            <Pencil size={14} />
+                          </button>
 
-                      <button
-                        onClick={() => onDelete(service)}
-                        className="p-2 text-muted hover:text-danger hover:bg-danger/5 transition-all"
-                        title="Delete Service"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                          <button
+                            onClick={() => onDelete(service)}
+                            className="p-2 text-muted hover:text-danger hover:bg-danger/10 transition-all rounded-none border border-transparent hover:border-danger/20 focus:ring-2 focus:ring-danger/20 focus:outline-none"
+                            title="Decommission"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

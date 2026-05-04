@@ -361,57 +361,57 @@ export const LogsView: React.FC = () => {
             : `Monitoring real-time telemetry stream specifically for ${selectedServiceName}.`
         }
       >
-        <div className="flex items-center gap-4">
-          <div className="flex flex-col items-end">
-            <span className="text-[0.6rem] font-bold text-neutral-400 uppercase">
-              Live Debug
-            </span>
-            <span className="text-[0.7rem] font-black uppercase text-neutral-600">
-              {socketConnected ? "SOCKET UP" : "SOCKET DOWN"}
-            </span>
-            <span className="text-[0.6rem] font-bold uppercase text-neutral-500">
-              IN {liveReceived} / PASS {liveReceived - liveFilteredOut}
-            </span>
+        <div className="flex flex-wrap items-center gap-3 md:gap-6">
+          <div className="hidden lg:flex items-center gap-6">
+            <div className="flex flex-col items-end">
+              <span className="text-[0.6rem] font-bold text-muted uppercase">
+                Live Debug
+              </span>
+              <span
+                className={`text-[0.7rem] font-black uppercase ${socketConnected ? "text-success" : "text-danger"}`}
+              >
+                {socketConnected ? "SOCKET UP" : "SOCKET DOWN"}
+              </span>
+              <span className="text-[0.6rem] font-bold uppercase text-muted/60">
+                IN {liveReceived} / PASS {liveReceived - liveFilteredOut}
+              </span>
+            </div>
+            <div className="h-8 w-px bg-border" />
+            <div className="flex flex-col items-end">
+              <span className="text-[0.6rem] font-bold text-muted uppercase">
+                Stream Buffer
+              </span>
+              <span className="text-[0.7rem] font-black text-primary uppercase">
+                {initialLogs?.length || 0} Recent Events
+              </span>
+            </div>
+            <div className="h-8 w-px bg-border" />
+            <div className="flex flex-col items-end">
+              <span className="text-[0.6rem] font-bold text-muted uppercase">
+                Stream Bus
+              </span>
+              <span className="text-[0.7rem] font-black text-primary uppercase">
+                PUB {streamMetrics?.bus?.published ?? 0} / CONS{" "}
+                {streamMetrics?.bus?.consumed ?? 0}
+              </span>
+            </div>
           </div>
-          <div className="h-8 w-px bg-neutral-200" />
-          <div className="flex flex-col items-end">
-            <span className="text-[0.6rem] font-bold text-neutral-400 uppercase">
-              Live Stream Buffer
-            </span>
-            <span className="text-[0.7rem] font-black text-primary uppercase">
-              {initialLogs?.length || 0} Recent Events
-            </span>
-          </div>
-          <div className="h-8 w-px bg-neutral-200" />
-          <div className="flex flex-col items-end">
-            <span className="text-[0.6rem] font-bold text-neutral-400 uppercase">
-              Stream Bus
-            </span>
-            <span className="text-[0.7rem] font-black text-primary uppercase">
-              PUB {streamMetrics?.bus?.published ?? 0} / CONS{" "}
-              {streamMetrics?.bus?.consumed ?? 0}
-            </span>
-            <span className="text-[0.6rem] font-bold uppercase text-neutral-500">
-              BRD {streamMetrics?.workers?.broadcasts ?? 0} / INC{" "}
-              {streamMetrics?.workers?.incidentCreated ?? 0}
-            </span>
-          </div>
-          <div className="h-8 w-px bg-neutral-200" />
+
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsPaused(!isPaused)}
-              className={`flex items-center gap-2 px-4 py-2 rounded font-bold text-xs uppercase transition-all shadow-sm ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-none font-black text-[10px] uppercase transition-all shadow-sm border ${
                 isPaused
-                  ? "bg-amber-500/10 text-amber-500 border border-amber-500/30"
-                  : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/30"
+                  ? "bg-warning/10 text-warning border-warning/30"
+                  : "bg-success/10 text-success border-success/30"
               }`}
             >
-              {isPaused ? <Play size={14} /> : <Pause size={14} />}
+              {isPaused ? <Play size={12} /> : <Pause size={12} />}
               <span>{isPaused ? "Resume" : "Pause"}</span>
             </button>
 
-            <button className="bg-white text-neutral-400 hover:text-neutral-700 border border-neutral-200 p-2 rounded transition-all shadow-sm">
-              <Download size={16} />
+            <button className="bg-surface-2 text-muted hover:text-heading border border-border p-2 rounded-none transition-all shadow-sm">
+              <Download size={14} />
             </button>
           </div>
         </div>

@@ -24,6 +24,7 @@ import { useViewStore } from "@/src/features/dashboard/store/view-store";
 import OverviewSkeleton from "../components/OverviewSkeleton";
 import { useServices } from "../../service/hooks/useServices";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/src/features/auth/store/auth-store";
 
 const formatNumber = (
   value: any,
@@ -126,6 +127,9 @@ export const OverviewView: React.FC = () => {
       ? selectedService?.name || "Filtered service"
       : "All services";
 
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === "admin";
+
   return (
     <Container>
       <SectionHeading
@@ -146,58 +150,64 @@ export const OverviewView: React.FC = () => {
           Refresh
         </DashboardButton>
 
-        <DashboardButton
-          variant="primary"
-          onClick={() => setActiveView("services")}
-        >
-          <Plus size={14} />
-          Manage Services
-        </DashboardButton>
+        {isAdmin && (
+          <DashboardButton
+            variant="primary"
+            onClick={() => setActiveView("services")}
+          >
+            <Plus size={14} />
+            Manage Services
+          </DashboardButton>
+        )}
       </SectionHeading>
 
-      <div className="mb-4 flex flex-wrap items-center gap-3 text-[0.6875rem] text-body">
-        <div className="flex items-center gap-2">
-          <span className="rounded border border-border bg-surface-1 px-2 py-1 uppercase tracking-[0.12em] text-body/55">
-            Scope
-          </span>
-          <span className="rounded border border-border bg-surface-1 px-2 py-1 text-heading">
-            {selectedScopeLabel}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 border-l border-border pl-3">
-          <div className="flex items-center gap-1.5">
-            <div
-              className={`h-1.5 w-1.5 rounded-full ${metrics?.systemStatus?.frontend === "operational" ? "bg-success" : "bg-warning"}`}
-            />
-            <span className="uppercase tracking-widest text-body/60">
-              Frontend
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 text-[0.6875rem] text-body">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="rounded-none border border-border bg-surface-1 px-2 py-1 uppercase tracking-[0.12em] text-body/45">
+              Scope
+            </span>
+            <span className="rounded-none border border-border bg-surface-1 px-2 py-1 text-heading font-black">
+              {selectedScopeLabel}
             </span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <div
-              className={`h-1.5 w-1.5 rounded-full ${metrics?.systemStatus?.backend === "operational" ? "bg-success" : "bg-warning"}`}
-            />
-            <span className="uppercase tracking-widest text-body/60">
-              Backend
-            </span>
+
+          <div className="flex items-center gap-4 border-l border-border pl-4">
+            <div className="flex items-center gap-2">
+              <div
+                className={`h-1.5 w-1.5 rounded-full ${metrics?.systemStatus?.frontend === "operational" ? "bg-success shadow-[0_0_8px_rgba(16,185,129,0.3)]" : "bg-warning"}`}
+              />
+              <span className="uppercase tracking-[0.15em] text-body/60 font-bold">
+                Frontend
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div
+                className={`h-1.5 w-1.5 rounded-full ${metrics?.systemStatus?.backend === "operational" ? "bg-success shadow-[0_0_8px_rgba(16,185,129,0.3)]" : "bg-warning"}`}
+              />
+              <span className="uppercase tracking-[0.15em] text-body/60 font-bold">
+                Backend
+              </span>
+            </div>
           </div>
         </div>
 
-        <span className="ml-auto text-body/35">Updated {generatedAt}</span>
+        <span className="text-body/35 uppercase tracking-widest font-medium">
+          Updated {generatedAt}
+        </span>
       </div>
 
       {overviewQuery.isLoading && <OverviewSkeleton />}
 
       {overviewQuery.isError && (
-        <div className="rounded-lg border border-danger-border bg-danger-soft px-5 py-4 text-danger">
-          Could not load overview metrics.
+        <div className="rounded-none border border-danger/30 bg-danger/5 px-5 py-4 text-danger text-[10px] uppercase font-black tracking-widest mb-8">
+          Critical Sync Error: Could not load overview metrics.
         </div>
       )}
 
       {metrics && !overviewQuery.isLoading && (
         <>
-          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             <OverviewMetricCard
               title="Total APIs"
               value={formatNumber(totalApis, 0, 0)}

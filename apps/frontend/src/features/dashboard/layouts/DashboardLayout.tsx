@@ -19,11 +19,28 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   user: initialUser,
 }) => {
   const { activeView } = useViewStore();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user: storeUser, logout } = useAuthStore();
   const router = useRouter();
 
   const user = storeUser || initialUser;
+
+  // Auto-manage sidebar based on screen size
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // Initial check
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className="bg-page text-body font-body antialiased h-screen transition-colors duration-500 flex flex-col overflow-hidden">

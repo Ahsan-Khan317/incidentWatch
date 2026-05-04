@@ -19,9 +19,12 @@ export interface TimelineEvent {
 
 export interface Incident {
   id: string;
+  displayId: string;
+
   serverId: string;
+  serviceId?: string | null;
   title: string;
-  severity: "critical" | "high" | "medium" | "low";
+  severity: "critical" | "high" | "medium" | "low" | "SEV1" | "SEV2" | "SEV3";
   type: string;
   status:
     | "Investigating"
@@ -30,7 +33,12 @@ export interface Incident {
     | "Identified"
     | "Triggered";
   assignedTo?: string;
+  assignedMemberIds: string[];
+  assignedMemberNames: string[];
+  assignedTeamIds: string[];
+  tags: string[];
   description: string;
+  stack?: string;
   createdAt: string;
   timeline: TimelineEvent[];
 }

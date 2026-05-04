@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { motion } from "framer-motion";
+import { useIncidents } from "../hooks/useIncidents";
 import { Incident } from "../types";
 
 interface IncidentDetailProps {
@@ -12,6 +13,24 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
   incident,
   onClose,
 }) => {
+  const { acknowledgeIncident, resolveIncident, refresh } = useIncidents();
+  const [isProcessing, setIsProcessing] = React.useState(false);
+
+  const handleAcknowledge = async () => {
+    setIsProcessing(true);
+    await acknowledgeIncident(incident.id);
+    setIsProcessing(false);
+  };
+
+  const handleResolve = async () => {
+    setIsProcessing(true);
+    await resolveIncident(incident.id);
+    setIsProcessing(false);
+  };
+
+  const isResolved = incident.status === "Resolved";
+  const isAcknowledged = incident.status === "Investigating";
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -21,36 +40,115 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
     >
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border-soft pb-8">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 flex-1 min-w-0">
           <button
             onClick={onClose}
-            className="group w-12 h-12 rounded-md border border-border-soft flex items-center justify-center hover:bg-surface-2 transition-all"
+            className="group w-12 h-12 shrink-0 rounded-md border border-border-soft flex items-center justify-center hover:bg-surface-2 transition-all"
           >
             <span className="material-symbols-outlined text-muted group-hover:text-primary group-hover:-translate-x-1 transition-all">
               arrow_back
             </span>
           </button>
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-3 mb-1">
-              <span className="px-2 py-0.5 bg-danger-soft text-danger border border-danger-border text-[10px] font-black uppercase tracking-tighter rounded">
-                CRITICAL ALERT
+              <span
+                className={`px-2 py-0.5 border text-[10px] font-black uppercase tracking-tighter rounded shrink-0 ${
+                  isResolved
+                    ? "bg-success-soft text-success border-success-border"
+                    : isAcknowledged
+                      ? "bg-warning-soft text-warning border-warning-border"
+                      : "bg-danger-soft text-danger border-danger-border"
+                }`}
+              >
+                {incident.status.toUpperCase()}
               </span>
-              <span className="font-mono text-xs font-bold text-muted">
-                {incident.id}
+              <span className="font-mono text-xs font-black text-muted tracking-widest uppercase opacity-40 shrink-0">
+                {incident.displayId}
               </span>
             </div>
-            <h2 className="text-3xl font-display font-bold text-heading tracking-tight">
+            <h2 className="text-3xl font-display font-black text-heading tracking-tighter uppercase break-words leading-none mt-2 truncate">
               {incident.title}
             </h2>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button className="px-6 py-2.5 border border-border-soft text-muted text-xs font-bold rounded-md hover:bg-surface-2 transition-all">
-            Acknowledge
-          </button>
-          <button className="px-8 py-2.5 bg-primary text-white text-xs font-bold rounded-md shadow-lg hover:brightness-110 shadow-primary transition-all uppercase tracking-widest">
-            Resolve Incident
-          </button>
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
+          {!isResolved && !isAcknowledged && (
+            <button
+              onClick={handleAcknowledge}
+              disabled={isProcessing}
+              className="px-6 py-2.5 border border-border-soft text-muted text-xs font-bold rounded-md hover:bg-surface-2 transition-all disabled:opacity-50"
+            >
+              {isProcessing ? "Processing..." : "Acknowledge"}
+            </button>
+          )}
+          {!isResolved && (
+            <button
+              onClick={handleResolve}
+              disabled={isProcessing}
+              className="px-8 py-2.5 bg-primary text-white text-xs font-bold rounded-md shadow-lg hover:brightness-110 shadow-primary transition-all uppercase tracking-widest disabled:opacity-50"
+            >
+              {isProcessing ? "Processing..." : "Resolve Incident"}
+            </button>
+          )}
+          {isResolved && (
+            <div className="px-6 py-2.5 bg-success/10 text-success border border-success/30 text-xs font-black uppercase tracking-widest rounded-md">
+              Fixed & Resolved
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Tactical Lifecycle Stepper */}
+      <div className="grid grid-cols-3 gap-1 bg-surface-2 p-1 border border-border-soft rounded-md">
+        <div
+          className={`flex flex-col items-center py-3 px-2 rounded-sm transition-all duration-500 ${
+            !isAcknowledged && !isResolved
+              ? "bg-danger/10 border border-danger/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
+              : "opacity-40"
+          }`}
+        >
+          <div
+            className={`h-1.5 w-1.5 rounded-full mb-2 ${!isAcknowledged && !isResolved ? "bg-danger animate-pulse" : "bg-muted"}`}
+          />
+          <span
+            className={`text-[9px] font-black uppercase tracking-[0.2em] ${!isAcknowledged && !isResolved ? "text-danger" : "text-muted"}`}
+          >
+            Stage 01: Triggered
+          </span>
+        </div>
+
+        <div
+          className={`flex flex-col items-center py-3 px-2 rounded-sm transition-all duration-500 ${
+            isAcknowledged
+              ? "bg-warning/10 border border-warning/20 shadow-[0_0_15px_rgba(245,158,11,0.1)]"
+              : "opacity-40"
+          }`}
+        >
+          <div
+            className={`h-1.5 w-1.5 rounded-full mb-2 ${isAcknowledged ? "bg-warning animate-pulse" : "bg-muted"}`}
+          />
+          <span
+            className={`text-[9px] font-black uppercase tracking-[0.2em] ${isAcknowledged ? "text-warning" : "text-muted"}`}
+          >
+            Stage 02: Investigating
+          </span>
+        </div>
+
+        <div
+          className={`flex flex-col items-center py-3 px-2 rounded-sm transition-all duration-500 ${
+            isResolved
+              ? "bg-success/10 border border-success/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]"
+              : "opacity-40"
+          }`}
+        >
+          <div
+            className={`h-1.5 w-1.5 rounded-full mb-2 ${isResolved ? "bg-success" : "bg-muted"}`}
+          />
+          <span
+            className={`text-[9px] font-black uppercase tracking-[0.2em] ${isResolved ? "text-success" : "text-muted"}`}
+          >
+            Stage 03: Resolved
+          </span>
         </div>
       </div>
 
@@ -87,7 +185,9 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
                   <code className="block border-b border-border-soft/30 pb-2 mb-2 text-[10px] text-zinc-600 uppercase font-black">
                     Raw Stack Trace
                   </code>
-                  {`[2024-05-01 18:10:00.442] ERROR [Thread-42] o.a.c.c.C.[Tomcat].[localhost] : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception\njava.lang.OutOfMemoryError: GC overhead limit exceeded\n   at java.util.Arrays.copyOf(Arrays.java:3332)\n   at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:124)\n   at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:448)\n   at java.lang.StringBuilder.append(StringBuilder.java:136)\n   ... 14 more`}
+                  {incident.stack ||
+                    incident.description ||
+                    "No stack trace captured for this incident."}
                 </pre>
               </div>
             </div>
@@ -194,6 +294,59 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
                   </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          <section className="bg-surface-1 border border-border-soft rounded-md overflow-hidden shadow-md">
+            <div className="bg-surface-2 px-6 py-4 border-b border-border-soft flex items-center justify-between">
+              <h4 className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">
+                Responders
+              </h4>
+              <span className="material-symbols-outlined text-sm text-primary">
+                person_search
+              </span>
+            </div>
+            <div className="p-6 space-y-4">
+              {incident.assignedMemberNames.length > 0 ? (
+                incident.assignedMemberNames.map((name) => (
+                  <div
+                    key={name}
+                    className="flex items-center justify-between border border-border-soft bg-surface-2 px-3 py-2"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center border border-border bg-surface-1 text-[10px] font-black text-primary">
+                        {name.charAt(0)}
+                      </span>
+                      <span className="truncate text-xs font-bold text-heading">
+                        {name}
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-primary">
+                      Assigned
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-[11px] font-medium text-muted">
+                  {incident.assignedMemberIds.length > 0 ||
+                  incident.assignedTeamIds.length > 0
+                    ? incident.assignedTo
+                    : "No responder assigned yet."}
+                </p>
+              )}
+
+              {incident.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {incident.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="border border-border-soft bg-surface-2 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-muted"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
