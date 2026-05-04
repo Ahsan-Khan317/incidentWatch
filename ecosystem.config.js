@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     // ==============================
-    // BACKEND (scaled)
+    // BACKEND
     // ==============================
     {
       name: "backend",
@@ -10,9 +10,10 @@ module.exports = {
       cwd: "/opt/incidentWatch/apps/backend",
       interpreter: "none",
 
-      // 🔥 CPU usage (balanced)
-      instances: 2,
-      exec_mode: "cluster",
+      // ✅ FIXED: Bun cluster mode support nahi karta
+      // Bun apna khud ka multi-threading karta hai internally
+      instances: 1,
+      exec_mode: "fork",
 
       env: {
         NODE_ENV: "production",
@@ -34,7 +35,7 @@ module.exports = {
     },
 
     // ==============================
-    // FRONTEND (light)
+    // FRONTEND (Next.js)
     // ==============================
     {
       name: "frontend",
@@ -43,7 +44,7 @@ module.exports = {
       cwd: "/opt/incidentWatch/apps/frontend",
       interpreter: "none",
 
-      // ⚠️ only 1 instance
+      // ✅ Already correct
       instances: 1,
       exec_mode: "fork",
 
