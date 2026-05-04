@@ -40,19 +40,19 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
     >
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-border-soft pb-8">
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 flex-1 min-w-0">
           <button
             onClick={onClose}
-            className="group w-12 h-12 rounded-md border border-border-soft flex items-center justify-center hover:bg-surface-2 transition-all"
+            className="group w-12 h-12 shrink-0 rounded-md border border-border-soft flex items-center justify-center hover:bg-surface-2 transition-all"
           >
             <span className="material-symbols-outlined text-muted group-hover:text-primary group-hover:-translate-x-1 transition-all">
               arrow_back
             </span>
           </button>
-          <div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-3 mb-1">
               <span
-                className={`px-2 py-0.5 border text-[10px] font-black uppercase tracking-tighter rounded ${
+                className={`px-2 py-0.5 border text-[10px] font-black uppercase tracking-tighter rounded shrink-0 ${
                   isResolved
                     ? "bg-success-soft text-success border-success-border"
                     : isAcknowledged
@@ -62,16 +62,16 @@ export const IncidentDetail: React.FC<IncidentDetailProps> = ({
               >
                 {incident.status.toUpperCase()}
               </span>
-              <span className="font-mono text-xs font-black text-muted tracking-widest uppercase opacity-40">
+              <span className="font-mono text-xs font-black text-muted tracking-widest uppercase opacity-40 shrink-0">
                 {incident.displayId}
               </span>
             </div>
-            <h2 className="text-3xl font-display font-black text-heading tracking-tighter uppercase break-all leading-none mt-2">
+            <h2 className="text-3xl font-display font-black text-heading tracking-tighter uppercase break-words leading-none mt-2 truncate">
               {incident.title}
             </h2>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 shrink-0">
           {!isResolved && !isAcknowledged && (
             <button
               onClick={handleAcknowledge}

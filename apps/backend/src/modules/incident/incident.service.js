@@ -1,4 +1,6 @@
 import { ApiError } from "../../utils/Error/ApiError.js";
+import { getIO } from "../../socket/socket.js";
+import { SOCKET_EVENTS } from "../../socket/socket.js";
 import { authDao } from "../auth/auth.dao.js";
 
 import { incidentDao } from "./incident.dao.js";
@@ -67,6 +69,9 @@ export const incidentService = {
 
     await incident.save();
 
+    const io = getIO();
+    if (io) io.emit(SOCKET_EVENTS.INCIDENT.UPDATED, incident);
+
     return incident;
   },
 
@@ -88,6 +93,9 @@ export const incidentService = {
     });
 
     await incident.save();
+
+    const io = getIO();
+    if (io) io.emit(SOCKET_EVENTS.INCIDENT.UPDATED, incident);
 
     return incident;
   },

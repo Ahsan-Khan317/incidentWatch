@@ -5,7 +5,7 @@ const express = require("express");
 
   const iw = await init({
     apiKey: "5498877e64349a39154a3e5a370ffd0c887a5300d05af348532e594ac4c32ee5",
-    serverId: "test-server-02",
+    serverId: "final",
     platformUrl: "http://localhost:8000/api/v1/sdk",
     debug: true,
     integrations: {

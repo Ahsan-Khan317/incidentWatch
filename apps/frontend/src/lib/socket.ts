@@ -1,5 +1,11 @@
 import { io, Socket } from "socket.io-client";
 
+export const SOCKET_EVENTS = {
+  INCIDENT: {
+    UPDATED: "incident:updated",
+  },
+};
+
 class SocketService {
   private socket: Socket | null = null;
   private readonly logSubscriptions = new Map<

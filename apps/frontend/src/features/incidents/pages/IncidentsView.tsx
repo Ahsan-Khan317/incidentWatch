@@ -59,7 +59,7 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
   const [activeFilter, setActiveFilter] = useState<"all" | "mine">("all");
   const { user } = useAuthStore();
   const { selectedServiceId, services } = useServiceStore();
-  const { incidents: rawIncidents, isLoading } = useIncidents();
+  const { incidents: rawIncidents, isLoading, refresh } = useIncidents();
   const { members } = useMembers();
 
   const memberNameByUserId = useMemo(() => {
@@ -72,7 +72,17 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
 
   // Map backend data to frontend Incident type
   const allIncidents: Incident[] = useMemo(() => {
-    return (rawIncidents as BackendIncident[]).map((ri) => {
+    // Strictly deduplicate by _id to prevent any React key warnings
+    const uniqueRawIncidents = Array.from(
+      new Map(
+        (rawIncidents as BackendIncident[]).map((ri) => [
+          String(ri._id || (ri as any).id),
+          ri,
+        ]),
+      ).values(),
+    );
+
+    return uniqueRawIncidents.map((ri) => {
       const assignedMemberIds = normalizeIds(ri.assignedMembers);
       const assignedTeamIds = normalizeIds(ri.assignedTeams);
       const assignedMemberNames = assignedMemberIds
@@ -154,6 +164,7 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
 
   const handleBack = () => {
     setSelectedIncidentId(null);
+    refresh(); // Force refresh to prevent any state corruption bugs
     onClearInitial?.();
   };
 
@@ -276,7 +287,11 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
             </div>
           </motion.div>
         ) : (
-          <IncidentDetail incident={selectedIncident} onClose={handleBack} />
+          <IncidentDetail
+            key="incident-detail"
+            incident={selectedIncident}
+            onClose={handleBack}
+          />
         )}
       </AnimatePresence>
     </Container>

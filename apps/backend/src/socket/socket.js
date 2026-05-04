@@ -6,6 +6,9 @@ import { getRedis } from "@/configs/redis.config.js";
  * Socket.IO Constants
  */
 export const SOCKET_EVENTS = {
+  INCIDENT: {
+    UPDATED: "incident:updated",
+  },
   LOGS: {
     SUBSCRIBE: "subscribe:logs",
     UNSUBSCRIBE: "unsubscribe:logs",
